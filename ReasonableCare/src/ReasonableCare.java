@@ -1,17 +1,20 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import asg.cliche.ShellFactory;
 
 /**
- * Entrance program for the Reasonable Care system
+ * Entrance program for the Reasonable Care system.
+ * 
+ * @see <a href="https://code.google.com/p/cliche/wiki/Manual>Manual for Cliche
+ *      shell system</a>
  */
 public class ReasonableCare {
 
   private static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
   // Put your oracle ID and password here
-  private static final String user = "gshah@orcl";
+  private static final String user = "gshah";
   private static final String password = "001080029";
 
   /**
@@ -31,17 +34,14 @@ public class ReasonableCare {
       try (Connection connection = DriverManager.getConnection(jdbcURL, user,
           password)) {
 
-        // Create a statement instance that will be sending
-        // your SQL statements to the DBMS
-        try (Statement statement = connection.createStatement()) {
+        StudentShell shell = new StudentShell(connection);
+        ShellFactory.createConsoleShell("student", "ReasonableCare", shell).commandLoop();
 
-        }
       }
 
-    } catch (SQLException | ClassNotFoundException oops) {
+    } catch (Exception oops) {
       System.out.println("Exception running program.");
       oops.printStackTrace();
-
     }
 
   }
