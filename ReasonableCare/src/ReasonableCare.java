@@ -16,6 +16,8 @@ public class ReasonableCare {
   // Put your oracle ID and password here
   private static final String user = "gshah";
   private static final String password = "001080029";
+  
+  public static final String APP_NAME = "ReasonableCare";
 
   /**
    * @param args
@@ -34,8 +36,8 @@ public class ReasonableCare {
       try (Connection connection = DriverManager.getConnection(jdbcURL, user,
           password)) {
 
-        StudentShell shell = new StudentShell(connection);
-        ShellFactory.createConsoleShell("student", "ReasonableCare", shell).commandLoop();
+        Object shell = new LoginShell(connection);
+        ShellFactory.createConsoleShell("login", APP_NAME, shell).commandLoop();
 
       }
 

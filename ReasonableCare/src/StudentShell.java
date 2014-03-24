@@ -7,6 +7,10 @@ import asg.cliche.Command;
 
 public class StudentShell {
 
+  /**
+   * Connection object used to create Statements. This shell doesn't own the
+   * connection; no need to close.
+   */
   final Connection connection;
 
   public StudentShell(Connection connection) {
@@ -31,7 +35,7 @@ public class StudentShell {
           String name = result.getString("StudentID");
           sb.append(i + ": " + name + "\n");
         }
-        
+
         return sb.toString();
       }
     }
