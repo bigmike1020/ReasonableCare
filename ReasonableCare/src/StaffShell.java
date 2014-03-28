@@ -30,7 +30,7 @@ public class StaffShell {
     	
       stm.setString(1, name);
       stm.setString(2, password);
-      stm.setDate(3, java.sql.Date.valueOf(startingDate));
+      stm.setDate(3, java.sql.Date.valueOf(startingDate)); //date must be in YYYY-MM-DD format
       int id = stm.executeUpdate();
       
       return "Created new student with id " + id;
