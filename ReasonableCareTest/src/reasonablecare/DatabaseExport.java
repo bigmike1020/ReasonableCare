@@ -8,6 +8,7 @@ import java.util.List;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
+import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 public class DatabaseExport {
@@ -24,11 +25,16 @@ public class DatabaseExport {
 
       // partial database export
       QueryDataSet partialDataSet = new QueryDataSet(connection);
-      for(String table : tables) {
+      for (String table : tables) {
         partialDataSet.addTable(table);
       }
+
+      // write DTD file
+      FlatDtdDataSet.write(partialDataSet, new FileOutputStream("test.dtd"));
+
+      // write data file
       FlatXmlDataSet.write(partialDataSet, new FileOutputStream("partial.xml"));
-      
+
     }
   }
 
