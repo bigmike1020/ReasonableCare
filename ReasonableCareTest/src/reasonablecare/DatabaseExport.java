@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
+import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 public class DatabaseExport {
@@ -22,9 +22,13 @@ public class DatabaseExport {
     try (Connection jdbcConnection = Constants.makeConnection()) {
       IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
 
-      // full database export
-      IDataSet fullDataSet = connection.createDataSet();
-      FlatXmlDataSet.write(fullDataSet, new FileOutputStream("full.xml"));
+      // partial database export
+      QueryDataSet partialDataSet = new QueryDataSet(connection);
+      for(String table : tables) {
+        partialDataSet.addTable(table);
+      }
+      FlatXmlDataSet.write(partialDataSet, new FileOutputStream("partial.xml"));
+      
     }
   }
 
