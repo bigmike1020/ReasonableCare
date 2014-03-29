@@ -53,9 +53,10 @@ public class StaffShellTest extends DBTestCase {
   @Test
   public void testGetDoctors() throws SQLException {
     Object result = shell.getDoctors();
-    Object expected = "List of all DoctorIDs\n0: 2000\n0: 2001\n0: 2002\n0: 2003\n0: 2004\n";
+    Object expected = "Doctor ID|Doctor Name\n2000     |Dr. Miller \n2001     |Dr. Singh  \n2002     |Dr. Healey \n2003     |Dr. William\n2004     |Dr. Rob    \n";
 
-    assertThat(result, equalTo(expected));
+    String res = result.toString();
+    assertThat(res, equalTo(expected));
   }
 
 }

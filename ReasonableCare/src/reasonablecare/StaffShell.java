@@ -55,17 +55,17 @@ public class StaffShell {
 
       // Get records from the Doctor table
       try (ResultSet result = statement
-          .executeQuery("SELECT DoctorID FROM Doctor")) {
+          .executeQuery("SELECT doctorID, doctorName FROM Doctor ORDER BY doctorID")) {
 
-        StringBuilder sb = new StringBuilder("List of all DoctorIDs\n");
-
-        int i = 0;
+        Table res = new Table("Doctor ID", "Doctor Name");
+        
         while (result.next()) {
-          String name = result.getString("DoctorID");
-          sb.append(i + ": " + name + "\n");
+          int id = result.getInt("doctorID");
+          String name = result.getString("doctorName");
+          res.add(id, name);
         }
 
-        return sb.toString();
+        return res;
       }
     }
   }
