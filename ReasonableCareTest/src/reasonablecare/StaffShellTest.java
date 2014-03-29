@@ -4,12 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.FileInputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DBTestCase;
 import org.dbunit.PropertiesBasedJdbcDatabaseTester;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.After;
@@ -18,7 +16,6 @@ import org.junit.Test;
 
 public class StaffShellTest extends DBTestCase {
 
-  Connection connection;
   StaffShell shell;
 
   public StaffShellTest(String name) {
@@ -38,14 +35,12 @@ public class StaffShellTest extends DBTestCase {
   @Before
   protected void setUp() throws Exception {
     super.setUp();
-    shell = new StaffShell(connection = Constants.makeConnection());
+    shell = new StaffShell(getConnection().getConnection());
   }
 
   @After
   protected void tearDown() throws Exception {
     shell = null;
-    connection.close();
-    connection = null;
     super.tearDown();
   }
 
