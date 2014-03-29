@@ -107,6 +107,7 @@ BEFORE INSERT
 ON Student
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.StudentID IS NULL)
 BEGIN
 SELECT StudentID_sequence.nextval INTO :N.StudentID FROM dual;
 END;
@@ -117,6 +118,7 @@ BEFORE INSERT
 ON Doctor
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.DoctorID IS NULL)
 BEGIN
 SELECT doctorID_sequence.nextval INTO :N.doctorID FROM dual;
 END;
@@ -127,6 +129,7 @@ BEFORE INSERT
 ON Appointment
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.AppointmentID IS NULL)
 BEGIN
 SELECT AppointmentID_sequence.nextval INTO :N.AppointmentID FROM dual;
 END;
@@ -137,6 +140,7 @@ BEFORE INSERT
 ON Nurse
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.NurseID IS NULL)
 BEGIN
 SELECT NurseID_sequence.nextval INTO :N.NurseID FROM dual;
 END;
@@ -147,6 +151,7 @@ BEFORE INSERT
 ON Staff
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.StaffID IS NULL)
 BEGIN
 SELECT staffID_sequence.nextval INTO :N.staffID FROM dual;
 END;
@@ -157,6 +162,7 @@ BEFORE INSERT
 ON Consultation
 REFERENCING NEW AS N
 FOR EACH ROW
+WHEN (N.ConsultationID IS NULL)
 BEGIN
 SELECT ConsultationID_sequence.nextval INTO :N.ConsultationID FROM dual;
 END;
