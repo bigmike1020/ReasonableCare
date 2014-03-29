@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 //import java.sql.Timestamp;
 
 import asg.cliche.Command;
@@ -46,4 +47,27 @@ public class StaffShell {
       return "Created new student with id "+ id;
     }
   }
+  
+  @Command
+  public Object getDoctors() throws SQLException {
+
+    try (Statement statement = connection.createStatement()) {
+
+      // Get records from the Doctor table
+      try (ResultSet result = statement
+          .executeQuery("SELECT DoctorID FROM Doctor")) {
+
+        StringBuilder sb = new StringBuilder("List of all DoctorIDs\n");
+
+        int i = 0;
+        while (result.next()) {
+          String name = result.getString("DoctorID");
+          sb.append(i + ": " + name + "\n");
+        }
+
+        return sb.toString();
+      }
+    }
+  }
+
 }
