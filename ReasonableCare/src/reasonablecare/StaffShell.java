@@ -69,5 +69,28 @@ public class StaffShell {
       }
     }
   }
+  
+  @Command
+  public Object getStudents() throws SQLException {
+
+    try (Statement statement = connection.createStatement()) {
+
+      // Get records from the Student table
+      try (ResultSet result = statement
+          .executeQuery("SELECT studentID, studentName FROM Student ORDER BY studentID")) {
+
+        Table res = new Table("Student ID", "Student Name");
+        
+        while (result.next()) {
+          int id = result.getInt("studentID");
+          String name = result.getString("studentName");
+          res.add(id, name);
+        }
+
+        return res;
+      }
+    }
+  }
+
 
 }
