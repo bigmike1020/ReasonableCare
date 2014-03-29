@@ -53,7 +53,7 @@ public class StaffShellTest extends DBTestCase {
   @Test
   public void testGetDoctors() throws SQLException {
     Object result = shell.getDoctors();
-    Object expected = "List of all DoctorIDs\n0: 4000\n";
+    Object expected = "List of all DoctorIDs\n0: 2000\n0: 2001\n0: 2002\n0: 2003\n0: 2004\n";
 
     assertThat(result, equalTo(expected));
   }
