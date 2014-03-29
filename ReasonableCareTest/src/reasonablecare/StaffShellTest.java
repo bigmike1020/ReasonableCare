@@ -3,57 +3,24 @@ package reasonablecare;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.io.FileInputStream;
 import java.sql.SQLException;
 
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class StaffShellTest {
+public class StaffShellTest extends BaseShellTest {
 
-  static IDatabaseConnection connection;
-  StaffShell shell;
-
-  public StaffShellTest() {
-    super();
-  }
-  
-  @BeforeClass
-  public static void connect() throws Exception {
-    connection = new DatabaseConnection(Constants.makeConnection());
-    
-  }
-  
-  @AfterClass
-  public static void disconnect() throws Exception {
-    connection.close();
-    connection = null;
-  }
+  protected StaffShell shell;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUpShell() throws Exception {
     shell = new StaffShell(connection.getConnection());
-
-    IDataSet dataSet = getDataSet();
-    DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDownShell() throws Exception {
     shell = null;
-  }
-
-  private IDataSet getDataSet() throws Exception {
-    return new FlatXmlDataSetBuilder().build(new FileInputStream(
-        "db/shell1.xml"));
   }
 
   @Test
