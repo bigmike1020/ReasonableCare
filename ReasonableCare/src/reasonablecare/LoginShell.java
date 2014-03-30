@@ -38,7 +38,23 @@ public class LoginShell implements ShellDependent {
   }
 
   @Command
-  public void loginStudent(int id, String password) throws IOException {
+  public String login(int id, String password) throws IOException {
+    if (1000 <= id && id < 2000) {
+      loginStudent(id, password);
+    } else if (2000 <= id && id < 3000) {
+      loginDoctor(id, password);
+    } else if (4000 <= id && id < 5000) {
+      loginNurse(id, password);
+    } else if (5000 <= id && id < 6000) {
+      loginStaff(id, password);
+    } else {
+      return "Invalid id. Not in any user class range.";
+    }
+    
+    return "Back at login shell.";
+  }
+
+  private void loginStudent(int id, String password) throws IOException {
 
     // TODO verify id/password is correct
 
@@ -46,8 +62,7 @@ public class LoginShell implements ShellDependent {
         new StudentShell(connection, id)).commandLoop();
   }
 
-  @Command
-  public void loginStaff(int id) throws IOException {
+  private void loginStaff(int id, String password) throws IOException {
 
     // TODO verify id/password is correct
 
@@ -55,13 +70,20 @@ public class LoginShell implements ShellDependent {
         .commandLoop();
   }
 
-  @Command
-  public void loginDoctor(int id) throws IOException {
+  private void loginDoctor(int id, String password) throws IOException {
 
     // TODO verify id/password is correct
 
     factory.createSubshell(loginShell, "doctor",
         new DoctorShell(connection, id)).commandLoop();
+  }
+
+  private void loginNurse(int id, String password) throws IOException {
+
+    // TODO verify id/password is correct
+
+    factory.createSubshell(loginShell, "nurse", new NurseShell(connection, id))
+        .commandLoop();
   }
 
 }
