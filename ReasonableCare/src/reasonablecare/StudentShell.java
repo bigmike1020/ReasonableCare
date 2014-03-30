@@ -1,4 +1,5 @@
 package reasonablecare;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ public class StudentShell {
    * connection; no need to close.
    */
   final Connection connection;
-  
+
   final int id;
 
   public StudentShell(Connection connection, int id) {
@@ -21,26 +22,21 @@ public class StudentShell {
     this.id = id;
   }
 
-  @Command
-  public Object getStudents() throws SQLException {
-
-    // Create a statement instance that will be sending
-    // your SQL statements to the DBMS
+  @Command(description = "List all doctor specializations, and doctors that have those specializations.")
+  public Table getSpecializations() throws SQLException {
     try (Statement statement = connection.createStatement()) {
 
       // Get records from the Student table
-      try (ResultSet result = statement
-          .executeQuery("SELECT StudentID FROM Student")) {
+      try (ResultSet rs = statement
+          .executeQuery("SELECT specialization, doctorID, doctorName FROM Doctor ORDER BY specialization, doctorID")) {
 
-        StringBuilder sb = new StringBuilder("List of all StudentIDs\n");
+        Table table = new Table("Specialization", "Doctor ID", "Doctor Name");
 
-        int i = 0;
-        while (result.next()) {
-          String name = result.getString("StudentID");
-          sb.append(i + ": " + name + "\n");
+        while (rs.next()) {
+          table.add(rs.getString(1), rs.getInt(2), rs.getString(3));
         }
 
-        return sb.toString();
+        return table;
       }
     }
   }
