@@ -13,9 +13,12 @@ public class StudentShell {
    * connection; no need to close.
    */
   final Connection connection;
+  
+  final int id;
 
-  public StudentShell(Connection connection) {
+  public StudentShell(Connection connection, int id) {
     this.connection = connection;
+    this.id = id;
   }
 
   @Command

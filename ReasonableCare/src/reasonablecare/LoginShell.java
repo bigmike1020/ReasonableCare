@@ -6,29 +6,28 @@ import java.sql.Connection;
 import asg.cliche.Command;
 import asg.cliche.Shell;
 import asg.cliche.ShellDependent;
-import asg.cliche.ShellFactory;
 
 public class LoginShell implements ShellDependent {
-
-  private static final String APP_NAME = ReasonableCare.APP_NAME;
 
   /**
    * Connection object used to create Statements. This shell doesn't own the
    * connection; no need to close.
    */
-  final Connection connection;
+  Connection connection;
 
   private Shell loginShell;
+
+  ShellFactory factory = new ShellFactory();
 
   public LoginShell(Connection connection) {
     this.connection = connection;
   }
-  
+
   /**
-   * This method is mocked in unit tests.
+   * This method is called in unit tests.
    */
-  Connection getConnection() {
-    return this.connection;
+  public void setFactory(ShellFactory f) {
+    this.factory = f;
   }
 
   /**
@@ -39,19 +38,30 @@ public class LoginShell implements ShellDependent {
   }
 
   @Command
-  public void loginStudent(int id) throws IOException {
-    StudentShell student = new StudentShell(getConnection());
-    createSubshell("student", student);
+  public void loginStudent(int id, String password) throws IOException {
+
+    // TODO verify id/password is correct
+
+    factory.createSubshell(loginShell, "student",
+        new StudentShell(connection, id)).commandLoop();
   }
 
   @Command
-  public void loginStaff() throws IOException {
-    StaffShell staff = new StaffShell(getConnection());
-    createSubshell("staff", staff);
+  public void loginStaff(int id) throws IOException {
+
+    // TODO verify id/password is correct
+
+    factory.createSubshell(loginShell, "staff", new StaffShell(connection, id))
+        .commandLoop();
   }
 
-  public void createSubshell(String name, Object shell) throws IOException {
-    ShellFactory.createSubshell(name, loginShell, APP_NAME, shell).commandLoop();
+  @Command
+  public void loginDoctor(int id) throws IOException {
+
+    // TODO verify id/password is correct
+
+    factory.createSubshell(loginShell, "doctor",
+        new DoctorShell(connection, id)).commandLoop();
   }
 
 }

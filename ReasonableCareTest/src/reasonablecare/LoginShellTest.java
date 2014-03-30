@@ -1,33 +1,54 @@
 package reasonablecare;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import asg.cliche.Shell;
+
 public class LoginShellTest extends BaseShellTest {
 
-  protected LoginShell mockedShell;
+  private LoginShell shell;
+
+  private ShellFactory mockedFactory;
+  private Shell mockedSubshell;
 
   @Before
   public void setUpShell() throws Exception {
-    mockedShell = mock(LoginShell.class);
-    
-    // Return our connection. Couldn't be passed in through constructor.
-    doReturn(connection.getConnection()).when(mockedShell).getConnection();
-    
-    // Don't create subshells. Those would run forever
-    doNothing().when(mockedShell).createSubshell(anyString(),anyObject());
+    shell = new LoginShell(getConnection());
+
+    // Create a mock subshell for the loginshell to create
+    mockedSubshell = mock(Shell.class);
+    doNothing().when(mockedSubshell).commandLoop();
+
+    // Create a mock ShellFactory that doesn't create subshells.
+    mockedFactory = mock(ShellFactory.class);
+    doReturn(mockedSubshell).when(mockedFactory).createSubshell(
+        any(Shell.class), anyString(), any());
+
+    shell.setFactory(mockedFactory);
   }
 
   @After
   public void tearDownShell() throws Exception {
-    mockedShell = null;
+    mockedFactory = null;
+    mockedSubshell = null;
+    shell = null;
   }
 
   @Test
   public void testLoginStudent() throws Exception {
-    mockedShell.loginStudent(1004);
-    verify(mockedShell).createSubshell(eq("student"), any(StudentShell.class));
+    shell.loginStudent(1004, "Triangle");
+    
+    verify(mockedFactory).createSubshell(any(Shell.class), eq("student"), any(StudentShell.class));
+    verify(mockedSubshell).commandLoop();
   }
 }

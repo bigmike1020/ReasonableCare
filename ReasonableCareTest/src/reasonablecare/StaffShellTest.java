@@ -11,11 +11,11 @@ import org.junit.Test;
 
 public class StaffShellTest extends BaseShellTest {
 
-  protected StaffShell shell;
+  private StaffShell shell;
 
   @Before
   public void setUpShell() throws Exception {
-    shell = new StaffShell(connection.getConnection());
+    shell = new StaffShell(getConnection(), 5021);
   }
 
   @After

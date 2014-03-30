@@ -15,9 +15,12 @@ public class StaffShell {
    * connection; no need to close.
    */
   final Connection connection;
+  
+  final int id;
 
-  public StaffShell(Connection connection) {
+  public StaffShell(Connection connection, int id) {
     this.connection = connection;
+    this.id = id;
   }
 
   @Command

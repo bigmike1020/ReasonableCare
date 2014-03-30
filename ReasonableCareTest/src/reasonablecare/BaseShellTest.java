@@ -1,6 +1,8 @@
 package reasonablecare;
 
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -13,7 +15,7 @@ import org.junit.BeforeClass;
 
 public class BaseShellTest {
 
-  static IDatabaseConnection connection;
+  private static IDatabaseConnection connection;
 
   @BeforeClass
   public static void connect() throws Exception {
@@ -35,6 +37,10 @@ public class BaseShellTest {
   private IDataSet getDataSet() throws Exception {
     return new FlatXmlDataSetBuilder().build(new FileInputStream(
         "db/shell1.xml"));
+  }
+  
+  protected static Connection getConnection() throws SQLException {
+    return connection.getConnection();
   }
 
 }
