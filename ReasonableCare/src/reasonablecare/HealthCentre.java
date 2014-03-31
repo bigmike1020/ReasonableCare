@@ -16,16 +16,19 @@ public class HealthCentre {
       System.in));
 
   /** This HealthCentre does not own the connection, no need to close. */
-  Connection connection = null;
+  private final Connection connection;
 
-  Statement statement = null;
-  ResultSet result = null;
-  int userid;
-  String pass;
-  String job;
+  private Statement statement;
+  private ResultSet result;
+  private int userid;
+  private String pass;
+  private String job;
 
-  public void main(Connection connection) throws Exception {
+  public HealthCentre(Connection connection) {
     this.connection = connection;
+  }
+  
+  public void main(Connection connection) throws Exception {
 
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
@@ -200,63 +203,7 @@ public class HealthCentre {
   public void login() throws IOException, SQLException {
     String log = new String();
     do {
-      out.println("Please Login to the system:");
-
-      out.println("Enter Userid");
-      userid = Integer.parseInt(br.readLine());
-
-      out.println("Enter Password");
-      pass = br.readLine();
-
-      String j = "";
-      while (j.isEmpty()) {
-        out.println("Select which intended user are you :\ns for Student\nm for Managing Staff\nd for Doctor\nn for Nurse");
-        j = br.readLine();
-        j.toLowerCase();
-        switch (j) {
-        case "s":
-          result = statement
-              .executeQuery("SELECT * FROM student WHERE studentid=" + userid
-                  + " and password='" + pass + "'"); // fetch the query
-          if (!result.next()) {
-            out.println("invalid login");
-            job = "none";
-          } else
-            job = "student";
-          break;
-        case "n":
-          result = statement.executeQuery("SELECT * FROM nurse WHERE nurseid="
-              + userid + " and password='" + pass + "'"); // fetch the query
-          if (!result.next()) {
-            out.println("invalid login");
-            job = "none";
-          } else
-            job = "nurse";
-          break;
-        case "d":
-          result = statement
-              .executeQuery("SELECT * FROM doctor WHERE doctorid=" + userid
-                  + " and password='" + pass + "'"); // fetch the query
-          if (!result.next()) {
-            out.println("invalid login");
-            job = "none";
-          } else
-            job = "doctor";
-          break;
-        case "m":
-          result = statement.executeQuery("SELECT * FROM staff WHERE staffid="
-              + userid + " and password='" + pass + "'"); // fetch the query
-          if (!result.next()) {
-            out.println("invalid login");
-            job = "none";
-          } else
-            job = "managing staff";
-          break;
-
-        default:
-          j = "";
-        }// end of switch
-      }// end of while
+      
 
       switch (job) // call the appropriate function for the corresponding staff
       {
