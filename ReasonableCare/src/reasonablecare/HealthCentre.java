@@ -289,7 +289,7 @@ public class HealthCentre {
     }
     do {
       int dchoice;
-      out.println("What would you like to do:\n1.Update your information\n2.See future appointments\n3.See a particular student record");
+      out.println("What would you like to do:\n1.Update your information\n2.See future appointments");
       dchoice = Integer.parseInt(br.readLine());
       switch (dchoice) {
       case 1:
@@ -297,9 +297,6 @@ public class HealthCentre {
         break;
       case 2:
         checkAppointments();
-        break;
-      case 3:
-        checkStudentRecord();
         break;
       // case 4:
       // checkAppointments();
@@ -328,16 +325,12 @@ public class HealthCentre {
     }
     do {
       int nchoice;
-      out.println("What would you like to do:\n1.Update your information\n2.Add a new consultation record");
+      out.println("What would you like to do:\n1.Update your information");
       nchoice = Integer.parseInt(br.readLine());
       switch (nchoice) {
       case 1:
         updatenurseinformation(userid);
         break;
-      case 2:
-        addConsultations();
-        break;
-
       default:
         out.println("Wrong choice:(");
       }// end of switch
@@ -393,14 +386,6 @@ public class HealthCentre {
         out.println("Password: " + result.getString("password"));
       }
     }
-  }
-
-  private void addConsultations() throws IOException, SQLException {
-
-  }
-
-  private void checkStudentRecord() throws IOException, SQLException {
-
   }
 
   private void updatedoctorinformation(int z) throws IOException, SQLException {

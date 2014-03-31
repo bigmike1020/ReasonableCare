@@ -1,14 +1,23 @@
 package reasonablecare;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+
+import asg.cliche.Command;
 
 public class DoctorShell {
 
+  private final Connection connection;
+  
+  private final int id;
+  
   public DoctorShell(Connection connection, int id) {
-    // TODO Auto-generated constructor stub
+    this.connection = connection;
+    this.id = id;
+  }
+  
+  @Command
+  public void checkStudentRecord() {
+    // TODO
   }
 
 }
