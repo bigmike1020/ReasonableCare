@@ -573,21 +573,7 @@ public class HealthCentre {
       statement.executeUpdate("update Student set studentname =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM student WHERE studentid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("studentID"));
-          out.println("Name: " + result.getString("studentname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("HealthInsurance Provider Name: "
-              + result.getString("HEALTHINSURANCEPROVIDERNAME"));
-          out.println("HealthInsurance Provider Number: "
-              + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
-          out.println("Starting semester: " + result.getString("startingdate"));
-        } while (result.next());
-      }
+      printStudentInfo(z);
       break;
     case 2:
 
@@ -602,21 +588,7 @@ public class HealthCentre {
           .executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
               + b + " 'where studentid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM student WHERE studentid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("studentID"));
-          out.println("Name: " + result.getString("studentname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("HealthInsurance Provider Name: "
-              + result.getString("HEALTHINSURANCEPROVIDERNAME"));
-          out.println("HealthInsurance Provider Number: "
-              + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
-          out.println("Starting semester: " + result.getString("startingdate"));
-        } while (result.next());
-      }
+      printStudentInfo(z);
 
       break;
     case 3:
@@ -624,64 +596,42 @@ public class HealthCentre {
           .executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
               + b + " 'where studentid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM student WHERE studentid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("studentID"));
-          out.println("Name: " + result.getString("studentname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("HealthInsurance Provider Name: "
-              + result.getString("HEALTHINSURANCEPROVIDERNAME"));
-          out.println("HealthInsurance Provider Number: "
-              + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
-          out.println("Starting semester: " + result.getString("startingdate"));
-        } while (result.next());
-      }
+      printStudentInfo(z);
       break;
     case 4:
       statement.executeUpdate("update Student set PASSWORD =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM student WHERE studentid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("studentID"));
-          out.println("Name: " + result.getString("studentname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("HealthInsurance Provider Name: "
-              + result.getString("HEALTHINSURANCEPROVIDERNAME"));
-          out.println("HealthInsurance Provider Number: "
-              + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
-          out.println("Starting semester: " + result.getString("startingdate"));
-        } while (result.next());
-      }
+      printStudentInfo(z);
       break;
     case 5:
       statement.executeUpdate("update Student set startingdate =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM student WHERE studentid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("studentID"));
-          out.println("Name: " + result.getString("studentname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("HealthInsurance Provider Name: "
-              + result.getString("HEALTHINSURANCEPROVIDERNAME"));
-          out.println("HealthInsurance Provider Number: "
-              + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
-          out.println("Starting semester: " + result.getString("startingdate"));
-        } while (result.next());
-      }
+      printStudentInfo(z);
       break;
     }// end of switch
   }// end of updatestudentinformation
+
+  private void printStudentInfo(int studentId) throws SQLException {
+    out.println("Your updated details are as shown:");
+
+    // get the details of the student whose record is updated
+    try (ResultSet result = statement
+        .executeQuery("SELECT * FROM student WHERE studentid=" + studentId + "")) {
+
+      while (result.next()) {
+        out.println("ID: " + result.getString("studentID"));
+        out.println("Name: " + result.getString("studentname"));
+        out.println("Password: " + result.getString("password"));
+        out.println("HealthInsurance Provider Name: "
+            + result.getString("HEALTHINSURANCEPROVIDERNAME"));
+        out.println("HealthInsurance Provider Number: "
+            + result.getString("HEALTHINSURANCEPOLICYNUMBER"));
+        out.println("Starting semester: " + result.getString("startingdate"));
+      }
+    }
+  }
 
 }// end of class HealthCentre
 
