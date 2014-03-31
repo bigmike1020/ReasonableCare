@@ -424,72 +424,45 @@ public class HealthCentre {
       statement.executeUpdate("update doctor set doctorname =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM doctor WHERE doctorid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("doctorid"));
-          out.println("Name: " + result.getString("doctorname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("Specialization: " + result.getString("specialization"));
-          out.println("Phone Number: " + result.getString("Phonenumber"));
-        } while (result.next());
-      }
+      printDoctorInfo(z);
       break;
 
     case 2:
       statement.executeUpdate("update doctor set PASSWORD =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM doctor WHERE doctorid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("doctorid"));
-          out.println("Name: " + result.getString("doctorname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("Specialization: " + result.getString("specialization"));
-          out.println("Phone Number: " + result.getString("Phonenumber"));
-        } while (result.next());
-      }
+      printDoctorInfo(z);
       break;
     case 3:
       statement.executeUpdate("update doctor set Specialization =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM doctor WHERE doctorid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("doctorid"));
-          out.println("Name: " + result.getString("doctorname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("Specialization: " + result.getString("specialization"));
-          out.println("Phone Number: " + result.getString("Phonenumber"));
-        } while (result.next());
-      }
+      printDoctorInfo(z);
       break;
     case 4:
       statement.executeUpdate("update doctor set phonenumber =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM doctor WHERE doctorid="
-          + z + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("doctorid"));
-          out.println("Name: " + result.getString("doctorname"));
-          out.println("Password: " + result.getString("password"));
-          out.println("Specialization: " + result.getString("specialization"));
-          out.println("Phone Number: " + result.getString("Phonenumber"));
-        } while (result.next());
-      }
+      printDoctorInfo(z);
       break;
     }// end of switch
+  }
+
+  private void printDoctorInfo(int doctorId) throws SQLException {
+    out.println("Your updated details are as shown:");
+
+    // get the details of the student whose record is updated
+    try (ResultSet result = statement
+        .executeQuery("SELECT * FROM doctor WHERE doctorid=" + doctorId + "")) {
+
+      while (result.next()) {
+        out.println("ID: " + result.getString("doctorid"));
+        out.println("Name: " + result.getString("doctorname"));
+        out.println("Password: " + result.getString("password"));
+        out.println("Specialization: " + result.getString("specialization"));
+        out.println("Phone Number: " + result.getString("Phonenumber"));
+      }
+    }
   }
 
   private void updatestaffinformation(int z) throws IOException, SQLException {
@@ -502,7 +475,7 @@ public class HealthCentre {
     b = (br.readLine());
     if (b.isEmpty()) {
       out.println("invalid input");
-      updatenurseinformation(userid2);
+      updatestaffinformation(userid2);
     }
 
     switch (y) {
