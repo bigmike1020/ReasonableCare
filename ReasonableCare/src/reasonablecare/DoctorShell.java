@@ -19,5 +19,10 @@ public class DoctorShell {
   public void checkStudentRecord() {
     // TODO
   }
+  
+  @Command
+  public void checkAppointments() {
+    // TODO list future appointments
+  }
 
 }

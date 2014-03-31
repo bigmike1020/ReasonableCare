@@ -21,7 +21,6 @@ public class HealthCentre {
   private Statement statement;
   private ResultSet result;
   private final int userid;
-  private String job;
 
   public HealthCentre(Connection connection, int userid) {
     this.connection = connection;
@@ -210,20 +209,11 @@ public class HealthCentre {
     }
     do {
       int schoice;
-      out.println("What would you like to do:\n1.Update your information\n2. Make an Appointment \n Make an Appointment\n3.Check your mandatory vaccinations \n4. See future appointments");
+      out.println("What would you like to do:\n1.Update your information\n");
       schoice = Integer.parseInt(br.readLine());
       switch (schoice) {
       case 1:
         updatestudentinformation(userid);
-        break;
-      case 2:
-        makeAppointment();
-        break;
-      case 3:
-        checkVaccinations();
-        break;
-      case 4:
-        checkAppointments();
         break;
       default:
         out.println("Wrong choice:(");
@@ -249,15 +239,12 @@ public class HealthCentre {
     }
     do {
       int mchoice;
-      out.println("What would you like to do:\n1.Update your information\n2.Make an Appointment");
+      out.println("What would you like to do:\n1.Update your information\n");
       // n3.Check your mandatory vaccinations \n4. See future appointments");
       mchoice = Integer.parseInt(br.readLine());
       switch (mchoice) {
       case 1:
         updatestaffinformation(userid);
-        break;
-      case 2:
-        makeAppointment();
         break;
       // case 3:
       // checkVaccinations();
@@ -289,14 +276,11 @@ public class HealthCentre {
     }
     do {
       int dchoice;
-      out.println("What would you like to do:\n1.Update your information\n2.See future appointments");
+      out.println("What would you like to do:\n1.Update your information\n");
       dchoice = Integer.parseInt(br.readLine());
       switch (dchoice) {
       case 1:
         updatedoctorinformation(userid);
-        break;
-      case 2:
-        checkAppointments();
         break;
       // case 4:
       // checkAppointments();
@@ -491,20 +475,6 @@ public class HealthCentre {
         out.println("Password: " + result.getString("password"));
       }
     }
-  }
-
-  private void checkAppointments() throws IOException, SQLException {
-    // out.println("You are in: checkAppointments");
-  }
-
-  private void checkVaccinations() throws IOException, SQLException {
-    // out.println("You are in: checkVaccinations");
-
-  }
-
-  private void makeAppointment() throws IOException, SQLException {
-    // out.println("You are in: makeAppointment");
-
   }
 
   private void updatestudentinformation(int z) throws IOException, SQLException {
