@@ -6,72 +6,46 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class HealthCentre {
-  private static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
-  // Put your oracle ID and password here
-  private static final String user = "gshah";
-  private static final String password = "001080029";
-
-  private static BufferedReader br = new BufferedReader(new InputStreamReader(
+  private final BufferedReader br = new BufferedReader(new InputStreamReader(
       System.in));
 
-  static Connection connection = null;
-  static Statement statement = null;
-  static ResultSet result = null;
-  static int userid;
-  static String pass;
-  static String job;
+  /** This HealthCentre does not own the connection, no need to close. */
+  Connection connection = null;
 
-  public static void main(String[] args) throws Exception {
+  Statement statement = null;
+  ResultSet result = null;
+  int userid;
+  String pass;
+  String job;
 
-    // Loading the driver. This creates an instance of the driver and calls
-    // the registerDriver method to make Oracle Thin driver, at
-    // ora.csc.ncsu.edu, available to clients.
-    Class.forName("oracle.jdbc.driver.OracleDriver");
+  public void main(Connection connection) throws Exception {
+    this.connection = connection;
 
-    try { // try 2
+    // Create a statement instance that will be sending your SQL statements
+    // to the DBMS
+    statement = connection.createStatement();
+    connection.setAutoCommit(true); // set autocommit on
 
-      // Get a connection instance from the first driver in the DriverManager
-      // list that recognizes the URL jdbcURL
-      connection = DriverManager.getConnection(jdbcURL, user, password);
+    out.println("Are you a new user to this system?\n1:Yes \n2:No");
+    int newuser = Integer.parseInt(br.readLine());
+    if (newuser == 1)
+      register();
 
-      // Create a statement instance that will be sending your SQL statements
-      // to the DBMS
-      statement = connection.createStatement();
-      connection.setAutoCommit(true); // set autocommit on
-
-      out.println("Are you a new user to this system?\n1:Yes \n2:No");
-      int newuser = Integer.parseInt(br.readLine());
-      if (newuser == 1)
-        register();
-
-      login();
-
-    }
-    // end of try 2
-
-    finally {
-      close(result);
-      close(statement);
-      close(connection);
-    }// end of finally for try 2
+    login();
 
   }// end of main
 
-  private static void register() throws IOException, SQLException// function for
-                                                                 // user of the
-                                                                 // system to
-                                                                 // register for
-                                                                 // the first
-                                                                 // time in the
-                                                                 // system
-  {
+  /**
+   * function for user of the system to register for the first time in the
+   * system
+   */
+  public void register() throws IOException, SQLException {
     String j = "";
 
     out.println("Select which intended user are you :\ns for Student\nm for Managing Staff\nd for Doctor\nn for Nurse");
@@ -222,36 +196,8 @@ public class HealthCentre {
     }// end of switch
   }
 
-  static void close(Connection connection) {
-    if (connection != null) {
-      try {
-        connection.close();
-      } catch (Throwable whatever) {
-      }
-    } // end of if
-  } // end of close for connection
-
-  static void close(Statement statement) {
-    if (statement != null) {
-      try {
-        statement.close();
-      } catch (Throwable whatever) {
-      }
-    } // end of if
-  } // end of close for statement
-
-  static void close(ResultSet result) {
-    if (result != null) {
-      try {
-        result.close();
-      } catch (Throwable whatever) {
-      }
-    } // end of if
-  } // end of close for result set
-
-  static void login() throws IOException, SQLException// function for user of
-                                                      // the system to login
-  {
+  /** function for user of the system to login */
+  public void login() throws IOException, SQLException {
     String log = new String();
     do {
       out.println("Please Login to the system:");
@@ -474,8 +420,7 @@ public class HealthCentre {
     } while (log.equals("y"));
   }// end login function
 
-  private static void updatenurseinformation(int z) throws IOException,
-      SQLException {
+  private void updatenurseinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -524,16 +469,15 @@ public class HealthCentre {
     }// end of switch
   }
 
-  private static void addConsultations() throws IOException, SQLException {
+  private void addConsultations() throws IOException, SQLException {
 
   }
 
-  private static void checkStudentRecord() throws IOException, SQLException {
+  private void checkStudentRecord() throws IOException, SQLException {
 
   }
 
-  private static void updatedoctorinformation(int z) throws IOException,
-      SQLException {
+  private void updatedoctorinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -619,8 +563,7 @@ public class HealthCentre {
     }// end of switch
   }
 
-  private static void updatestaffinformation(int z) throws IOException,
-      SQLException {
+  private void updatestaffinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -669,22 +612,21 @@ public class HealthCentre {
     }// end of switch
   }
 
-  private static void checkAppointments() throws IOException, SQLException {
+  private void checkAppointments() throws IOException, SQLException {
     // out.println("You are in: checkAppointments");
   }
 
-  private static void checkVaccinations() throws IOException, SQLException {
+  private void checkVaccinations() throws IOException, SQLException {
     // out.println("You are in: checkVaccinations");
 
   }
 
-  private static void makeAppointment() throws IOException, SQLException {
+  private void makeAppointment() throws IOException, SQLException {
     // out.println("You are in: makeAppointment");
 
   }
 
-  private static void updatestudentinformation(int z) throws IOException,
-      SQLException {
+  private void updatestudentinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
