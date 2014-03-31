@@ -367,35 +367,32 @@ public class HealthCentre {
       statement.executeUpdate("update Nurse set nursename =' " + b
           + " 'where nurseid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM nurse WHERE nurseid=" + z
-          + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("nurseid"));
-          out.println("Name: " + result.getString("nursename"));
-          out.println("Password: " + result.getString("password"));
-        } while (result.next());
-      }
+      printNurseInfo(z);
       break;
     case 2:
 
       statement.executeUpdate("update nurse set password =' " + b
           + " 'where nurseid=" + z);
       out.println("Record Updated");
-      out.println("Your updated details are as shown:");
-      result = statement.executeQuery("SELECT * FROM nurse WHERE nurseid=" + z
-          + ""); // get the details of the student whose record is updated
-      if (result.next()) {
-        do {
-          out.println("ID: " + result.getString("nurseid"));
-          out.println("Name: " + result.getString("nursename"));
-          out.println("Password: " + result.getString("password"));
-        } while (result.next());
-      }
+      printNurseInfo(z);
 
       break;
     }// end of switch
+  }
+
+  private void printNurseInfo(int nurseId) throws SQLException {
+    out.println("Your updated details are as shown:");
+
+    // get the details of the student whose record is updated
+    try (ResultSet result = statement
+        .executeQuery("SELECT * FROM nurse WHERE nurseid=" + nurseId + "")) {
+
+      while (result.next()) {
+        out.println("ID: " + result.getString("nurseid"));
+        out.println("Name: " + result.getString("nursename"));
+        out.println("Password: " + result.getString("password"));
+      }
+    }
   }
 
   private void addConsultations() throws IOException, SQLException {
