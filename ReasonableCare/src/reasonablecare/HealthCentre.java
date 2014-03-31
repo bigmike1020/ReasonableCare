@@ -20,14 +20,14 @@ public class HealthCentre {
 
   private Statement statement;
   private ResultSet result;
-  private int userid;
-  private String pass;
+  private final int userid;
   private String job;
 
-  public HealthCentre(Connection connection) {
+  public HealthCentre(Connection connection, int userid) {
     this.connection = connection;
+    this.userid = userid;
   }
-  
+
   public void main(Connection connection) throws Exception {
 
     // Create a statement instance that will be sending your SQL statements
@@ -39,8 +39,6 @@ public class HealthCentre {
     int newuser = Integer.parseInt(br.readLine());
     if (newuser == 1)
       register();
-
-    login();
 
   }// end of main
 
@@ -199,173 +197,157 @@ public class HealthCentre {
     }// end of switch
   }
 
-  /** function for user of the system to login */
-  public void login() throws IOException, SQLException {
-    String log = new String();
+  public void manageStudent() throws SQLException, IOException {
+    int at = 0;
+    result = statement
+        .executeQuery("SELECT studentname FROM student WHERE studentid="
+            + userid + ""); // get the name of the student
+    if (result.next()) {
+      do {
+        out.println("Hi " + result.getString("studentname")
+            + ". Welcome to Student Health Centre.");
+      } while (result.next());
+    }
     do {
-      
-
-      switch (job) // call the appropriate function for the corresponding staff
-      {
-      case "student": {
-        int at = 0;
-        result = statement
-            .executeQuery("SELECT studentname FROM student WHERE studentid="
-                + userid + ""); // get the name of the student
-        if (result.next()) {
-          do {
-            out.println("Hi " + result.getString("studentname")
-                + ". Welcome to Student Health Centre.");
-          } while (result.next());
-        }
-        do {
-          int schoice;
-          out.println("What would you like to do:\n1.Update your information\n2. Make an Appointment \n Make an Appointment\n3.Check your mandatory vaccinations \n4. See future appointments");
-          schoice = Integer.parseInt(br.readLine());
-          switch (schoice) {
-          case 1:
-            updatestudentinformation(userid);
-            break;
-          case 2:
-            makeAppointment();
-            break;
-          case 3:
-            checkVaccinations();
-            break;
-          case 4:
-            checkAppointments();
-            break;
-          default:
-            out.println("Wrong choice:(");
-          }// end of switch
-          out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
-          at = Integer.parseInt(br.readLine());
-
-        } while (at == 1);// end of do
-        if (at != 1)
-          out.println("Thank you for using this system. Do visit us again");
+      int schoice;
+      out.println("What would you like to do:\n1.Update your information\n2. Make an Appointment \n Make an Appointment\n3.Check your mandatory vaccinations \n4. See future appointments");
+      schoice = Integer.parseInt(br.readLine());
+      switch (schoice) {
+      case 1:
+        updatestudentinformation(userid);
         break;
-      }
-      case "managing staff": {
-        int at = 0;
-        result = statement
-            .executeQuery("SELECT staffname FROM staff WHERE staffid=" + userid
-                + ""); // get the name of the staff member
-        if (result.next()) {
-          do {
-            out.println("Hi " + result.getString("staffname")
-                + ". Welcome to Student Health Centre.");
-          } while (result.next());
-        }
-        do {
-          int mchoice;
-          out.println("What would you like to do:\n1.Update your information\n2.Make an Appointment");
-          // n3.Check your mandatory vaccinations \n4. See future appointments");
-          mchoice = Integer.parseInt(br.readLine());
-          switch (mchoice) {
-          case 1:
-            updatestaffinformation(userid);
-            break;
-          case 2:
-            makeAppointment();
-            break;
-          // case 3:
-          // checkVaccinations();
-          // break;
-          // case 4:
-          // checkAppointments();
-          // break;
-          default:
-            out.println("Wrong choice:(");
-          }// end of switch
-          out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
-          at = Integer.parseInt(br.readLine());
-
-        } while (at == 1);// end of do
-        if (at != 1)
-          out.println("Thank you for using this system. Do visit us again");
+      case 2:
+        makeAppointment();
         break;
-      }
-      case "doctor": {
-        int at = 0;
-        result = statement
-            .executeQuery("SELECT doctorname FROM doctor WHERE doctorid="
-                + userid + ""); // get the name of the doctor
-        if (result.next()) {
-          do {
-            out.println("Hi " + result.getString("doctorname")
-                + ". Welcome to Student Health Centre.");
-          } while (result.next());
-        }
-        do {
-          int dchoice;
-          out.println("What would you like to do:\n1.Update your information\n2.See future appointments\n3.See a particular student record");
-          dchoice = Integer.parseInt(br.readLine());
-          switch (dchoice) {
-          case 1:
-            updatedoctorinformation(userid);
-            break;
-          case 2:
-            checkAppointments();
-            break;
-          case 3:
-            checkStudentRecord();
-            break;
-          // case 4:
-          // checkAppointments();
-          // break;
-          default:
-            out.println("Wrong choice:(");
-          }// end of switch
-          out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
-          at = Integer.parseInt(br.readLine());
-
-        } while (at == 1);// end of do
-        if (at != 1)
-          out.println("Thank you for using this system. Do visit us again");
+      case 3:
+        checkVaccinations();
         break;
-      }
-      case "nurse": {
-        int at = 0;
-        result = statement
-            .executeQuery("SELECT nursename FROM nurse WHERE nurseid=" + userid
-                + ""); // get the name of the nurse
-        if (result.next()) {
-          do {
-            out.println("Hi " + result.getString("nursename")
-                + ". Welcome to Student Health Centre.");
-          } while (result.next());
-        }
-        do {
-          int nchoice;
-          out.println("What would you like to do:\n1.Update your information\n2.Add a new consultation record");
-          nchoice = Integer.parseInt(br.readLine());
-          switch (nchoice) {
-          case 1:
-            updatenurseinformation(userid);
-            break;
-          case 2:
-            addConsultations();
-            break;
-
-          default:
-            out.println("Wrong choice:(");
-          }// end of switch
-          out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
-          at = Integer.parseInt(br.readLine());
-
-        } while (at == 1);// end of do
-        if (at != 1)
-          out.println("Thank you for using this system. Do visit us again");
+      case 4:
+        checkAppointments();
         break;
-      }
-      case "none":
-        out.println("Enter y to go to try logging in again");
-        log = br.readLine();
-        log.toLowerCase();
+      default:
+        out.println("Wrong choice:(");
       }// end of switch
-    } while (log.equals("y"));
-  }// end login function
+      out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
+      at = Integer.parseInt(br.readLine());
+
+    } while (at == 1);// end of do
+    if (at != 1)
+      out.println("Thank you for using this system. Do visit us again");
+  }
+
+  public void manageStaff() throws SQLException, IOException {
+    int at = 0;
+    result = statement
+        .executeQuery("SELECT staffname FROM staff WHERE staffid=" + userid
+            + ""); // get the name of the staff member
+    if (result.next()) {
+      do {
+        out.println("Hi " + result.getString("staffname")
+            + ". Welcome to Student Health Centre.");
+      } while (result.next());
+    }
+    do {
+      int mchoice;
+      out.println("What would you like to do:\n1.Update your information\n2.Make an Appointment");
+      // n3.Check your mandatory vaccinations \n4. See future appointments");
+      mchoice = Integer.parseInt(br.readLine());
+      switch (mchoice) {
+      case 1:
+        updatestaffinformation(userid);
+        break;
+      case 2:
+        makeAppointment();
+        break;
+      // case 3:
+      // checkVaccinations();
+      // break;
+      // case 4:
+      // checkAppointments();
+      // break;
+      default:
+        out.println("Wrong choice:(");
+      }// end of switch
+      out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
+      at = Integer.parseInt(br.readLine());
+
+    } while (at == 1);// end of do
+    if (at != 1)
+      out.println("Thank you for using this system. Do visit us again");
+  }
+
+  public void manageDoctor() throws SQLException, IOException {
+    int at = 0;
+    result = statement
+        .executeQuery("SELECT doctorname FROM doctor WHERE doctorid=" + userid
+            + ""); // get the name of the doctor
+    if (result.next()) {
+      do {
+        out.println("Hi " + result.getString("doctorname")
+            + ". Welcome to Student Health Centre.");
+      } while (result.next());
+    }
+    do {
+      int dchoice;
+      out.println("What would you like to do:\n1.Update your information\n2.See future appointments\n3.See a particular student record");
+      dchoice = Integer.parseInt(br.readLine());
+      switch (dchoice) {
+      case 1:
+        updatedoctorinformation(userid);
+        break;
+      case 2:
+        checkAppointments();
+        break;
+      case 3:
+        checkStudentRecord();
+        break;
+      // case 4:
+      // checkAppointments();
+      // break;
+      default:
+        out.println("Wrong choice:(");
+      }// end of switch
+      out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
+      at = Integer.parseInt(br.readLine());
+
+    } while (at == 1);// end of do
+    if (at != 1)
+      out.println("Thank you for using this system. Do visit us again");
+  }
+
+  public void manageNurse() throws SQLException, IOException {
+    int at = 0;
+    result = statement
+        .executeQuery("SELECT nursename FROM nurse WHERE nurseid=" + userid
+            + ""); // get the name of the nurse
+    if (result.next()) {
+      do {
+        out.println("Hi " + result.getString("nursename")
+            + ". Welcome to Student Health Centre.");
+      } while (result.next());
+    }
+    do {
+      int nchoice;
+      out.println("What would you like to do:\n1.Update your information\n2.Add a new consultation record");
+      nchoice = Integer.parseInt(br.readLine());
+      switch (nchoice) {
+      case 1:
+        updatenurseinformation(userid);
+        break;
+      case 2:
+        addConsultations();
+        break;
+
+      default:
+        out.println("Wrong choice:(");
+      }// end of switch
+      out.println("Do you want to carry out another task?\n 1.Yes\n2.No");
+      at = Integer.parseInt(br.readLine());
+
+    } while (at == 1);// end of do
+    if (at != 1)
+      out.println("Thank you for using this system. Do visit us again");
+  }
 
   private void updatenurseinformation(int z) throws IOException, SQLException {
     int userid2 = z;
