@@ -295,7 +295,7 @@ public class CommonStatements implements AutoCloseable {
       out.println("Thank you for using this system. Do visit us again");
   }
 
-  private void updatenurseinformation(int z) throws IOException, SQLException {
+  public void updatenurseinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -341,7 +341,7 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
-  private void updatedoctorinformation(int z) throws IOException, SQLException {
+  public void updatedoctorinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -400,7 +400,7 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
-  private void updatestaffinformation(int z) throws IOException, SQLException {
+  public void updatestaffinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;
@@ -446,7 +446,7 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
-  private void updatestudentinformation(int z) throws IOException, SQLException {
+  public void updatestudentinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
     String b;

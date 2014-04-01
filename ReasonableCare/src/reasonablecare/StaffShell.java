@@ -155,5 +155,34 @@ public class StaffShell {
       stm.createNurse();
     }
   }
+  
+  @Command
+  public void updateNurse(int nurseId) throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.updatenurseinformation(nurseId);
+    }
+  }
+
+  @Command
+  public void updateDoctor(int id) throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.updatedoctorinformation(id);
+    }
+  }
+
+  @Command
+  public void updateStudent(int id) throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.updatestudentinformation(id);
+    }
+  }
+
+  @Command
+  public void updateStaff(int id) throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.updatestaffinformation(id);
+    }
+  }
+
 
 }
