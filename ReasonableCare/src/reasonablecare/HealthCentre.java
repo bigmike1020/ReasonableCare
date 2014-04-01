@@ -27,7 +27,7 @@ public class HealthCentre {
     this.userid = userid;
   }
 
-  public void main(Connection connection) throws Exception {
+  public void main() throws Exception {
 
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
@@ -53,147 +53,163 @@ public class HealthCentre {
     j.toLowerCase();
     switch (j) {
     case "s":
-      String sname = "";
-      while (sname.isEmpty()) {
-        out.println("Enter your Name");
-        sname = (br.readLine());
-      }
-      String spassword = "";
-      while (spassword.isEmpty()) {
-        out.println("Choose a student health centre Password");
-        spassword = (br.readLine());
-      }
-      String startingsemester = "";
-      while (startingsemester.isEmpty()) {
-        out.println("Enter the starting semester");
-        startingsemester = (br.readLine());
-      }
-      out.println("Do you have a health insurance?\n1. Yes \n2. No");
-      int c = Integer.parseInt(br.readLine());
-      if (c == 1) {
-        String HEALTHINSURANCEPROVIDERNAME = "";
-        while (HEALTHINSURANCEPROVIDERNAME.isEmpty()) {
-          out.println("Enter your health insurance provider name");
-          HEALTHINSURANCEPROVIDERNAME = br.readLine();
-        }
-        String HEALTHINSURANCEPOLICYNUMBER = "";
-        while (HEALTHINSURANCEPOLICYNUMBER.isEmpty()) {
-          out.println("Enter your health insurance provider name");
-          HEALTHINSURANCEPOLICYNUMBER = br.readLine();
-        }
-
-        statement
-            .executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
-                + sname
-                + "' , '"
-                + spassword
-                + "' , '"
-                + HEALTHINSURANCEPROVIDERNAME
-                + "', '"
-                + HEALTHINSURANCEPOLICYNUMBER
-                + "', '"
-                + startingsemester
-                + "')");
-        result = statement.executeQuery("SELECT studentid from student");
-      }// end of if
-      else {
-        statement
-            .executeUpdate("INSERT INTO Student( studentName, password, startingDate) values('"
-                + sname
-                + "' , '"
-                + spassword
-                + "' , '"
-                + startingsemester
-                + "')");
-        result = statement.executeQuery("SELECT studentid from student");
-      }
-      int ID1 = 0;
-      while (result.next()) {
-        ID1 = result.getInt("studentid");
-      }// end of while
-      out.println("Registration completed. Your Id is:" + ID1);
+      createStudent();
       break;
     case "n":
-      String nname = "";
-      while (nname.isEmpty()) {
-        out.println("Enter your Name");
-        nname = (br.readLine());
-      }
-      String npassword = "";
-      while (npassword.isEmpty()) {
-        out.println("Choose a student health centre Password");
-        npassword = (br.readLine());
-      }
-      statement
-          .executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
-              + nname + "','" + npassword + "')");
-      result = statement.executeQuery("SELECT nurseid from nurse");
-      int ID2 = 0;
-      while (result.next()) {
-        ID2 = result.getInt("nurseid");
-      }// end of while
-      out.println("Registration completed. Your Id is:" + ID2);
+      createNurse();
       break;
     case "d":
-      String dname = "";
-      while (dname.isEmpty()) {
-        out.println("Enter your Name");
-        dname = (br.readLine());
-      }
-      String dpassword = "";
-      while (dpassword.isEmpty()) {
-        out.println("Choose a student health centre Password");
-        dpassword = (br.readLine());
-      }
-      String dphone = "";
-      while (dphone.isEmpty()) {
-        out.println("Enter your Phone number");
-        dphone = (br.readLine());
-      }
-      String dspecialization = "";
-      while (dspecialization.isEmpty()) {
-        out.println("Enter your Specialization");
-        dspecialization = (br.readLine());
-      }
-      statement
-          .executeUpdate("INSERT INTO Doctor( doctorNAme, password, phonenumber, specialization) values ('"
-              + dname
-              + "','"
-              + dpassword
-              + "','"
-              + dphone
-              + "','"
-              + dspecialization + "')");
-      result = statement.executeQuery("SELECT doctorid from doctor");
-      int ID3 = 0;
-      while (result.next()) {
-        ID3 = result.getInt("doctorid");
-      }// end of while
-      out.println("Registration completed. Your Id is:" + ID3);
+      createDoctor();
       break;
     case "m":
-      String mname = "";
-      while (mname.isEmpty()) {
-        out.println("Enter your Name");
-        mname = (br.readLine());
-      }
-      String mpassword = "";
-      while (mpassword.isEmpty()) {
-        out.println("Choose a student health centre Password");
-        mpassword = (br.readLine());
-      }
-      statement
-          .executeUpdate("INSERT INTO Staff(staffName, password) values ('"
-              + mname + "','" + mpassword + "')");
-      result = statement.executeQuery("SELECT staffid from staff");
-      int ID4 = 0;
-      while (result.next()) {
-        ID4 = result.getInt("staffid");
-      }// end of while
-      out.println("Registration completed. Your Id is:" + ID4);
+      createStaff();
       break;
 
     }// end of switch
+  }
+
+  private void createStudent() throws IOException, SQLException {
+    String sname = "";
+    while (sname.isEmpty()) {
+      out.println("Enter your Name");
+      sname = (br.readLine());
+    }
+    String spassword = "";
+    while (spassword.isEmpty()) {
+      out.println("Choose a student health centre Password");
+      spassword = (br.readLine());
+    }
+    String startingsemester = "";
+    while (startingsemester.isEmpty()) {
+      out.println("Enter the starting semester");
+      startingsemester = (br.readLine());
+    }
+    out.println("Do you have a health insurance?\n1. Yes \n2. No");
+    int c = Integer.parseInt(br.readLine());
+    if (c == 1) {
+      String HEALTHINSURANCEPROVIDERNAME = "";
+      while (HEALTHINSURANCEPROVIDERNAME.isEmpty()) {
+        out.println("Enter your health insurance provider name");
+        HEALTHINSURANCEPROVIDERNAME = br.readLine();
+      }
+      String HEALTHINSURANCEPOLICYNUMBER = "";
+      while (HEALTHINSURANCEPOLICYNUMBER.isEmpty()) {
+        out.println("Enter your health insurance provider name");
+        HEALTHINSURANCEPOLICYNUMBER = br.readLine();
+      }
+
+      statement
+          .executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
+              + sname
+              + "' , '"
+              + spassword
+              + "' , '"
+              + HEALTHINSURANCEPROVIDERNAME
+              + "', '"
+              + HEALTHINSURANCEPOLICYNUMBER
+              + "', '"
+              + startingsemester
+              + "')");
+      result = statement.executeQuery("SELECT studentid from student");
+    }// end of if
+    else {
+      statement
+          .executeUpdate("INSERT INTO Student( studentName, password, startingDate) values('"
+              + sname
+              + "' , '"
+              + spassword
+              + "' , '"
+              + startingsemester
+              + "')");
+      result = statement.executeQuery("SELECT studentid from student");
+    }
+    int ID1 = 0;
+    while (result.next()) {
+      ID1 = result.getInt("studentid");
+    }// end of while
+    out.println("Registration completed. Your Id is:" + ID1);
+  }
+
+  private void createNurse() throws IOException, SQLException {
+    String nname = "";
+    while (nname.isEmpty()) {
+      out.println("Enter your Name");
+      nname = (br.readLine());
+    }
+    String npassword = "";
+    while (npassword.isEmpty()) {
+      out.println("Choose a student health centre Password");
+      npassword = (br.readLine());
+    }
+    statement
+        .executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
+            + nname + "','" + npassword + "')");
+    result = statement.executeQuery("SELECT nurseid from nurse");
+    int ID2 = 0;
+    while (result.next()) {
+      ID2 = result.getInt("nurseid");
+    }// end of while
+    out.println("Registration completed. Your Id is:" + ID2);
+  }
+
+  private void createDoctor() throws IOException, SQLException {
+    String dname = "";
+    while (dname.isEmpty()) {
+      out.println("Enter your Name");
+      dname = (br.readLine());
+    }
+    String dpassword = "";
+    while (dpassword.isEmpty()) {
+      out.println("Choose a student health centre Password");
+      dpassword = (br.readLine());
+    }
+    String dphone = "";
+    while (dphone.isEmpty()) {
+      out.println("Enter your Phone number");
+      dphone = (br.readLine());
+    }
+    String dspecialization = "";
+    while (dspecialization.isEmpty()) {
+      out.println("Enter your Specialization");
+      dspecialization = (br.readLine());
+    }
+    statement
+        .executeUpdate("INSERT INTO Doctor( doctorNAme, password, phonenumber, specialization) values ('"
+            + dname
+            + "','"
+            + dpassword
+            + "','"
+            + dphone
+            + "','"
+            + dspecialization + "')");
+    result = statement.executeQuery("SELECT doctorid from doctor");
+    int ID3 = 0;
+    while (result.next()) {
+      ID3 = result.getInt("doctorid");
+    }// end of while
+    out.println("Registration completed. Your Id is:" + ID3);
+  }
+
+  private void createStaff() throws IOException, SQLException {
+    String mname = "";
+    while (mname.isEmpty()) {
+      out.println("Enter your Name");
+      mname = (br.readLine());
+    }
+    String mpassword = "";
+    while (mpassword.isEmpty()) {
+      out.println("Choose a student health centre Password");
+      mpassword = (br.readLine());
+    }
+    statement
+        .executeUpdate("INSERT INTO Staff(staffName, password) values ('"
+            + mname + "','" + mpassword + "')");
+    result = statement.executeQuery("SELECT staffid from staff");
+    int ID4 = 0;
+    while (result.next()) {
+      ID4 = result.getInt("staffid");
+    }// end of while
+    out.println("Registration completed. Your Id is:" + ID4);
   }
 
   public void manageStudent() throws SQLException, IOException {
