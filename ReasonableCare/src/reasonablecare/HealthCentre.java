@@ -18,7 +18,7 @@ public class HealthCentre implements AutoCloseable {
   /** This HealthCentre does not own the connection, no need to close. */
   private final Connection connection;
 
-  private Statement statement;
+  private Statement stm;
   private final int userid;
 
   public HealthCentre(Connection connection, int userid) {
@@ -30,7 +30,7 @@ public class HealthCentre implements AutoCloseable {
 
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
-    statement = connection.createStatement();
+    stm = connection.createStatement();
     connection.setAutoCommit(true); // set autocommit on
 
     out.println("Are you a new user to this system?\n1:Yes \n2:No");
@@ -39,14 +39,13 @@ public class HealthCentre implements AutoCloseable {
       register();
 
   }// end of main
-  
+
   @Override
   public void close() throws SQLException {
-    if(statement != null) {
-      statement.close();
+    if (stm != null) {
+      stm.close();
     }
   }
-
 
   /**
    * function for user of the system to register for the first time in the
@@ -92,7 +91,7 @@ public class HealthCentre implements AutoCloseable {
       startingsemester = (br.readLine());
     }
     out.println("Do you have a health insurance?\n1. Yes \n2. No");
-    
+
     ResultSet result;
     int c = Integer.parseInt(br.readLine());
     if (c == 1) {
@@ -107,30 +106,23 @@ public class HealthCentre implements AutoCloseable {
         HEALTHINSURANCEPOLICYNUMBER = br.readLine();
       }
 
-      statement
-          .executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
-              + sname
-              + "' , '"
-              + spassword
-              + "' , '"
-              + HEALTHINSURANCEPROVIDERNAME
-              + "', '"
-              + HEALTHINSURANCEPOLICYNUMBER
-              + "', '"
-              + startingsemester
-              + "')");
-      result = statement.executeQuery("SELECT studentid from student");
+      stm.executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
+          + sname
+          + "' , '"
+          + spassword
+          + "' , '"
+          + HEALTHINSURANCEPROVIDERNAME
+          + "', '"
+          + HEALTHINSURANCEPOLICYNUMBER
+          + "', '"
+          + startingsemester
+          + "')");
+      result = stm.executeQuery("SELECT studentid from student");
     }// end of if
     else {
-      statement
-          .executeUpdate("INSERT INTO Student( studentName, password, startingDate) values('"
-              + sname
-              + "' , '"
-              + spassword
-              + "' , '"
-              + startingsemester
-              + "')");
-      result = statement.executeQuery("SELECT studentid from student");
+      stm.executeUpdate("INSERT INTO Student( studentName, password, startingDate) values('"
+          + sname + "' , '" + spassword + "' , '" + startingsemester + "')");
+      result = stm.executeQuery("SELECT studentid from student");
     }
     int ID1 = 0;
     while (result.next()) {
@@ -150,10 +142,9 @@ public class HealthCentre implements AutoCloseable {
       out.println("Choose a student health centre Password");
       npassword = (br.readLine());
     }
-    statement
-        .executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
-            + nname + "','" + npassword + "')");
-    ResultSet result = statement.executeQuery("SELECT nurseid from nurse");
+    stm.executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
+        + nname + "','" + npassword + "')");
+    ResultSet result = stm.executeQuery("SELECT nurseid from nurse");
     int ID2 = 0;
     while (result.next()) {
       ID2 = result.getInt("nurseid");
@@ -182,16 +173,16 @@ public class HealthCentre implements AutoCloseable {
       out.println("Enter your Specialization");
       dspecialization = (br.readLine());
     }
-    statement
-        .executeUpdate("INSERT INTO Doctor( doctorNAme, password, phonenumber, specialization) values ('"
-            + dname
-            + "','"
-            + dpassword
-            + "','"
-            + dphone
-            + "','"
-            + dspecialization + "')");
-    ResultSet result = statement.executeQuery("SELECT doctorid from doctor");
+    stm.executeUpdate("INSERT INTO Doctor( doctorNAme, password, phonenumber, specialization) values ('"
+        + dname
+        + "','"
+        + dpassword
+        + "','"
+        + dphone
+        + "','"
+        + dspecialization
+        + "')");
+    ResultSet result = stm.executeQuery("SELECT doctorid from doctor");
     int ID3 = 0;
     while (result.next()) {
       ID3 = result.getInt("doctorid");
@@ -210,10 +201,9 @@ public class HealthCentre implements AutoCloseable {
       out.println("Choose a student health centre Password");
       mpassword = (br.readLine());
     }
-    statement
-        .executeUpdate("INSERT INTO Staff(staffName, password) values ('"
-            + mname + "','" + mpassword + "')");
-    ResultSet result = statement.executeQuery("SELECT staffid from staff");
+    stm.executeUpdate("INSERT INTO Staff(staffName, password) values ('"
+        + mname + "','" + mpassword + "')");
+    ResultSet result = stm.executeQuery("SELECT staffid from staff");
     int ID4 = 0;
     while (result.next()) {
       ID4 = result.getInt("staffid");
@@ -223,7 +213,7 @@ public class HealthCentre implements AutoCloseable {
 
   public void manageStudent() throws SQLException, IOException {
     int at = 0;
-    ResultSet result = statement
+    ResultSet result = stm
         .executeQuery("SELECT studentname FROM student WHERE studentid="
             + userid + ""); // get the name of the student
     if (result.next()) {
@@ -253,7 +243,7 @@ public class HealthCentre implements AutoCloseable {
 
   public void manageStaff() throws SQLException, IOException {
     int at = 0;
-    ResultSet result = statement
+    ResultSet result = stm
         .executeQuery("SELECT staffname FROM staff WHERE staffid=" + userid
             + ""); // get the name of the staff member
     if (result.next()) {
@@ -290,7 +280,7 @@ public class HealthCentre implements AutoCloseable {
 
   public void manageDoctor() throws SQLException, IOException {
     int at = 0;
-    ResultSet result = statement
+    ResultSet result = stm
         .executeQuery("SELECT doctorname FROM doctor WHERE doctorid=" + userid
             + ""); // get the name of the doctor
     if (result.next()) {
@@ -323,7 +313,7 @@ public class HealthCentre implements AutoCloseable {
 
   public void manageNurse() throws SQLException, IOException {
     int at = 0;
-    ResultSet result = statement
+    ResultSet result = stm
         .executeQuery("SELECT nursename FROM nurse WHERE nurseid=" + userid
             + ""); // get the name of the nurse
     if (result.next()) {
@@ -366,14 +356,14 @@ public class HealthCentre implements AutoCloseable {
 
     switch (y) {
     case 1:
-      statement.executeUpdate("update Nurse set nursename =' " + b
+      stm.executeUpdate("update Nurse set nursename =' " + b
           + " 'where nurseid=" + z);
       out.println("Record Updated");
       printNurseInfo(z);
       break;
     case 2:
 
-      statement.executeUpdate("update nurse set password =' " + b
+      stm.executeUpdate("update nurse set password =' " + b
           + " 'where nurseid=" + z);
       out.println("Record Updated");
       printNurseInfo(z);
@@ -386,7 +376,7 @@ public class HealthCentre implements AutoCloseable {
     out.println("Your updated details are as shown:");
 
     // get the details of the student whose record is updated
-    try (ResultSet result = statement
+    try (ResultSet result = stm
         .executeQuery("SELECT * FROM nurse WHERE nurseid=" + nurseId + "")) {
 
       while (result.next()) {
@@ -412,26 +402,26 @@ public class HealthCentre implements AutoCloseable {
 
     switch (y) {
     case 1:
-      statement.executeUpdate("update doctor set doctorname =' " + b
+      stm.executeUpdate("update doctor set doctorname =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
 
     case 2:
-      statement.executeUpdate("update doctor set PASSWORD =' " + b
+      stm.executeUpdate("update doctor set PASSWORD =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
     case 3:
-      statement.executeUpdate("update doctor set Specialization =' " + b
+      stm.executeUpdate("update doctor set Specialization =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
     case 4:
-      statement.executeUpdate("update doctor set phonenumber =' " + b
+      stm.executeUpdate("update doctor set phonenumber =' " + b
           + " 'where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
@@ -443,7 +433,7 @@ public class HealthCentre implements AutoCloseable {
     out.println("Your updated details are as shown:");
 
     // get the details of the student whose record is updated
-    try (ResultSet result = statement
+    try (ResultSet result = stm
         .executeQuery("SELECT * FROM doctor WHERE doctorid=" + doctorId + "")) {
 
       while (result.next()) {
@@ -471,14 +461,14 @@ public class HealthCentre implements AutoCloseable {
 
     switch (y) {
     case 1:
-      statement.executeUpdate("update staff set staffname =' " + b
+      stm.executeUpdate("update staff set staffname =' " + b
           + " 'where staffid=" + z);
       out.println("Record Updated");
       printStaffInfo(z);
       break;
     case 2:
 
-      statement.executeUpdate("update staff set password =' " + b
+      stm.executeUpdate("update staff set password =' " + b
           + " 'where staffid=" + z);
       out.println("Record Updated");
       printStaffInfo(z);
@@ -491,7 +481,7 @@ public class HealthCentre implements AutoCloseable {
     out.println("Your updated details are as shown:");
 
     // get the details of the student whose record is updated
-    try (ResultSet result = statement
+    try (ResultSet result = stm
         .executeQuery("SELECT * FROM staff WHERE staffid=" + staffId + "")) {
 
       while (result.next()) {
@@ -517,42 +507,39 @@ public class HealthCentre implements AutoCloseable {
 
     switch (y) {
     case 1:
-      statement.executeUpdate("update Student set studentname =' " + b
+      stm.executeUpdate("update Student set studentname =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
       printStudentInfo(z);
       break;
     case 2:
 
-      statement
-          .executeUpdate("update Student set HEALTHINSURANCEPROVIDERNAME =' "
-              + b + " 'where studentid=" + z);
+      stm.executeUpdate("update Student set HEALTHINSURANCEPROVIDERNAME =' "
+          + b + " 'where studentid=" + z);
       do {
         out.println("Enter the HEALTHINSURANCE POLICY NUMBER");
         b = (br.readLine());
       } while (b.isEmpty());
-      statement
-          .executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
-              + b + " 'where studentid=" + z);
+      stm.executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
+          + b + " 'where studentid=" + z);
       out.println("Record Updated");
       printStudentInfo(z);
 
       break;
     case 3:
-      statement
-          .executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
-              + b + " 'where studentid=" + z);
+      stm.executeUpdate("update Student set HEALTHINSURANCEPOLICYNUMBER =' "
+          + b + " 'where studentid=" + z);
       out.println("Record Updated");
       printStudentInfo(z);
       break;
     case 4:
-      statement.executeUpdate("update Student set PASSWORD =' " + b
+      stm.executeUpdate("update Student set PASSWORD =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
       printStudentInfo(z);
       break;
     case 5:
-      statement.executeUpdate("update Student set startingdate =' " + b
+      stm.executeUpdate("update Student set startingdate =' " + b
           + " 'where studentid=" + z);
       out.println("Record Updated");
       printStudentInfo(z);
@@ -564,7 +551,7 @@ public class HealthCentre implements AutoCloseable {
     out.println("Your updated details are as shown:");
 
     // get the details of the student whose record is updated
-    try (ResultSet result = statement
+    try (ResultSet result = stm
         .executeQuery("SELECT * FROM student WHERE studentid=" + studentId + "")) {
 
       while (result.next()) {
@@ -579,7 +566,6 @@ public class HealthCentre implements AutoCloseable {
       }
     }
   }
-
 
 }// end of class HealthCentre
 
