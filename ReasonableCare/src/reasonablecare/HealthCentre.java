@@ -82,15 +82,15 @@ public class HealthCentre implements AutoCloseable {
     ResultSet result;
     int c = Integer.parseInt(br.readLine());
     if (c == 1) {
-      String HEALTHINSURANCEPROVIDERNAME = "";
-      while (HEALTHINSURANCEPROVIDERNAME.isEmpty()) {
+      String providerName = "";
+      while (providerName.isEmpty()) {
         out.println("Enter your health insurance provider name");
-        HEALTHINSURANCEPROVIDERNAME = br.readLine();
+        providerName = br.readLine();
       }
-      String HEALTHINSURANCEPOLICYNUMBER = "";
-      while (HEALTHINSURANCEPOLICYNUMBER.isEmpty()) {
+      String policyNumber = "";
+      while (policyNumber.isEmpty()) {
         out.println("Enter your health insurance provider name");
-        HEALTHINSURANCEPOLICYNUMBER = br.readLine();
+        policyNumber = br.readLine();
       }
 
       stm.executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
@@ -98,12 +98,9 @@ public class HealthCentre implements AutoCloseable {
           + "' , '"
           + spassword
           + "' , '"
-          + HEALTHINSURANCEPROVIDERNAME
+          + providerName
           + "', '"
-          + HEALTHINSURANCEPOLICYNUMBER
-          + "', '"
-          + startingsemester
-          + "')");
+          + policyNumber + "', '" + startingsemester + "')");
       result = stm.executeQuery("SELECT studentid from student");
     }// end of if
     else {
