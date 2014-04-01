@@ -16,11 +16,8 @@ public class CommonStatements implements AutoCloseable {
       System.in));
 
   private final Statement stm;
-  private final int userid;
 
-  public CommonStatements(Connection connection, int userid) throws SQLException {
-    this.userid = userid;
-
+  public CommonStatements(Connection connection) throws SQLException {
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
     stm = connection.createStatement();
@@ -195,7 +192,7 @@ public class CommonStatements implements AutoCloseable {
     out.println("Registration completed. Your Id is:" + ID4);
   }
 
-  public void manageStudent() throws SQLException, IOException {
+  public void manageStudent(int userid) throws SQLException, IOException {
     int at = 0;
     ResultSet result = stm
         .executeQuery("SELECT studentname FROM student WHERE studentid="
@@ -225,7 +222,7 @@ public class CommonStatements implements AutoCloseable {
       out.println("Thank you for using this system. Do visit us again");
   }
 
-  public void manageStaff() throws SQLException, IOException {
+  public void manageStaff(int userid) throws SQLException, IOException {
     int at = 0;
     ResultSet result = stm
         .executeQuery("SELECT staffname FROM staff WHERE staffid=" + userid
@@ -262,7 +259,7 @@ public class CommonStatements implements AutoCloseable {
       out.println("Thank you for using this system. Do visit us again");
   }
 
-  public void manageDoctor() throws SQLException, IOException {
+  public void manageDoctor(int userid) throws SQLException, IOException {
     int at = 0;
     ResultSet result = stm
         .executeQuery("SELECT doctorname FROM doctor WHERE doctorid=" + userid
@@ -295,7 +292,7 @@ public class CommonStatements implements AutoCloseable {
       out.println("Thank you for using this system. Do visit us again");
   }
 
-  public void manageNurse() throws SQLException, IOException {
+  public void manageNurse(int userid) throws SQLException, IOException {
     int at = 0;
     ResultSet result = stm
         .executeQuery("SELECT nursename FROM nurse WHERE nurseid=" + userid
