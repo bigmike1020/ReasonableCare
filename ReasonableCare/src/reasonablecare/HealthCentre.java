@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class HealthCentre {
+public class HealthCentre implements AutoCloseable {
 
   private final BufferedReader br = new BufferedReader(new InputStreamReader(
       System.in));
@@ -19,7 +19,6 @@ public class HealthCentre {
   private final Connection connection;
 
   private Statement statement;
-  private ResultSet result;
   private final int userid;
 
   public HealthCentre(Connection connection, int userid) {
@@ -40,6 +39,14 @@ public class HealthCentre {
       register();
 
   }// end of main
+  
+  @Override
+  public void close() throws SQLException {
+    if(statement != null) {
+      statement.close();
+    }
+  }
+
 
   /**
    * function for user of the system to register for the first time in the
@@ -85,6 +92,8 @@ public class HealthCentre {
       startingsemester = (br.readLine());
     }
     out.println("Do you have a health insurance?\n1. Yes \n2. No");
+    
+    ResultSet result;
     int c = Integer.parseInt(br.readLine());
     if (c == 1) {
       String HEALTHINSURANCEPROVIDERNAME = "";
@@ -144,7 +153,7 @@ public class HealthCentre {
     statement
         .executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
             + nname + "','" + npassword + "')");
-    result = statement.executeQuery("SELECT nurseid from nurse");
+    ResultSet result = statement.executeQuery("SELECT nurseid from nurse");
     int ID2 = 0;
     while (result.next()) {
       ID2 = result.getInt("nurseid");
@@ -182,7 +191,7 @@ public class HealthCentre {
             + dphone
             + "','"
             + dspecialization + "')");
-    result = statement.executeQuery("SELECT doctorid from doctor");
+    ResultSet result = statement.executeQuery("SELECT doctorid from doctor");
     int ID3 = 0;
     while (result.next()) {
       ID3 = result.getInt("doctorid");
@@ -204,7 +213,7 @@ public class HealthCentre {
     statement
         .executeUpdate("INSERT INTO Staff(staffName, password) values ('"
             + mname + "','" + mpassword + "')");
-    result = statement.executeQuery("SELECT staffid from staff");
+    ResultSet result = statement.executeQuery("SELECT staffid from staff");
     int ID4 = 0;
     while (result.next()) {
       ID4 = result.getInt("staffid");
@@ -214,7 +223,7 @@ public class HealthCentre {
 
   public void manageStudent() throws SQLException, IOException {
     int at = 0;
-    result = statement
+    ResultSet result = statement
         .executeQuery("SELECT studentname FROM student WHERE studentid="
             + userid + ""); // get the name of the student
     if (result.next()) {
@@ -244,7 +253,7 @@ public class HealthCentre {
 
   public void manageStaff() throws SQLException, IOException {
     int at = 0;
-    result = statement
+    ResultSet result = statement
         .executeQuery("SELECT staffname FROM staff WHERE staffid=" + userid
             + ""); // get the name of the staff member
     if (result.next()) {
@@ -281,7 +290,7 @@ public class HealthCentre {
 
   public void manageDoctor() throws SQLException, IOException {
     int at = 0;
-    result = statement
+    ResultSet result = statement
         .executeQuery("SELECT doctorname FROM doctor WHERE doctorid=" + userid
             + ""); // get the name of the doctor
     if (result.next()) {
@@ -314,7 +323,7 @@ public class HealthCentre {
 
   public void manageNurse() throws SQLException, IOException {
     int at = 0;
-    result = statement
+    ResultSet result = statement
         .executeQuery("SELECT nursename FROM nurse WHERE nurseid=" + userid
             + ""); // get the name of the nurse
     if (result.next()) {
@@ -570,6 +579,7 @@ public class HealthCentre {
       }
     }
   }
+
 
 }// end of class HealthCentre
 
