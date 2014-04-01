@@ -15,30 +15,17 @@ public class HealthCentre implements AutoCloseable {
   private final BufferedReader br = new BufferedReader(new InputStreamReader(
       System.in));
 
-  /** This HealthCentre does not own the connection, no need to close. */
-  private final Connection connection;
-
-  private Statement stm;
+  private final Statement stm;
   private final int userid;
 
-  public HealthCentre(Connection connection, int userid) {
-    this.connection = connection;
+  public HealthCentre(Connection connection, int userid) throws SQLException {
     this.userid = userid;
-  }
-
-  public void main() throws Exception {
 
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
     stm = connection.createStatement();
     connection.setAutoCommit(true); // set autocommit on
-
-    out.println("Are you a new user to this system?\n1:Yes \n2:No");
-    int newuser = Integer.parseInt(br.readLine());
-    if (newuser == 1)
-      register();
-
-  }// end of main
+  }
 
   @Override
   public void close() throws SQLException {
