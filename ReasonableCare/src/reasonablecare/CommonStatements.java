@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class HealthCentre implements AutoCloseable {
+public class CommonStatements implements AutoCloseable {
 
   private final BufferedReader br = new BufferedReader(new InputStreamReader(
       System.in));
@@ -18,7 +18,7 @@ public class HealthCentre implements AutoCloseable {
   private final Statement stm;
   private final int userid;
 
-  public HealthCentre(Connection connection, int userid) throws SQLException {
+  public CommonStatements(Connection connection, int userid) throws SQLException {
     this.userid = userid;
 
     // Create a statement instance that will be sending your SQL statements
