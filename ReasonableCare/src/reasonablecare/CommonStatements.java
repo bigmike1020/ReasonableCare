@@ -31,34 +31,7 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
-  /**
-   * function for user of the system to register for the first time in the
-   * system
-   */
-  public void register() throws IOException, SQLException {
-    String j = "";
-
-    out.println("Select which intended user are you :\ns for Student\nm for Managing Staff\nd for Doctor\nn for Nurse");
-    j = br.readLine();
-    j.toLowerCase();
-    switch (j) {
-    case "s":
-      createStudent();
-      break;
-    case "n":
-      createNurse();
-      break;
-    case "d":
-      createDoctor();
-      break;
-    case "m":
-      createStaff();
-      break;
-
-    }// end of switch
-  }
-
-  private void createStudent() throws IOException, SQLException {
+  public void createStudent() throws IOException, SQLException {
     String sname = "";
     while (sname.isEmpty()) {
       out.println("Enter your Name");
@@ -112,7 +85,7 @@ public class CommonStatements implements AutoCloseable {
     out.println("Registration completed. Your Id is:" + ID1);
   }
 
-  private void createNurse() throws IOException, SQLException {
+  public void createNurse() throws IOException, SQLException {
     String nname = "";
     while (nname.isEmpty()) {
       out.println("Enter your Name");
@@ -133,7 +106,7 @@ public class CommonStatements implements AutoCloseable {
     out.println("Registration completed. Your Id is:" + ID2);
   }
 
-  private void createDoctor() throws IOException, SQLException {
+  public void createDoctor() throws IOException, SQLException {
     String dname = "";
     while (dname.isEmpty()) {
       out.println("Enter your Name");
@@ -171,7 +144,7 @@ public class CommonStatements implements AutoCloseable {
     out.println("Registration completed. Your Id is:" + ID3);
   }
 
-  private void createStaff() throws IOException, SQLException {
+  public void createStaff() throws IOException, SQLException {
     String mname = "";
     while (mname.isEmpty()) {
       out.println("Enter your Name");

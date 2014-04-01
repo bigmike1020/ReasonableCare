@@ -1,5 +1,6 @@
 package reasonablecare;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -139,6 +140,20 @@ public class StaffShell {
   @Command
   public void makeAppointment() {
     // TODO 
+  }
+
+  @Command
+  public void createStaff() throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.createStaff();
+    }
+  }
+
+  @Command
+  public void createNurse() throws IOException, SQLException {
+    try (CommonStatements stm = new CommonStatements(connection)) {
+      stm.createNurse();
+    }
   }
 
 }
