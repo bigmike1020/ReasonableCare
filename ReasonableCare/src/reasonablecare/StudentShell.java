@@ -40,5 +40,15 @@ public class StudentShell {
       }
     }
   }
+  
+  @Command
+  public void checkVaccinations() {
+    // TODO show the student mandatory vaccination info
+  }
+  
+  @Command
+  public void checkAppointments() {
+    // TODO list future appointments
+  }
 
 }
