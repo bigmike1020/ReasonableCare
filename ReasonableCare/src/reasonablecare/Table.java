@@ -7,6 +7,13 @@ import java.util.List;
 
 public class Table {
 
+  static final char[] blanks, dashes;
+
+  static {
+    Arrays.fill((blanks = new char[100]), ' ');
+    Arrays.fill((dashes = new char[100]), '-');
+  }
+
   private final List<String> columnNames = new ArrayList<String>();
   private final int[] columnLengths;
 
@@ -50,40 +57,43 @@ public class Table {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
-    char[] blanks = new char[1000];
-    Arrays.fill(blanks, ' ');
+    // Header row = +-------+----+
+    appendSeparatorRow(sb, dashes);
 
-    // Print headers
-    for (int column = 0; column < columnNames.size(); ++column) {
-      if (column != 0) {
-        sb.append("|");
-      }
+    // Headers   = | Header1 | Header 2 |
+    appendList(sb, columnNames);
 
-      String header = columnNames.get(column);
-      sb.append(header);
-      sb.append(blanks, 0, columnLengths[column] - header.length());
-    }
-    sb.append('\n');
+    // Header/data separator = +------+----+
+    appendSeparatorRow(sb, dashes);
 
     // Print data
-    for (int row = 0; row < this.data.size(); ++row) {
-      
-      List<String> data = this.data.get(row);
-      
-      for (int column = 0; column < data.size(); ++column) {
-        if (column != 0) {
-          sb.append("|");
-        }
-
-        String datum = data.get(column);
-        sb.append(datum);
-        sb.append(blanks, 0, columnLengths[column] - datum.length());
-      }
-      
-      sb.append('\n');
+    for (List<String> row : this.data) {
+      appendList(sb, row);
     }
 
+    // Final row = +-----+---+
+    appendSeparatorRow(sb, dashes);
+
     return sb.toString();
+  }
+
+  private void appendList(StringBuilder sb, List<String> data) {
+    for (int column = 0; column < data.size(); ++column) {
+      String datum = data.get(column);
+      sb.append("| ").append(datum);
+      sb.append(blanks, 0, columnLengths[column] - datum.length());
+      sb.append(' '); // Extra blank on right side
+    }
+    sb.append("|\n");
+  }
+
+  private void appendSeparatorRow(StringBuilder sb, char[] dashes) {
+    sb.append("+");
+    for (int column = 0; column < columnNames.size(); ++column) {
+      sb.append(dashes, 0, columnLengths[column] + 2); // Space on either side
+      sb.append("+");
+    }
+    sb.append('\n');
   }
 
   @Override

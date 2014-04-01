@@ -26,7 +26,8 @@ public class StaffShellTest extends BaseShellTest {
   @Test
   public void testGetDoctors() throws SQLException {
     Object result = shell.getDoctors();
-    Object expected = "Doctor ID|Doctor Name\n2000     |Dr. Miller \n2001     |Dr. Singh  \n2002     |Dr. Healey \n2003     |Dr. William\n2004     |Dr. Rob    \n";
+    Object expected = "+-----------+-------------+\n| Doctor ID | Doctor Name |\n+-----------+-------------+\n| 2000      | Dr. Miller  |\n| 2001      | Dr. Singh   |\n| 2002      | Dr. Healey  |\n| 2003      | Dr. William |\n| 2004      | Dr. Rob     |\n+-----------+-------------+\n"
+;
 
     String res = result.toString();
     assertThat(res, equalTo(expected));
