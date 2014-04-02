@@ -142,19 +142,72 @@ public class StaffShell {
     // TODO 
   }
 
-  @Command
-  public void createStaff() throws IOException, SQLException {
-    try (CommonStatements stm = new CommonStatements(connection)) {
-      stm.createStaff();
-    }
-  }
+  @Command(description = "Add a new staff member to the system.  Usage: create-staff name "
+  		+ "password.  Returns uniqueID of staff member.")
+	  public Object createStaff(
+	      @Param(name = "name", description = "Name of staff member.  For names containing spaces/"
+	      		+ "multiple words, surround with single quotes ('').") 
+	      String name,
+	      @Param(name = "password", description = "Password.  For passwords with spaces, surround "
+	      		+ "with single quotes ('').") 
+	      String password)
+	      throws SQLException {
 
-  @Command
-  public void createNurse() throws IOException, SQLException {
-    try (CommonStatements stm = new CommonStatements(connection)) {
-      stm.createNurse();
-    }
-  }
+	    String sql = "insert into staff(staffName,password) values(?,?)";
+
+	    // Create a statement to enter staff into DB and return ID
+	    try (PreparedStatement stm = connection.prepareStatement(sql,
+	        new String[] { "StaffID" })) {
+
+	      stm.setString(1, name);
+	      stm.setString(2, password);
+	      stm.executeUpdate();
+
+	      //get the auto-generated key from the row that was added
+	      int id = 0;
+
+	      ResultSet rs = stm.getGeneratedKeys();
+	      if (rs != null && rs.next()) {
+	        id = rs.getInt(1);
+	      }
+
+	      return "Created new staff member with id " + id;
+	    }
+	  }
+
+  @Command(description = "Add a new nurse to the system.  Usage: create-nurse name "
+	  		+ "password.  Returns uniqueID of nurse.")
+		  public Object createNurse(
+		      @Param(name = "name", description = "Name of nurse.  For names containing spaces/"
+		      		+ "multiple words, surround with single quotes ('').") 
+		      String name,
+		      @Param(name = "password", description = "Password.  For passwords with spaces, surround "
+		      		+ "with single quotes ('').") 
+		      String password)
+		      throws SQLException {
+
+		    String sql = "insert into nurse(nurseName,password) values(?,?)";
+
+		    // Create a statement to enter staff into DB and return ID
+		    try (PreparedStatement stm = connection.prepareStatement(sql,
+		        new String[] { "NurseID" })) {
+
+		      stm.setString(1, name);
+		      stm.setString(2, password);
+		      stm.executeUpdate();
+
+		      //get the auto-generated key from the row that was added
+		      int id = 0;
+
+		      ResultSet rs = stm.getGeneratedKeys();
+		      if (rs != null && rs.next()) {
+		        id = rs.getInt(1);
+		      }
+
+		      return "Created new nurse with id " + id;
+		    }
+		   }
+	
   
   @Command
   public void updateNurse(int nurseId) throws IOException, SQLException {
