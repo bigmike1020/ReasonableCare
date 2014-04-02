@@ -27,8 +27,18 @@ public class StaffShell {
     this.id = id;
   }
 
-  @Command
-  public Object createStudent(String name, String password, String startingDate)
+  @Command(description="Add a new student to the system.  Returns UniqueID of student.  Usage:"
+  		+ "create-student 'name' 'password' startingDate (YYYY-MM-DD)")
+  public Object createStudent(
+		  @Param(name = "name", description="Name of student.  For student names with multiple words,"
+		  		+ "surround with single quotes.")
+		  String name, 
+		  @Param(name="password", description="password for student to login.  For passwords with"
+		  		+ "spaces, surround with single quotes.")
+		  String password, 
+		  @Param(name="startingDate", description="starting semester of student in the format"
+		  		+ "YYYY-MM-DD.  Enter without quotes.")
+		  String startingDate)
       throws SQLException {
 
     String sql = "insert into student(studentName,password,startingDate) values(?,?,?)";
@@ -56,15 +66,48 @@ public class StaffShell {
     }
 
   }
+  
+  @Command(description="Add or Update Insurance Informatin for a Student.  Usage:")
+  public Object updateStudentInsuranceInformation(
+	  @Param(name="studentID", description="Student ID Number")
+	  int studentID,
+	  @Param(name="insuranceProviderName", description="Health Insurance Provider Name")
+	  String insuranceProviderName,
+	  @Param(name="insurancePolicyNumber", description="Health Insurance Policy Number")
+	  String insurancePolicyNumber)
+  	throws SQLException{
+	  
+	  String sql = "update student set HEALTHINSURANCEPROVIDERNAME = ?, "
+	  		+ "HEALTHINSURANCEPOLICYNUMBER = ? where studentID = ?";
 
-  @Command(description = "Add a new doctor to the system.  Usage: create-doctor name password phoneNumber specialization.  "
-      + "Returns uniqueID of doctor.")
+	    // Create a statement instance that will be sending
+	    try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+	      stm.setString(1, insuranceProviderName);
+	      stm.setString(2, insurancePolicyNumber);
+	      stm.setInt(3, studentID);
+	      stm.executeUpdate();
+	      }
+
+	      return "Updated Insurance Information";
+  }
+  			
+
+  @Command(description = "Add a new doctor to the system.  Usage: create-doctor name password "
+  		+ "phoneNumber specialization. Returns uniqueID of doctor.")
   public Object createDoctor(
-      @Param(name = "name", description = "Name of Doctor.  For names containing spaces/multiple words, surround with single quotes ('').") String name,
-      @Param(name = "password", description = "Password.  For passwords with spaces, surround with single quotes ('').") String password,
-      @Param(name = "phoneNumber", description = "Phone number.  Should be in form ###-###-####.") String phoneNumber,
-      @Param(name = "specialization", description = "Specialization.  For specializations with spaces, surround with single quotes ('')."
-          + "If doctor is not a specialist, use 'General Practitioner'.") String specialization)
+      @Param(name = "name", description = "Name of Doctor.  For names containing spaces/multiple "
+      		+ "words, surround with single quotes ('').") 
+      String name,
+      @Param(name = "password", description = "Password.  For passwords with spaces, surround with "
+      		+ "single quotes ('').") 
+      String password,
+      @Param(name = "phoneNumber", description = "Phone number.  Should be in form ###-###-####.") 
+      String phoneNumber,
+      @Param(name = "specialization", description = "Specialization.  For specializations with spaces,"
+      		+ " surround with single quotes ('')."
+          + "If doctor is not a specialist, use 'General Practitioner'.") 
+      String specialization)
       throws SQLException {
 
     String sql = "insert into doctor(doctorName,password,phoneNumber,specialization) values(?,?,?,?)";
