@@ -34,7 +34,7 @@ public class StudentShell {
 
 	@Command(description = "List all doctor specializations, and doctors that have "
 			+ "those specializations.")
-	public Table getSpecializations() throws SQLException {
+	public Table getDoctors() throws SQLException {
 		try (Statement statement = connection.createStatement()) {
 
 			// Get records from the Student table
@@ -96,9 +96,10 @@ public class StudentShell {
 		
 		//prompt for appointment information
 		
-		//TODO get Doctor for appointment
+		apptDoc=selectDoctor(); //select doctor
 		
-		apptDoc=selectDoctor();
+		//TODO prompt for appointment time
+		
 		
 		
 		/*
@@ -148,24 +149,27 @@ public class StudentShell {
 	{
 		int menuSelection=0, doctorID=0;
 		
+		//loops through prompts; for use handling invalid input without exiting
 		while (true)
 		{
-			System.out.println("Select a doctor: \n1. Enter Doctor ID"
-				+ "\n2. View List of Doctors"					+ "\n3. Exit Program\n");
+			System.out.println("Select a doctor: "
+				+ "\n1. Enter Doctor ID"
+				+ "\n2. View List of Doctors"					
+				+ "\n3. Exit Program\n");
+			
 			try {
 				menuSelection=Integer.parseInt(br.readLine().trim());
 				if (menuSelection<1 || menuSelection>3)
-			   	  System.out.println("\nInvalid Selection\n");
+			   	  System.out.println("Invalid Selection\n");
 			      
 			} catch (NumberFormatException e) {
-		      System.out.println("\nInvalid Selection\n");
+		      System.out.println("Invalid Selection\n");
 			}	
 		
 		switch (menuSelection) {
+		//Allow user to enter a doctorID
 		    case 1:
-		    	
 		    	System.out.println("Enter Doctor ID: ");
-		    	
 		    	try {
 				      doctorID=Integer.parseInt(br.readLine().trim());
 				      if (doctorID<2000 || doctorID>2999 || !validateDoctorID(doctorID))
@@ -173,18 +177,14 @@ public class StudentShell {
 				    	  System.out.println("Invalid Doctor ID\n");
 				    	  break;
 				      }
-				      
 				} catch (NumberFormatException e) {
 				    	  System.out.println("Invalid Doctor ID\n");
 				    	  break;
-				}
-		    	
-		    	return doctorID;
-		      
+				}  	
+		    	return doctorID; 
+		    //Allow user to view a list of doctors and then enter a doctorID
 		     case 2:
-		    	
-		    	 System.out.println(getSpecializations());
-		    	 
+		    	 System.out.println(getDoctors());
 		    	 System.out.println("Enter DoctorID from List: ");
 		    	 
 		    	 try {
@@ -203,7 +203,6 @@ public class StudentShell {
 		    	return doctorID;
 		    	
 			default:
-				
 				System.exit(0);
 		    
 		    }// end of switch
