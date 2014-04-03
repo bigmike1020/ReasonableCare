@@ -10,7 +10,7 @@ import asg.cliche.ShellDependent;
 
 public class LoginShell implements ShellDependent {
 
-	private static class LoginFailedException extends Exception {
+	public static class LoginFailedException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public LoginFailedException(String msg) {
