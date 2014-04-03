@@ -60,10 +60,6 @@ public class StudentShell {
 		return null;
 	}
 
-	@Command
-	public void showAvailableTimes(String doctorId, String date) {
-		// TODO getFreeTime
-	}
 
 	@Command
 	public void checkVaccinations() {
@@ -71,13 +67,29 @@ public class StudentShell {
 	}
 
 	@Command
-	public void checkFutureAppointments() {
-		// TODO list future appointments
-	}
+	public void manageAppointments(){
+		
+		/*
+		 * 
+		 * Merging these into a manageAppointments (or view/manage) suite
+		 * 
+		@Command
+		public void checkFutureAppointments() {
+			// TODO list future appointments
+		}
+		
+		@Command
+		public void checkPastAppointments() {
+			// TODO checkPastAppointments
+		}
+		
+		@Command
+		public void deleteAppointment() {
+		// TODO deleteAppointment
+		}
 	
-	@Command
-	public void checkPastAppointments() {
-		// TODO checkPastAppointments
+		*/
+		
 	}
 
 	@Command
@@ -96,10 +108,10 @@ public class StudentShell {
 		
 		//prompt for appointment information
 		
-		apptDoc=selectDoctor(); //select doctor
+		//select doctor for the appointment
+		apptDoc=selectDoctor();
 		
 		//TODO prompt for appointment time
-		
 		
 		
 		/*
@@ -111,7 +123,8 @@ public class StudentShell {
 
 		      stm.setString(1, reasonForVisit);
 		      stm.setString(2, apptType);
-		      stm.setString(3, apptTime);
+		      //TODO send as timestamp
+		      stm.setString(3, apptTime); 
 		      stm.setString(4, "");
 		      stm.setString(5, null);
 		      stm.executeUpdate();
@@ -123,8 +136,22 @@ public class StudentShell {
 		      if (rs != null && rs.next()) {
 		        apptID = rs.getInt(1);
 		      }
-
+		      
+		 String associateAppt = "insert into makesAppointment(studentID,doctorID,apptID)"
+		 	+ "values (?,?,?)";
+		 	
+		      
+		 try (PreparedStatement stm1 = connection.prepareStatement(associateAppt){
+		 
+		 	stm1.setString(1, studentID)
+		 	stm1.setString(2, doctorID)
+		 	stm1.setString(3, appointmentID)
+		 	
+		 	...
+		 	
 		      return "Created new Appointment";*/
+		
+		
 		// Lots of prompts here
 		// TODO use insurance to get copay
 		// use insurance to get deductible
@@ -134,11 +161,37 @@ public class StudentShell {
 		//     don't bill
 		
 	}
-
+	/*
 	@Command
-	public void deleteAppointment() {
-		// TODO deleteAppointment
-	}
+	public Table showAvailableTimes(String doctorId, String date) {
+		
+		//TODO Build Table of available Times 
+		Table appointmentTable = new Table ("Available Appointment Time");
+		
+		for (int hour=8; hour<27; hour++)
+		{
+			for (int minute=0; minute<31; minute+=30)
+			{
+				//probably a way better way of doing this
+			}
+		}
+		
+		//TODO return appointments for a specific doctor on a specific date
+
+		try (PreparedStatement...
+				}
+
+				return table;
+			}
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//TODO remove conflicting appointments from table of available times and return table
+		
+	}*/
 	
 	/**
 	 * Prompt user to select a doctor.  Allow to enter doctorID or choose from list.
@@ -208,6 +261,8 @@ public class StudentShell {
 		    }// end of switch
 		}//end while
 	}
+	
+	
 	
 	/**
 	 * Check if a doctor exists in the DB with a given doctorID
