@@ -27,6 +27,11 @@ public class StaffShell {
     this.id = id;
   }
 
+  @Command
+  public String createStudent(Object... args) {
+	  return "Unrecognized command.";
+  }
+  
   @Command(description="Add a new student to the system.  Returns UniqueID of student.  Usage:"
   		+ "create-student 'name' 'password' startingDate (YYYY-MM-DD)")
   public Object createStudent(
@@ -63,6 +68,8 @@ public class StaffShell {
       }
 
       return "Created new student with id " + id;
+    } catch(IllegalArgumentException ex) {
+    	return "Error parsing date argument. Enter in yyyy-mm-dd format. Student not created.";
     }
 
   }
@@ -180,11 +187,6 @@ public class StaffShell {
     }
   }
 
-  @Command
-  public void makeAppointment() {
-    // TODO 
-  }
-
   @Command(description = "Add a new staff member to the system.  Usage: create-staff name "
   		+ "password.  Returns uniqueID of staff member.")
 	  public Object createStaff(
@@ -280,5 +282,21 @@ public class StaffShell {
     }
   }
 
+  @Command
+  public void makeAppointment() {
+	  // TODO makeAppointment
+	  // TODO make sure date is at start of semester
+  }
+  
+  @Command
+  public void deleteAppointment() {
+	  // TODO deleteAppointment
+  }
+  
+  @Command
+  public void checkVaccinations() {
+	  // TODO list students that have (not had 3 vaccinations
+	  // and have been here for >6 months)
+  }
 
 }

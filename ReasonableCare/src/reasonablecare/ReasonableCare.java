@@ -39,7 +39,7 @@ public class ReasonableCare {
           password)) {
 
         Object shell = new LoginShell(connection);
-        ShellFactory.createConsoleShell("login", APP_NAME, shell).commandLoop();
+        ShellFactory.createConsoleShell("ReasonableCare", APP_NAME, shell).commandLoop();
 
       }
 

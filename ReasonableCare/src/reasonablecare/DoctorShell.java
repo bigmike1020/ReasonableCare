@@ -16,13 +16,28 @@ public class DoctorShell {
   }
   
   @Command
-  public void checkStudentRecord() {
-    // TODO
+  public void checkStudentRecord(String studentId) {
+    // TODO show past appointments and reasons for appointment
+	  // TODO show consultations and notes
   }
   
   @Command
-  public void checkAppointments() {
-    // TODO list future appointments
+  public void checkPastAppointments() {
+    // TODO list past appointments
+  }
+  
+  @Command
+  public void checkFutureAppointments() {
+	  // TODO list future appointments
+  }
+  
+  @Command
+  public void updateNotes(String appointmentId) {
+	  // TODO updateNotes
   }
 
+  @Command
+  public void updateDoctor() {
+	  // TODO updateDoctor
+  }
 }
