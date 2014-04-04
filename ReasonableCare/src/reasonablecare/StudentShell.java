@@ -101,17 +101,22 @@ public class StudentShell {
 		// TODO makeAppointment
 		
 		
-		String reasonForVisit="",apptTime="", apptDate="", apptType="";
+		java.sql.Timestamp apptTime;
 		int apptDoc=0;
 		
-		//prompt for appointment information
+		// TODO prompt for appointment type and reason
+		
+		/*
+		int apptType;/*sentinel value for appointment type
+						* 1=vaccination
+						* 2=physical
+						* 3=office visit */
 		
 		//select doctor for the appointment
 		apptDoc=selectDoctor();
 		
-		//TODO prompt for appointment time
-		
-		
+		//prompt for appointment time
+		apptTime = selectDateTime(apptDoc);
 		
 		/*
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
@@ -188,7 +193,7 @@ public class StudentShell {
 		}
 		
 		//set a string equal to the day of week for the date
-	      String dayName = String.format("%tA", date);
+	      String dayName = String.format("%tA", apptDate);
 	      
 	    //system is closed on Sundays.
 	    if (dayName.equals("Sunday"))
@@ -215,12 +220,7 @@ public class StudentShell {
 		      {
 		    	  scheduledAppointments.add(rs.getTimestamp(1));
 		      }
-		      
-		      /*
-		       * Assumes all days have equal hours
-		       * //TODO determine if day is a Saturday or Sunday and build around it
-		       */
-		      
+		           
 		      //Build AppointmentTable
 		      
 		      java.sql.Timestamp currentTime;
@@ -317,6 +317,104 @@ public class StudentShell {
 		}//end while
 	}
 
+	/**
+	 * Allow a user to select a valid date and time for an appointment.
+	 * @param doctorID the doctorID for the appointment's doctor.
+	 * @throws Exception 
+	 */
+	public java.sql.Timestamp selectDateTime(int doctorID) throws Exception
+	{
+		String date="";
+		java.sql.Date apptDate;
+		java.sql.Time apptTime;
+		int menuSelection=0;
+		boolean dateSelected=false, runSelectionLoop=true;
+		
+		//loops through prompts; for use handling invalid input without exiting
+		while (!dateSelected)
+		{
+			System.out.println("Enter the date for the appointment (YYYY-MM-DD): \n");
+
+			date=(br.readLine().trim());
+					
+			try{
+				apptDate = java.sql.Date.valueOf(date);
+				dateSelected=true;
+			}
+			catch (IllegalArgumentException e){
+				System.out.println("Invalid Date Format: Must be YYYY-MM-DD"); 
+				}
+			
+			if (dateSelected)
+			{
+				System.out.println(showAvailableTimes(Integer.toString(doctorID),date));
+				
+				//Allow user to select a time
+				while (runSelectionLoop)
+				{
+					System.out.println("Select an option: "
+							+"\n1. Enter an available time from the list (HH:MM:SS)"
+							+"\n2. Enter a different date"
+							+"\n3. Exit system and log out\n");
+					
+					try {
+						menuSelection=Integer.parseInt(br.readLine().trim());
+						if (menuSelection<1 || menuSelection>3)
+					   	  System.out.println("Invalid Selection\n");
+						else runSelectionLoop=false;
+					      
+					} catch (NumberFormatException e) {
+				      System.out.println("Invalid Selection\n");
+					}
+					
+					if (!runSelectionLoop)
+					{
+						switch (menuSelection) {
+						//Allow user to enter a time and validate it
+						    case 1:
+						    System.out.println("Enter an available time from the list (HH:MM:SS):");
+						    
+						    String time = br.readLine().trim();
+						    
+						    try{
+						    	apptTime = java.sql.Time.valueOf(time);
+						    }
+						    catch (IllegalArgumentException e){
+								System.out.println("Invalid Time Format: Must be HH:MM:SS"); 
+								}
+						    //get available times
+						    ArrayList<java.sql.Timestamp> apptTimes = 
+						    		getAvailableTimes(doctorID,date);
+						    
+						    if (apptTimes.contains(java.sql.Timestamp.valueOf
+						    		(date+" "+time)))
+						    {
+						    	return java.sql.Timestamp.valueOf(date+" "+time);
+						    }
+						    else 
+						    {
+						    	System.out.println("Time not available for appointments");
+						    	runSelectionLoop=true;
+						   	}
+						    	
+						    break;
+						    
+						    //Go back through the previous menus
+						     case 2:
+						    	runSelectionLoop=false;
+						    	dateSelected=false;
+						    	break;
+						    	
+							default:
+								System.exit(0);
+						}
+					}//end if
+				}//end while selection
+			}//end if date
+		}//end while date	
+		return null;
+		
+	}
 	
 	/**
 	 * Check if a doctor exists in the DB with a given doctorID
@@ -351,5 +449,74 @@ public class StudentShell {
 			else return true;
 
 		}
+	}
+	
+	/**
+	 * Get the available times for a doctor on a particular day
+	 * @param doctorID as int
+	 * @param date as String
+	 * @return ArrayList<java.sql.Timestamp> of available times for a doctor
+	 * @throws Exception
+	 */
+	public ArrayList<java.sql.Timestamp> getAvailableTimes(int doctorID, String date) 
+			throws Exception {
+		
+		java.sql.Date apptDate = java.sql.Date.valueOf(date);
+		
+		//set a string equal to the day of week for the date
+	      String dayName = String.format("%tA", apptDate);
+	      
+	      //import result set into an ArrayList
+	      ArrayList<java.sql.Timestamp> scheduledAppointments = 
+	    		  new ArrayList<java.sql.Timestamp>();
+	      ArrayList<java.sql.Timestamp> availableAppointments =
+	    		  new ArrayList<java.sql.Timestamp>();
+		
+		//return appointments for a specific doctor on a specific date
+		String sql="select a.appointmenttime from (appointment a natural join makesappointment ma) "
+				+ "where ma.doctorID= ? and to_char(a.appointmenttime, 'YYYY-MM-DD') = ?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql,
+		        new String[] { "AppointmentTime" })) {
+
+		      stm.setInt(1, doctorID);
+		      stm.setString(2, date);
+		      ResultSet rs = stm.executeQuery();
+		      
+		      while (rs.next()) 
+		      {
+		    	  scheduledAppointments.add(rs.getTimestamp(1));
+		      }
+		           
+		      //Build AppointmentTable  
+		      java.sql.Timestamp currentTime;
+			  if (dayName.equals("Sunday")); //system is closed on Sundays.
+		      else if (dayName.equals("Saturday")) //open 10-2
+		      {
+		    	  for (int hour=10; hour<14; hour++)
+					{
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(date+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime))
+								availableAppointments.add(currentTime);
+						}
+					}
+		      }
+		      else //weekday - open 8-5
+		      {
+		    	  for (int hour=8; hour<17; hour++)
+					{
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(date+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime))
+								availableAppointments.add(currentTime);
+						}
+					}
+		      }
+		}
+		
+		return availableAppointments;
 	}
 }
