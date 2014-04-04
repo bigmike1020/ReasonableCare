@@ -109,10 +109,39 @@ public class StudentShell {
 		// TODO makeAppointment		
 		
 		java.sql.Timestamp apptTime;
-		int apptDoc=0;
+		int apptDoc=0,menuSelection=0;
+		String apptType, apptReason;
+		boolean apptTypeSelected=false;
 		
-		// TODO prompt for appointment type and reason
-		
+		//prompt for appointment type and reason (if not physical/vaccination)
+		while (!apptTypeSelected)
+		{
+			System.out.println("Select Appointment Type"
+					+"\n1. Vaccination"
+					+"\n2. Physical"
+					+"\n3. Office Visit\n");
+			try {
+				menuSelection=Integer.parseInt(br.readLine().trim());
+				if (menuSelection<1 || menuSelection>3)
+			   	  System.out.println("Invalid Selection\n");
+				else apptTypeSelected=true;
+			      
+			} catch (NumberFormatException e) {
+		      System.out.println("Invalid Selection\n");
+			}		
+			if (apptTypeSelected){
+			switch (menuSelection) {
+		    case 1:
+		    	apptType=apptReason="Vaccination"; break;
+		    case 2:
+		    	apptType=apptReason="Physical"; break;
+			default:
+				apptReason="Office Visit";
+				System.out.println("Enter the reason for your appointment:");
+				apptReason=br.readLine();
+				//TODO control input >512 chars
+			}}// end switch+if
+		}//end while
 		/*
 		int apptType;/*sentinel value for appointment type
 						* 1=vaccination
@@ -124,6 +153,15 @@ public class StudentShell {
 		
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
+		
+		// Lots of prompts here
+		// TODO use insurance to get copay
+		// use insurance to get deductible
+		// if deductible not paid,
+		//     use billing to approve copay
+		// if deductible paid,
+		//     don't bill
+		
 		
 		/* saving later for the statement
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
@@ -161,15 +199,6 @@ public class StudentShell {
 		 	...
 		 	
 		      return "Created new Appointment";*/
-		
-		
-		// Lots of prompts here
-		// TODO use insurance to get copay
-		// use insurance to get deductible
-		// if deductible not paid,
-		//     use billing to approve copay
-		// if deductible paid,
-		//     don't bill
 		
 	}
 
@@ -425,8 +454,7 @@ public class StudentShell {
 				}//end while selection
 			}//end if date
 		}//end while date	
-		return null;
-		
+		return null; //if error
 	}
 	
 	/**
