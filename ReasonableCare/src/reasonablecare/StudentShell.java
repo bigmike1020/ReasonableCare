@@ -8,10 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import asg.cliche.Command;
 
+/**
+ * Shell containing methods for the student user class
+ *
+ */
 public class StudentShell {
 
 	/**
@@ -94,12 +97,16 @@ public class StudentShell {
 	public void updateStudent() {
 		// TODO updateStudent
 	}
-
+/**
+ * Interactive method to allow a student to make appointment by being prompted for 
+ * the values needed.  Invalid input is mostly handled
+ * 
+ * @throws Exception
+ */
 	@Command
 	public void makeAppointment() throws Exception {
 		
-		// TODO makeAppointment
-		
+		// TODO makeAppointment		
 		
 		java.sql.Timestamp apptTime;
 		int apptDoc=0;
@@ -118,7 +125,7 @@ public class StudentShell {
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
-		/*
+		/* saving later for the statement
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
 				+ "doctorNotes, cost) values(?,?,?,?,?)";
 		
@@ -167,7 +174,7 @@ public class StudentShell {
 	}
 
 	/**
-	 * Show the available times for a doctor on a given date
+	 * Show the available appointment times for a doctor on a given date
 	 * @param doctorID
 	 * @param date
 	 * @return appointmentTable with Available Times
@@ -256,7 +263,10 @@ public class StudentShell {
 	}
 	
 	/**
-	 * Prompt user to select a doctor.  Allow to enter doctorID or choose from list.
+	 * Interactive system of prompts to allow a user to select a doctor from the DB.  
+	 * 
+	 * Gives the option to show a list of available doctors
+	 * 
 	 * @return selected DoctorID
 	 * @throws Exception 
 	 */
@@ -318,8 +328,11 @@ public class StudentShell {
 	}
 
 	/**
-	 * Allow a user to select a valid date and time for an appointment.
-	 * @param doctorID the doctorID for the appointment's doctor.
+	 * Interactive system of prompts to allow a student to select a valid
+	 * time and date for an appointment with a given doctor.
+	 * 
+	 * @param doctorID
+	 * @return timestamp showing the date and time of the appointment
 	 * @throws Exception 
 	 */
 	public java.sql.Timestamp selectDateTime(int doctorID) throws Exception
@@ -417,9 +430,10 @@ public class StudentShell {
 	}
 	
 	/**
-	 * Check if a doctor exists in the DB with a given doctorID
-	 * @param docID the doctorID to be checked
-	 * @throws Exception if there is no doctor
+	 * Utility method to validate that a given int is a valid doctorID in the DB
+	 * 
+	 * @param docID
+	 * @throws Exception
 	 */
 	private boolean validateDoctorID(String docID) throws Exception {
 
@@ -452,9 +466,11 @@ public class StudentShell {
 	}
 	
 	/**
-	 * Get the available times for a doctor on a particular day
-	 * @param doctorID as int
-	 * @param date as String
+	 * Method to return the avaialable appointment times for a given doctor 
+	 * on a given date as an ArrayList
+	 * 
+	 * @param doctorID
+	 * @param date
 	 * @return ArrayList<java.sql.Timestamp> of available times for a doctor
 	 * @throws Exception
 	 */
