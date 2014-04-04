@@ -111,6 +111,7 @@ public class StudentShell {
 		//TODO prompt for appointment time
 		
 		
+		
 		/*
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
 				+ "doctorNotes, cost) values(?,?,?,?,?)";
@@ -159,12 +160,20 @@ public class StudentShell {
 		
 	}
 
+	/**
+	 * Show the available times for a doctor on a given date
+	 * @param doctorID
+	 * @param date
+	 * @return appointmentTable with Available Times
+	 * @throws Exception
+	 */
 	@Command
 	public Object showAvailableTimes(String doctorID, String date) throws Exception {
 		
 		java.sql.Date apptDate;
 		int docID;
 		
+		//validate input and ensure valid doctor and date
 		if (!validateDoctorID(doctorID))
 			return "Invalid Doctor ID";
 		else 
@@ -176,7 +185,6 @@ public class StudentShell {
 		catch (IllegalArgumentException e){
 			return "Invalid Date Format: Must be YYYY-MM-DD";
 		}
-		
 		
 		//Build Table of available Times 
 		Table appointmentTable = new Table ("Available Appointment Times on "+ apptDate);
@@ -200,6 +208,10 @@ public class StudentShell {
 		    	  scheduledAppointments.add(rs.getTimestamp(1));
 		      }
 		      
+		      /*
+		       * Assumes all days have equal hours
+		       * //TODO determine if day is a Saturday or Sunday and build around it
+		       */
 		      //Build AppointmentTable
 		      java.sql.Timestamp currentTime;
 		      for (int hour=8; hour<17; hour++)
@@ -278,8 +290,7 @@ public class StudentShell {
 		    }// end of switch
 		}//end while
 	}
-	
-	
+
 	
 	/**
 	 * Check if a doctor exists in the DB with a given doctorID
