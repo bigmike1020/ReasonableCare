@@ -1,17 +1,14 @@
 package reasonablecare;
 
-import static java.lang.System.out;
-
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
-import reasonablecare.LoginShell.LoginFailedException;
 import asg.cliche.Command;
 
 public class StudentShell {
@@ -161,37 +158,64 @@ public class StudentShell {
 		//     don't bill
 		
 	}
-	/*
+
 	@Command
-	public Table showAvailableTimes(String doctorId, String date) {
+	public Object showAvailableTimes(String doctorID, String date) throws Exception {
 		
-		//TODO Build Table of available Times 
-		Table appointmentTable = new Table ("Available Appointment Time");
+		java.sql.Date apptDate;
+		int docID;
 		
-		for (int hour=8; hour<27; hour++)
-		{
-			for (int minute=0; minute<31; minute+=30)
-			{
-				//probably a way better way of doing this
-			}
+		if (!validateDoctorID(doctorID))
+			return "Invalid Doctor ID";
+		else 
+			docID=Integer.parseInt(doctorID);
+		
+		try{
+			apptDate = java.sql.Date.valueOf(date);
+		}
+		catch (IllegalArgumentException e){
+			return "Invalid Date Format: Must be YYYY-MM-DD";
 		}
 		
-		//TODO return appointments for a specific doctor on a specific date
+		
+		//Build Table of available Times 
+		Table appointmentTable = new Table ("Available Appointment Times on "+ apptDate);
+		
+		//return appointments for a specific doctor on a specific date
+		String sql="select a.appointmenttime from (appointment a natural join makesappointment ma) "
+				+ "where ma.doctorID= ? and to_char(a.appointmenttime, 'YYYY-MM-DD') = ?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql,
+		        new String[] { "AppointmentTime" })) {
 
-		try (PreparedStatement...
+		      stm.setInt(1, docID);
+		      stm.setString(2, date);
+		      ResultSet rs = stm.executeQuery();
+		      
+		      //import result set into an ArrayList
+		      ArrayList<java.sql.Timestamp> scheduledAppointments = 
+		    		  new ArrayList<java.sql.Timestamp>();
+		      while (rs.next()) 
+		      {
+		    	  scheduledAppointments.add(rs.getTimestamp(1));
+		      }
+		      
+		      //Build AppointmentTable
+		      java.sql.Timestamp currentTime;
+		      for (int hour=8; hour<17; hour++)
+				{
+					for (int minute=0; minute<31; minute+=30)
+					{
+						currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
+						if (!scheduledAppointments.contains(currentTime))
+							appointmentTable.add(currentTime);
+						else scheduledAppointments.remove(currentTime);
+					}
 				}
-
-				return table;
-			}
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
-		//TODO remove conflicting appointments from table of available times and return table
-		
-	}*/
+		return appointmentTable;
+	}
 	
 	/**
 	 * Prompt user to select a doctor.  Allow to enter doctorID or choose from list.
@@ -200,7 +224,8 @@ public class StudentShell {
 	 */
 	public int selectDoctor() throws Exception
 	{
-		int menuSelection=0, doctorID=0;
+		String doctorID;
+		int menuSelection=0;
 		
 		//loops through prompts; for use handling invalid input without exiting
 		while (true)
@@ -223,37 +248,29 @@ public class StudentShell {
 		//Allow user to enter a doctorID
 		    case 1:
 		    	System.out.println("Enter Doctor ID: ");
-		    	try {
-				      doctorID=Integer.parseInt(br.readLine().trim());
-				      if (doctorID<2000 || doctorID>2999 || !validateDoctorID(doctorID))
-				      {
-				    	  System.out.println("Invalid Doctor ID\n");
-				    	  break;
-				      }
-				} catch (NumberFormatException e) {
-				    	  System.out.println("Invalid Doctor ID\n");
-				    	  break;
-				}  	
-		    	return doctorID; 
+		    	
+		    	doctorID=br.readLine().trim();
+		    	
+		    	if (!validateDoctorID(doctorID))
+		    	{
+		    		System.out.println("Invalid Doctor ID\n");
+		    		break;
+		    	}
+		    	else return Integer.parseInt(doctorID);
+		    	
 		    //Allow user to view a list of doctors and then enter a doctorID
 		     case 2:
 		    	 System.out.println(getDoctors());
 		    	 System.out.println("Enter DoctorID from List: ");
 		    	 
-		    	 try {
-				      doctorID=Integer.parseInt(br.readLine().trim());
-				      if (doctorID<2000 || doctorID>2999 || !validateDoctorID(doctorID))
-				      {
-				    	  System.out.println("Invalid Doctor ID\n");
-				    	  break;
-				      }
-				      
-				} catch (NumberFormatException e) {
-					 System.out.println("Invalid Doctor ID\n");
-			    	  break;
-				}
-		    	
-		    	return doctorID;
+		    	 doctorID=br.readLine().trim();
+		    	 
+		    	 if (!validateDoctorID(doctorID))
+			    	{
+			    		System.out.println("Invalid Doctor ID\n");
+			    		break;
+			    	}
+			    	else return Integer.parseInt(doctorID);
 		    	
 			default:
 				System.exit(0);
@@ -269,13 +286,26 @@ public class StudentShell {
 	 * @param docID the doctorID to be checked
 	 * @throws Exception if there is no doctor
 	 */
-	private boolean validateDoctorID(int docID) throws Exception {
+	private boolean validateDoctorID(String docID) throws Exception {
 
+		int doctorID=0;
+		
+		//ensure the given doctor ID is an int
+		try {
+			doctorID=Integer.parseInt(docID);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		//check valid range
+		if (doctorID<2000 || doctorID>2999)
+			return false;
+		
+		//check if exists in DB
 		String sql = "select 1 from doctor where doctorID=?";
-
+		
 		try (PreparedStatement stm = connection.prepareStatement(sql)) {
 
-			stm.setInt(1,docID);
+			stm.setInt(1,doctorID);
 
 			ResultSet rs = stm.executeQuery();
 			if (!rs.next()) {
