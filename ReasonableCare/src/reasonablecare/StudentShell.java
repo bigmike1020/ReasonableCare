@@ -111,7 +111,9 @@ public class StudentShell {
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0;
 		String apptType, apptReason;
-		boolean apptTypeSelected=false;
+		boolean apptTypeSelected=false, validCreditCardEntered=false;
+		
+		//TODO check that student has insurance information
 		
 		//prompt for appointment type and reason (if not physical/vaccination)
 		while (!apptTypeSelected)
@@ -142,11 +144,6 @@ public class StudentShell {
 				//TODO control input >512 chars
 			}}// end switch+if
 		}//end while
-		/*
-		int apptType;/*sentinel value for appointment type
-						* 1=vaccination
-						* 2=physical
-						* 3=office visit */
 		
 		//select doctor for the appointment
 		apptDoc=selectDoctor();
