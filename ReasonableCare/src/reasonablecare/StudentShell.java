@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import asg.cliche.Command;
 
@@ -186,6 +187,13 @@ public class StudentShell {
 			return "Invalid Date Format: Must be YYYY-MM-DD";
 		}
 		
+		//set a string equal to the day of week for the date
+	      String dayName = String.format("%tA", date);
+	      
+	    //system is closed on Sundays.
+	    if (dayName.equals("Sunday"))
+	    	return "The Health Center is Closed on Sundays";
+		
 		//Build Table of available Times 
 		Table appointmentTable = new Table ("Available Appointment Times on "+ apptDate);
 		
@@ -212,18 +220,36 @@ public class StudentShell {
 		       * Assumes all days have equal hours
 		       * //TODO determine if day is a Saturday or Sunday and build around it
 		       */
+		      
 		      //Build AppointmentTable
+		      
 		      java.sql.Timestamp currentTime;
-		      for (int hour=8; hour<17; hour++)
-				{
-					for (int minute=0; minute<31; minute+=30)
+		      if (dayName.equals("Saturday")) //open 10-2
+		      {
+		    	  for (int hour=10; hour<14; hour++)
 					{
-						currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
-						if (!scheduledAppointments.contains(currentTime))
-							appointmentTable.add(currentTime);
-						else scheduledAppointments.remove(currentTime);
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime))
+								appointmentTable.add(currentTime);
+							else scheduledAppointments.remove(currentTime);
+						}
 					}
-				}
+		      }
+		      else //weekday - open 8-5
+		      {
+		    	  for (int hour=8; hour<17; hour++)
+					{
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime))
+								appointmentTable.add(currentTime);
+							else scheduledAppointments.remove(currentTime);
+						}
+					}
+		      }
 		}
 		
 		return appointmentTable;
