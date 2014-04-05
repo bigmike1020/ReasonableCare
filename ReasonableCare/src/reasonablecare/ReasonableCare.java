@@ -38,6 +38,7 @@ public class ReasonableCare {
       try (Connection connection = DriverManager.getConnection(jdbcURL, user,
           password)) {
 
+        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         Object shell = new LoginShell(connection);
         ShellFactory.createConsoleShell("ReasonableCare", APP_NAME, shell).commandLoop();
 

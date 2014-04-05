@@ -288,10 +288,54 @@ public class StaffShell {
 	  // TODO make sure date is at start of semester
   }
   
-  @Command
-  public void deleteAppointment() {
-	  // TODO deleteAppointment
+  @Command(description = "Delete an appointment, given the appointment's ID.")
+  public String deleteAppointment(@Param(name="appointmentID")String appointmentId) throws SQLException {
+    int id;
+    try {
+      id = Integer.parseInt(appointmentId);
+    } catch (NumberFormatException e) {
+      return "Error: AppointmentId must be a number. Appointment not deleted.";
+    }
+
+    final String studentName, doctorName;
+    try {
+      connection.setAutoCommit(false);
+
+      String sql = "select studentname, doctorname from makesAppointment join student using(studentid) join doctor using(doctorid) "
+          + " where appointmentid=?";
+      try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, id);
+
+        // Get records from the Student table
+        try (ResultSet rs = statement.executeQuery()) {
+
+          if (!rs.next()) {
+            return "Error: Could not find appointment. Appointment not deleted.";
+          }
+
+          studentName = rs.getString(1);
+          doctorName = rs.getString(2);
+        }
+      }
+
+      sql = "DELETE FROM Appointment WHERE appointmentId=?";
+      try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, id);
+        statement.executeUpdate();
+      }
+
+      connection.commit();
+    } catch (SQLException e) {
+      connection.rollback();
+      throw e;
+    } finally {
+      connection.setAutoCommit(true);
+    }
+
+    return "Deleted appointment between " + doctorName + " and " + studentName;
   }
+
   
   @Command(description = "List students that have been attending for 6 months and have not scheduled 3 vaccinations.")
   public Table checkVaccinations() throws SQLException {
