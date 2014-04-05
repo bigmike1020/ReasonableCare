@@ -151,6 +151,8 @@ public class StudentShell {
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
+		//Student gets one free Physical per year
+		
 		// Lots of prompts here
 		// TODO use insurance to get copay
 		// use insurance to get deductible

@@ -17,8 +17,13 @@ public class InsuranceCompanySystem {
 	}
 	
 	
-	/**
-	 * public int getCopay()
-	 */
+	public int getCopay(String apptType, int doctorID, String insCompany, String insNumber)
+	{
+		//TODO determine if doctor is specialist
+		//TODO possible variance of copay based on Acme/non-Acme insurance
+		//TODO modify copay amount for vaccinations and physicals
+		
+		return 20;
+	}
 
 }
