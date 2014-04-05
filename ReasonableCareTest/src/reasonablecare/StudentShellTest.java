@@ -33,7 +33,7 @@ public class StudentShellTest extends BaseShellTest {
     expected.add("Physician", 2003, "Dr. William");
     expected.add("Psychiatrist", 2004, "Dr. Rob");
 
-    Table result = shell.getSpecializations();
+    Table result = shell.getDoctors();
 
     assertThat(result, equalTo(expected));
   }
