@@ -293,10 +293,39 @@ public class StaffShell {
 	  // TODO deleteAppointment
   }
   
-  @Command
-  public void checkVaccinations() {
-	  // TODO list students that have (not had 3 vaccinations
-	  // and have been here for >6 months)
+  @Command(description = "List students that have been attending for 6 months and have not had 3 vaccinations.")
+  public Table checkVaccinations() throws SQLException {
+
+    try (Statement statement = connection.createStatement()) {
+
+      String sql = "SELECT StudentID, studentName, startingDate, nvl(V.Vacc, 0)" // nvl() changes nulls to 0
+          + "FROM Student"
+          + "LEFT JOIN ("
+          + " SELECT StudentID, count(*) AS Vacc"
+          + " FROM makesAppointment "
+          + " NATURAL JOIN Appointment"
+          + " WHERE Appointment.type='Vaccination'"
+          + " GROUP BY StudentID"
+          + " HAVING count(*) < 3"
+          + ") V"
+          + "USING (StudentID)"
+          + "WHERE MONTHS_BETWEEN(CURRENT_TIMESTAMP, startingDate) >= 6";
+
+      // Get records from the Student table
+      try (ResultSet rs = statement.executeQuery(sql)) {
+
+        Table table = new Table("Student ID", "Student Name",
+            "Starting Semester", "Number of Vaccinations");
+
+        while (rs.next()) {
+          table.add(rs.getInt(1), rs.getString(2), rs.getString(3),
+              rs.getInt(4));
+        }
+
+        return table;
+      }
+    }
+
   }
 
 }
