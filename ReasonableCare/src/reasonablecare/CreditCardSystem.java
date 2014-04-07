@@ -2,6 +2,10 @@ package reasonablecare;
 
 public class CreditCardSystem {
 
+	public CreditCardSystem()
+	{
+		
+	}
 	
 	/**
 	 * Contacts the credit card company to get preapproval for a copay charge

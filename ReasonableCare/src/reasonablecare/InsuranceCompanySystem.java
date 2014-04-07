@@ -3,6 +3,11 @@ package reasonablecare;
 
 public class InsuranceCompanySystem {
 	
+	//default constructor
+	public InsuranceCompanySystem()
+	{
+		
+	}
 	//TODO implement methods to return deductible and copayment information
 	
 	public boolean getDeductiblePaid(String insuranceProvider, String policyNumber)

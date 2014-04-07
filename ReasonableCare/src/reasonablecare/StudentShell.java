@@ -33,6 +33,10 @@ public class StudentShell {
 		this.connection = connection;
 		this.id = id;
 	}
+	
+	//insurance instances to contact insurance and credit card companies
+	private InsuranceCompanySystem insurance = new InsuranceCompanySystem();
+	private CreditCardSystem creditCard = new CreditCardSystem();
 
 	@Command(description = "List all doctor specializations, and doctors that have "
 			+ "those specializations.")
@@ -105,14 +109,15 @@ public class StudentShell {
  * @throws Exception
  */
 	@Command
-	public void makeAppointment() throws Exception {
+	public Object makeAppointment() throws Exception {
 		
 		// TODO makeAppointment		
 		
 		java.sql.Timestamp apptTime;
-		int apptDoc=0,menuSelection=0;
-		String apptType, apptReason;
-		boolean apptTypeSelected=false, validCreditCardEntered=false, hasInsurance=false;
+		int apptDoc=0,menuSelection=0, cost=0;
+		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
+		boolean apptTypeSelected=false, validCreditCardEntered=false, hasInsurance=false, 
+				creditCardAccepted=false;
 		
 		//Check that student has insurance information
 		
@@ -136,7 +141,6 @@ public class StudentShell {
 				switch (menuSelection) {
 			    case 1:
 			    	//take insurance info
-			    	String insuranceProvider, insuranceNumber;
 			    	System.out.println("Enter the name of your insurance provider:\n");
 			    	insuranceProvider = br.readLine().trim();
 			    	System.out.println("Enter your insurance policy number:\n");
@@ -185,9 +189,9 @@ public class StudentShell {
 		    case 2:
 		    	apptType=apptReason="Physical"; break;
 			default:
-				apptReason="Office Visit";
+				apptType="Office Visit";
 				System.out.println("Enter the reason for your appointment:");
-				apptReason=br.readLine();
+				apptReason=br.readLine().trim();
 				//TODO control input >512 chars
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
@@ -198,53 +202,85 @@ public class StudentShell {
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
-		//Student gets one free Physical per year
+		/* commenting out for easier testing
+		//fetch insurance information
+		insuranceProvider = getInsuranceProvider(id);
+		insuranceNumber = getInsuranceNumber(id);
 		
-		// Lots of prompts here
-		// TODO use insurance to get copay
-		// use insurance to get deductible
-		// if deductible not paid,
-		//     use billing to approve copay
-		// if deductible paid,
-		//     don't bill
+		//TODO allow student to get a free physical each year
 		
+		//get cost of appointment
+		cost = insurance.getCopay(apptType, apptDoc, insuranceProvider, insuranceNumber);
 		
-		/* saving later for the statement
+		System.out.println("The copayment for your appointment will be: "+cost);
+		
+		if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
+		{
+			System.out.println("Your deductible has been paid for the year.  You will not be billed.");
+		}
+		else
+		{
+			System.out.println("Your deductible has not been paid for the year.");
+			do{
+				System.out.println("Enter your credit card number:");
+				ccNumber = br.readLine().trim();
+				//TODO handle credit card expiration date
+				
+				if (creditCard.validateCreditCard(ccNumber))
+				{
+					if (creditCard.getPreapproval(ccNumber))
+					{
+						creditCardAccepted=true;
+						System.out.println("Your credit card was pre-approved.");
+					}
+					else
+					{
+						System.out.println("Your credit card was not pre-approved.  You will need to"
+								+ "use a different card.");
+						//TODO handle exit option for this loop
+					}
+				}
+				else
+					System.out.println("Invalid Credit Card Number");
+				
+			} while (!creditCardAccepted);
+		}
+		*/
+		
+		//Make the appointment
+		
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
 				+ "doctorNotes, cost) values(?,?,?,?,?)";
 		
+		 int apptID = 0;
+		 
 		try (PreparedStatement stm = connection.prepareStatement(makeAppt,
 		        new String[] { "AppointmentID" })) {
 
-		      stm.setString(1, reasonForVisit);
+		      stm.setString(1, apptReason);
 		      stm.setString(2, apptType);
-		      //TODO send as timestamp
-		      stm.setString(3, apptTime); 
+		      stm.setTimestamp(3, apptTime); 
 		      stm.setString(4, "");
-		      stm.setString(5, null);
+		      stm.setInt(5, cost);
 		      stm.executeUpdate();
-
-		      //get the auto-generated key from the row that was added
-		      int apptID = 0;
-
+		      
 		      ResultSet rs = stm.getGeneratedKeys();
 		      if (rs != null && rs.next()) {
 		        apptID = rs.getInt(1);
 		      }
-		      
-		 String associateAppt = "insert into makesAppointment(studentID,doctorID,apptID)"
-		 	+ "values (?,?,?)";
-		 	
-		      
-		 try (PreparedStatement stm1 = connection.prepareStatement(associateAppt){
-		 
-		 	stm1.setString(1, studentID)
-		 	stm1.setString(2, doctorID)
-		 	stm1.setString(3, appointmentID)
-		 	
-		 	...
-		 	
-		      return "Created new Appointment";*/
+		}  
+		String associateAppt = "insert into makesAppointment(studentID,doctorID,appointmentID)"
+			 	+ "values (?,?,?)";
+		
+		try (PreparedStatement stm1 = connection.prepareStatement(associateAppt)){
+			 
+			 	stm1.setInt(1, id);
+			 	stm1.setInt(2, apptDoc);
+			 	stm1.setInt(3, apptID);
+			 	stm1.executeUpdate();
+			 	
+			 	return "Created new Appointment with id= "+apptID;
+			} 
 		
 	}
 
@@ -635,14 +671,23 @@ public class StudentShell {
 	}
 	
 	/**
+	 * Check if free physical has been taken in the past year for a student
+	 * 
+	 */
+	public boolean checkFreePhysical(int studentID)
+	{
+		//TODO Check if user has had a free physical in the past year
+		return false;
+	}
+	
+	/**
 	 * Check if a student has insurance
 	 * @param studentID
 	 * @return true or false that the student has insurance
 	 */
-	@Command
 	public boolean checkHasInsurance(int studentID)
 	{
-String sql = "select healthinsuranceprovidername,healthinsurancepolicynumber "
+		String sql = "select healthinsuranceprovidername,healthinsurancepolicynumber "
 		+ "from student where studentID=?";
 		
 		try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -663,4 +708,57 @@ String sql = "select healthinsuranceprovidername,healthinsurancepolicynumber "
 			return false;
 		}
 	}
+	
+	/**
+	 * Check return insuranceProvider of student
+	 * @param studentID
+	 * @return
+	 */
+	public String getInsuranceProvider(int studentID)
+	{
+		String sql = "select healthinsuranceprovidername from student where studentID=?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+			stm.setInt(1,studentID);
+
+			ResultSet rs = stm.executeQuery();
+			
+			rs.next();
+			
+			return rs.getString(1);
+			}
+		    
+		 catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+	}
+	
+	/**
+	 * Get Insurance Policy Number from Student
+	 * @param studentID
+	 * @return
+	 */
+	public String getInsuranceNumber(int studentID)
+	{
+		String sql = "select healthinsurancepolicynumber from student where studentID=?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+			stm.setInt(1,studentID);
+
+			ResultSet rs = stm.executeQuery();
+			
+			rs.next();
+			
+			return rs.getString(1);
+			}
+		    
+		 catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+	}
+	
 }
