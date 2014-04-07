@@ -202,7 +202,6 @@ public class StudentShell {
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
-		/* commenting out for easier testing
 		//fetch insurance information
 		insuranceProvider = getInsuranceProvider(id);
 		insuranceNumber = getInsuranceNumber(id);
@@ -245,7 +244,6 @@ public class StudentShell {
 				
 			} while (!creditCardAccepted);
 		}
-		*/
 		
 		//Make the appointment
 		
@@ -279,7 +277,8 @@ public class StudentShell {
 			 	stm1.setInt(3, apptID);
 			 	stm1.executeUpdate();
 			 	
-			 	return "Created new Appointment with id= "+apptID;
+			 	return "Created new Appointment with id= "+apptID+"\n"
+			 			+"You were billed for $"+cost;
 			} 
 		
 	}
@@ -464,8 +463,7 @@ public class StudentShell {
 		boolean dateSelected=false, runSelectionLoop=true;
 		
 		//loops through prompts; for use handling invalid input without exiting
-		while (!dateSelected)
-		{
+		do{
 			System.out.println("Enter the date for the appointment (YYYY-MM-DD): \n");
 
 			date=(br.readLine().trim());
@@ -484,7 +482,7 @@ public class StudentShell {
 				System.out.println(showAvailableTimes(Integer.toString(doctorID),date));
 				
 				//Allow user to select a time
-				while (runSelectionLoop)
+				do
 				{
 					System.out.println("Select an option: "
 							+"\n1. Enter an available time from the list (HH:MM:SS)"
@@ -551,9 +549,9 @@ public class StudentShell {
 								System.exit(0);
 						}
 					}//end if
-				}//end while selection
+				}while (runSelectionLoop);//end while selection
 			}//end if date
-		}//end while date	
+		}while (!dateSelected);	
 		return null; //if error
 	}
 	
