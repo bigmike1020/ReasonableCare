@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import asg.cliche.Command;
 
@@ -111,12 +112,58 @@ public class StudentShell {
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0;
 		String apptType, apptReason;
-		boolean apptTypeSelected=false, validCreditCardEntered=false;
+		boolean apptTypeSelected=false, validCreditCardEntered=false, hasInsurance=false;
 		
-		//TODO check that student has insurance information
+		//Check that student has insurance information
+		
+		while (!hasInsurance)
+		{
+			if (!checkHasInsurance(id))
+			{
+				System.out.println("You do not have insurance.  \nEnter an option from the menu below:"
+						+"\n1. Provide Insurance Information"
+						+"\n2. Exit System and Log out\n");
+				try {
+					menuSelection=Integer.parseInt(br.readLine().trim());
+					if (menuSelection<1 || menuSelection>2)
+				   	  System.out.println("Invalid Selection\n");
+					else apptTypeSelected=true;
+				      
+				} catch (NumberFormatException e) {
+			      System.out.println("Invalid Selection\n");
+				}		
+				if (apptTypeSelected){
+				switch (menuSelection) {
+			    case 1:
+			    	//take insurance info
+			    	String insuranceProvider, insuranceNumber;
+			    	System.out.println("Enter the name of your insurance provider:\n");
+			    	insuranceProvider = br.readLine().trim();
+			    	System.out.println("Enter your insurance policy number:\n");
+			    	insuranceNumber = br.readLine().trim();
+			    	
+			    	String updateIns = "UPDATE STUDENT SET HEALTHINSURANCEPROVIDERNAME=?, HEALTHINSURANCEPOLICYNUMBER= ? "
+			    			+ "WHERE STUDENTID=?";
+			    	
+			    	try (PreparedStatement stm = connection.prepareStatement(updateIns)) {
+					      stm.setString(1, insuranceProvider);
+					      stm.setString(2, insuranceNumber);
+					      stm.setInt(3, id); 
+					      stm.executeUpdate();
+			    	}
+			    	System.out.println("Insurance Information Accepted");
+			    	hasInsurance=true;
+			    	break;
+			    	
+				default:
+					System.exit(0);
+				}}// end switch+if
+			}
+			else hasInsurance=true;
+		}
 		
 		//prompt for appointment type and reason (if not physical/vaccination)
-		while (!apptTypeSelected)
+		do
 		{
 			System.out.println("Select Appointment Type"
 					+"\n1. Vaccination"
@@ -143,7 +190,7 @@ public class StudentShell {
 				apptReason=br.readLine();
 				//TODO control input >512 chars
 			}}// end switch+if
-		}//end while
+		} while (!apptTypeSelected);//end while
 		
 		//select doctor for the appointment
 		apptDoc=selectDoctor();
@@ -202,7 +249,8 @@ public class StudentShell {
 	}
 
 	/**
-	 * Show the available appointment times for a doctor on a given date
+	 * Show the available appointment times for a doctor on a given date.  Times associated with 
+	 * scheduled appointments or times in the past are not displayed.
 	 * @param doctorID
 	 * @param date
 	 * @return appointmentTable with Available Times
@@ -255,6 +303,10 @@ public class StudentShell {
 		      {
 		    	  scheduledAppointments.add(rs.getTimestamp(1));
 		      }
+		      
+		    //Timestamp representing actual current time
+		      java.util.Calendar calendar = Calendar.getInstance();
+		      java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 		           
 		      //Build AppointmentTable
 		      
@@ -266,7 +318,8 @@ public class StudentShell {
 						for (int minute=0; minute<31; minute+=30)
 						{
 							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
-							if (!scheduledAppointments.contains(currentTime))
+							if (!scheduledAppointments.contains(currentTime) 
+									&& now.before(currentTime))
 								appointmentTable.add(currentTime);
 							else scheduledAppointments.remove(currentTime);
 						}
@@ -279,7 +332,8 @@ public class StudentShell {
 						for (int minute=0; minute<31; minute+=30)
 						{
 							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
-							if (!scheduledAppointments.contains(currentTime))
+							if (!scheduledAppointments.contains(currentTime)
+									&& now.before(currentTime))
 								appointmentTable.add(currentTime);
 							else scheduledAppointments.remove(currentTime);
 						}
@@ -368,6 +422,8 @@ public class StudentShell {
 		String date="";
 		java.sql.Date apptDate;
 		java.sql.Time apptTime;
+		java.util.Calendar calendar = Calendar.getInstance();
+		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 		int menuSelection=0;
 		boolean dateSelected=false, runSelectionLoop=true;
 		
@@ -377,10 +433,11 @@ public class StudentShell {
 			System.out.println("Enter the date for the appointment (YYYY-MM-DD): \n");
 
 			date=(br.readLine().trim());
-					
+				
 			try{
 				apptDate = java.sql.Date.valueOf(date);
-				dateSelected=true;
+				
+				dateSelected = true;
 			}
 			catch (IllegalArgumentException e){
 				System.out.println("Invalid Date Format: Must be YYYY-MM-DD"); 
@@ -427,10 +484,18 @@ public class StudentShell {
 						    ArrayList<java.sql.Timestamp> apptTimes = 
 						    		getAvailableTimes(doctorID,date);
 						    
-						    if (apptTimes.contains(java.sql.Timestamp.valueOf
-						    		(date+" "+time)))
+						    java.sql.Timestamp apptTimestamp = 
+					    			java.sql.Timestamp.valueOf(date+" "+time);
+						
+						    if (apptTimes.contains(apptTimestamp))
 						    {
-						    	return java.sql.Timestamp.valueOf(date+" "+time);
+						    	if (apptTimestamp.after(now))
+						    		return apptTimestamp;
+						    	else
+						    	{
+						    		System.out.println("Appointment time cannot be in the past");
+						    		runSelectionLoop=true;
+						    	}
 						    }
 						    else 
 						    {
@@ -530,9 +595,14 @@ public class StudentShell {
 		      {
 		    	  scheduledAppointments.add(rs.getTimestamp(1));
 		      }
-		           
+		      
+		      //Timestamp representing actual current time
+		      java.util.Calendar calendar = Calendar.getInstance();
+		      java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+		      
 		      //Build AppointmentTable  
 		      java.sql.Timestamp currentTime;
+				
 			  if (dayName.equals("Sunday")); //system is closed on Sundays.
 		      else if (dayName.equals("Saturday")) //open 10-2
 		      {
@@ -541,7 +611,8 @@ public class StudentShell {
 						for (int minute=0; minute<31; minute+=30)
 						{
 							currentTime = java.sql.Timestamp.valueOf(date+" "+hour+":"+minute+":00");
-							if (!scheduledAppointments.contains(currentTime))
+							if (!scheduledAppointments.contains(currentTime) && 
+									now.before(currentTime))
 								availableAppointments.add(currentTime);
 						}
 					}
@@ -561,5 +632,35 @@ public class StudentShell {
 		}
 		
 		return availableAppointments;
+	}
+	
+	/**
+	 * Check if a student has insurance
+	 * @param studentID
+	 * @return true or false that the student has insurance
+	 */
+	@Command
+	public boolean checkHasInsurance(int studentID)
+	{
+String sql = "select healthinsuranceprovidername,healthinsurancepolicynumber "
+		+ "from student where studentID=?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+			stm.setInt(1,studentID);
+
+			ResultSet rs = stm.executeQuery();
+			
+			rs.next();
+			
+			if (rs.getString(1)==null || rs.getString(2)==null)
+				return false;
+			else return true;
+			}
+		    
+		 catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return false;
+		}
 	}
 }
