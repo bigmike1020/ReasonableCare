@@ -3,6 +3,7 @@ package reasonablecare;
 import static java.lang.System.out;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -75,8 +76,6 @@ public class DoctorShell {
 
 	@Command
 	public String updateNotes(String appointmentId) throws Exception {
-		// TODO updateNotes
-
 		int apptId;
 		try {
 			apptId = Integer.parseInt(appointmentId);
@@ -106,7 +105,7 @@ public class DoctorShell {
 		String newNotes = "";
 		while (newNotes.isEmpty()) {
 			out.println("Enter the updated notes:");
-			newNotes = br.readLine();
+			newNotes = br.readLine().trim();
 		}
 
 		sql = "update appointment set doctornotes=? where appointmentid=?";
@@ -115,7 +114,7 @@ public class DoctorShell {
 			stm.setInt(2, apptId);
 
 			stm.executeUpdate();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			return "Error updating notes: " + e.getMessage();
 		}
 
@@ -123,7 +122,9 @@ public class DoctorShell {
 	}
 
 	@Command
-	public void updateDoctor() {
-		// TODO updateDoctor
+	public void updateDoctor() throws SQLException, IOException {
+		try (CommonStatements common = new CommonStatements(connection)) {
+			common.updatedoctorinformation(id);
+		}
 	}
 }

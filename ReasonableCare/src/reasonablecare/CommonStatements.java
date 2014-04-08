@@ -98,27 +98,27 @@ public class CommonStatements implements AutoCloseable {
 
     switch (y) {
     case 1:
-      stm.executeUpdate("update doctor set doctorname =' " + b
-          + " 'where doctorid=" + z);
+      stm.executeUpdate("update doctor set doctorname ='" + b
+          + "' where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
 
     case 2:
-      stm.executeUpdate("update doctor set PASSWORD =' " + b
-          + " 'where doctorid=" + z);
+      stm.executeUpdate("update doctor set PASSWORD ='" + b
+          + " ' where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
     case 3:
-      stm.executeUpdate("update doctor set Specialization =' " + b
-          + " 'where doctorid=" + z);
+      stm.executeUpdate("update doctor set Specialization ='" + b
+          + "' where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
     case 4:
-      stm.executeUpdate("update doctor set phonenumber =' " + b
-          + " 'where doctorid=" + z);
+      stm.executeUpdate("update doctor set phonenumber ='" + b
+          + "' where doctorid=" + z);
       out.println("Record Updated");
       printDoctorInfo(z);
       break;
