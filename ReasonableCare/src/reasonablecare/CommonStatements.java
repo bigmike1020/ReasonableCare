@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CommonStatements implements AutoCloseable {
 
@@ -342,6 +344,100 @@ public class CommonStatements implements AutoCloseable {
 			close(prepStmt);
 		}
   }
+  
+  /**
+   * Show the available appointment times for a given doctor on a given date
+   * @param doctorID
+   * @param date YYYY-MM-DD
+   * @return appointment Table
+   * @throws Exception
+   */
+  public Object showAvailableTimes(String doctorID, String date) throws Exception {
+		
+		java.sql.Date apptDate;
+		int docID;
+		
+		//validate input and ensure valid doctor and date
+		if (!validateDoctorID(doctorID))
+			return "Invalid Doctor ID";
+		else 
+			docID=Integer.parseInt(doctorID);
+		
+		try{
+			apptDate = java.sql.Date.valueOf(date);
+		}
+		catch (IllegalArgumentException e){
+			return "Invalid Date Format: Must be YYYY-MM-DD";
+		}
+		
+		//set a string equal to the day of week for the date
+	      String dayName = String.format("%tA", apptDate);
+	      
+	    //system is closed on Sundays.
+	    if (dayName.equals("Sunday"))
+	    	return "The Health Center is Closed on Sundays";
+		
+		//Build Table of available Times 
+		Table appointmentTable = new Table ("Available Appointment Times on "+ apptDate);
+		
+		//return appointments for a specific doctor on a specific date
+		String sql="select a.appointmenttime from (appointment a natural join makesappointment ma) "
+				+ "where ma.doctorID= ? and to_char(a.appointmenttime, 'YYYY-MM-DD') = ?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql,
+		        new String[] { "AppointmentTime" })) {
+
+		      stm.setInt(1, docID);
+		      stm.setString(2, date);
+		      ResultSet rs = stm.executeQuery();
+		      
+		      //import result set into an ArrayList
+		      ArrayList<java.sql.Timestamp> scheduledAppointments = 
+		    		  new ArrayList<java.sql.Timestamp>();
+		      while (rs.next()) 
+		      {
+		    	  scheduledAppointments.add(rs.getTimestamp(1));
+		      }
+		      
+		    //Timestamp representing actual current time
+		      java.util.Calendar calendar = Calendar.getInstance();
+		      java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+		           
+		      //Build AppointmentTable
+		      
+		      java.sql.Timestamp currentTime;
+		      if (dayName.equals("Saturday")) //open 10-2
+		      {
+		    	  for (int hour=10; hour<14; hour++)
+					{
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime) 
+									&& now.before(currentTime))
+								appointmentTable.add(currentTime);
+							else scheduledAppointments.remove(currentTime);
+						}
+					}
+		      }
+		      else //weekday - open 8-5
+		      {
+		    	  for (int hour=8; hour<17; hour++)
+					{
+						for (int minute=0; minute<31; minute+=30)
+						{
+							currentTime = java.sql.Timestamp.valueOf(apptDate+" "+hour+":"+minute+":00");
+							if (!scheduledAppointments.contains(currentTime)
+									&& now.before(currentTime))
+								appointmentTable.add(currentTime);
+							else scheduledAppointments.remove(currentTime);
+						}
+					}
+		      }
+		}
+		
+		return appointmentTable;
+}
   
   
   private void close(ResultSet rs) {
