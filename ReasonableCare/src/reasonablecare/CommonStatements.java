@@ -15,10 +15,10 @@ import java.util.Calendar;
 
 public class CommonStatements implements AutoCloseable {
 
-  private final BufferedReader br = new BufferedReader(new InputStreamReader(
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(
       System.in));
 
-  private final Statement stm;
+  private static Statement stm;
   
   Connection connection;
 
@@ -493,6 +493,69 @@ private void close(PreparedStatement prepStmt) {
 
 		}
 	}
+	private static void FindSpecialist() throws IOException, SQLException {
+		 ResultSet result = null;
+		//static Statement statement = null;
+
+		String specialization="";
+			int aname1=0;
+			do{
+					System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.General Medical Problems \n4.Mental Health \n5.Orthopedics \n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems \n9.HIV Testing \10.Ear, Nose, Throat Problems \n11.Heart related Problems \n12.Vaccination");
+					aname1 = Integer.parseInt(br.readLine());
+				}while(aname1>=13);
+			
+			
+			switch(aname1)
+			{
+			case 1:
+				specialization="Endocrinologist";
+				break;
+			case 2:
+				specialization="General Physician";
+				break;
+			case 3:
+				specialization="General Physician";
+				break;
+			case 4:
+				specialization="Psychiatrist";
+				break;
+			case 5:
+				specialization="Orthopedic Surgeon";
+				break;
+			case 6:
+				specialization="Physical Therapist";
+				break;
+			case 7:
+				specialization="Gynaceologist";
+				break;
+			case 8:
+				specialization="Nephrologist";
+				break;
+			case 9:
+				specialization="General Physician";
+				break;
+			case 10:
+				specialization="ENT specialist";
+				break;
+			case 11:
+			
+				specialization="Cardiologist";
+				break;
+			case 12:
+				specialization="General Physician";
+				break;
+				}
+			System.out.println(specialization+":");
+			result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+			if(result.next())
+			{
+				do
+				{
+					System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
+				}while (result.next());
+			}		
+		}
+
 	/*
 	 * Create statements are only performed by Staff - Have methods in staff shell
 	 * 
