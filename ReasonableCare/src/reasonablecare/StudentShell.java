@@ -237,41 +237,6 @@ public class StudentShell {
 		//Make the appointment
 		
 		return commonStatements.makeAppointment(id, apptDoc, apptType, apptReason, apptTime, cost);
-		/*
-		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
-				+ "doctorNotes, cost) values(?,?,?,?,?)";
-		
-		 int apptID = 0;
-		 
-		try (PreparedStatement stm = connection.prepareStatement(makeAppt,
-		        new String[] { "AppointmentID" })) {
-
-		      stm.setString(1, apptReason);
-		      stm.setString(2, apptType);
-		      stm.setTimestamp(3, apptTime); 
-		      stm.setString(4, "");
-		      stm.setInt(5, cost);
-		      stm.executeUpdate();
-		      
-		      ResultSet rs = stm.getGeneratedKeys();
-		      if (rs != null && rs.next()) {
-		        apptID = rs.getInt(1);
-		      }
-		}  
-		String associateAppt = "insert into makesAppointment(studentID,doctorID,appointmentID)"
-			 	+ "values (?,?,?)";
-		
-		try (PreparedStatement stm1 = connection.prepareStatement(associateAppt)){
-			 
-			 	stm1.setInt(1, id);
-			 	stm1.setInt(2, apptDoc);
-			 	stm1.setInt(3, apptID);
-			 	stm1.executeUpdate();
-			 	
-			 	return "Created new Appointment with id= "+apptID+"\n"
-			 			+"You were billed for $"+cost;
-			} */
-		
 	}
 
 	/**

@@ -336,7 +336,7 @@ public class CommonStatements implements AutoCloseable {
 			prepStmt.setInt(3, apptID);
 			prepStmt.executeUpdate();
 			 	
-			return "Created new Appointment with id= "+apptID+"\n";
+			return "Created new Appointment with id = "+apptID+"\n";
 		}
 		finally{
 			close(prepStmt);
