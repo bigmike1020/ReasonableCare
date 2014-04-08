@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,12 +17,15 @@ public class CommonStatements implements AutoCloseable {
       System.in));
 
   private final Statement stm;
+  
+  Connection connection;
 
   public CommonStatements(Connection connection) throws SQLException {
     // Create a statement instance that will be sending your SQL statements
     // to the DBMS
+	this.connection=connection;
     stm = connection.createStatement();
-    connection.setAutoCommit(true); // set autocommit on
+    //connection.setAutoCommit(true); // set autocommit on
   }
 
   @Override
@@ -390,6 +394,42 @@ public class CommonStatements implements AutoCloseable {
       }
     }
   }
+  
+  /**
+	 * Utility method to validate that a given int is a valid doctorID in the DB
+	 * 
+	 * @param docID
+	 * @throws Exception
+	 */
+	public boolean validateDoctorID(String docID) throws Exception {
+
+		int doctorID=0;
+		
+		//ensure the given doctor ID is an int
+		try {
+			doctorID=Integer.parseInt(docID);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		//check valid range
+		if (doctorID<2000 || doctorID>2999)
+			return false;
+		
+		//check if exists in DB
+		String sql = "select 1 from doctor where doctorID=?";
+		
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+			stm.setInt(1,doctorID);
+
+			ResultSet rs = stm.executeQuery();
+			if (!rs.next()) {
+				return false;
+			}
+			else return true;
+
+		}
+	}
 
 }// end of class HealthCentre
 

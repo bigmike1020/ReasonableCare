@@ -23,15 +23,19 @@ public class StudentShell {
 	 * connection; no need to close.
 	 */
 	final Connection connection;
-
+	final CommonStatements commonStatements;
+	
+	
 	final int id;
 	
 	final BufferedReader br = new BufferedReader(new InputStreamReader(
 		      System.in));
 
-	public StudentShell(Connection connection, int id) {
+	public StudentShell(Connection connection, int id) throws SQLException {
 		this.connection = connection;
 		this.id = id;
+		//constructor to use shared statements
+		commonStatements = new CommonStatements(connection);
 	}
 	
 	//insurance instances to contact insurance and credit card companies
@@ -110,9 +114,7 @@ public class StudentShell {
  */
 	@Command(description="Interactive way to make an appointment.  Prompts for all information"
 			+ "needed.")
-	public Object makeAppointmentInteractive() throws Exception {
-		
-		// TODO makeAppointment		
+	public Object makeAppointmentInteractive() throws Exception {	
 		
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0, cost=0;
@@ -142,12 +144,13 @@ public class StudentShell {
 				switch (menuSelection) {
 			    case 1:
 			    	//take insurance info
-			    	System.out.println("Enter the name of your insurance provider:\n");
+			    	System.out.println("Enter the name of your insurance provider:");
 			    	insuranceProvider = br.readLine().trim();
-			    	System.out.println("Enter your insurance policy number:\n");
+			    	System.out.println("Enter your insurance policy number:");
 			    	insuranceNumber = br.readLine().trim();
 			    	
-			    	String updateIns = "UPDATE STUDENT SET HEALTHINSURANCEPROVIDERNAME=?, HEALTHINSURANCEPOLICYNUMBER= ? "
+			    	String updateIns = "UPDATE STUDENT SET HEALTHINSURANCEPROVIDERNAME=?, "
+			    			+ "HEALTHINSURANCEPOLICYNUMBER= ? "
 			    			+ "WHERE STUDENTID=?";
 			    	
 			    	try (PreparedStatement stm = connection.prepareStatement(updateIns)) {
@@ -173,7 +176,7 @@ public class StudentShell {
 			System.out.println("Select Appointment Type"
 					+"\n1. Vaccination"
 					+"\n2. Physical"
-					+"\n3. Office Visit\n");
+					+"\n3. Office Visit");
 			try {
 				menuSelection=Integer.parseInt(br.readLine().trim());
 				if (menuSelection<1 || menuSelection>3)
@@ -299,7 +302,7 @@ public class StudentShell {
 		int docID;
 		
 		//validate input and ensure valid doctor and date
-		if (!validateDoctorID(doctorID))
+		if (!commonStatements.validateDoctorID(doctorID))
 			return "Invalid Doctor ID";
 		else 
 			docID=Integer.parseInt(doctorID);
@@ -399,7 +402,7 @@ public class StudentShell {
 			System.out.println("Select a doctor: "
 				+ "\n1. Enter Doctor ID"
 				+ "\n2. View List of Doctors"					
-				+ "\n3. Exit Program\n");
+				+ "\n3. Exit System and Log Out");
 			
 			try {
 				menuSelection=Integer.parseInt(br.readLine().trim());
@@ -417,7 +420,7 @@ public class StudentShell {
 		    	
 		    	doctorID=br.readLine().trim();
 		    	
-		    	if (!validateDoctorID(doctorID))
+		    	if (!commonStatements.validateDoctorID(doctorID))
 		    	{
 		    		System.out.println("Invalid Doctor ID\n");
 		    		break;
@@ -431,7 +434,7 @@ public class StudentShell {
 		    	 
 		    	 doctorID=br.readLine().trim();
 		    	 
-		    	 if (!validateDoctorID(doctorID))
+		    	 if (!commonStatements.validateDoctorID(doctorID))
 			    	{
 			    		System.out.println("Invalid Doctor ID\n");
 			    		break;
@@ -554,42 +557,6 @@ public class StudentShell {
 			}//end if date
 		}while (!dateSelected);	
 		return null; //if error
-	}
-	
-	/**
-	 * Utility method to validate that a given int is a valid doctorID in the DB
-	 * 
-	 * @param docID
-	 * @throws Exception
-	 */
-	private boolean validateDoctorID(String docID) throws Exception {
-
-		int doctorID=0;
-		
-		//ensure the given doctor ID is an int
-		try {
-			doctorID=Integer.parseInt(docID);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-		//check valid range
-		if (doctorID<2000 || doctorID>2999)
-			return false;
-		
-		//check if exists in DB
-		String sql = "select 1 from doctor where doctorID=?";
-		
-		try (PreparedStatement stm = connection.prepareStatement(sql)) {
-
-			stm.setInt(1,doctorID);
-
-			ResultSet rs = stm.executeQuery();
-			if (!rs.next()) {
-				return false;
-			}
-			else return true;
-
-		}
 	}
 	
 	/**
