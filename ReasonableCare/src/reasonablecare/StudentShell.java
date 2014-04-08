@@ -108,15 +108,16 @@ public class StudentShell {
  * 
  * @throws Exception
  */
-	@Command
-	public Object makeAppointment() throws Exception {
+	@Command(description="Interactive way to make an appointment.  Prompts for all information"
+			+ "needed.")
+	public Object makeAppointmentInteractive() throws Exception {
 		
 		// TODO makeAppointment		
 		
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0, cost=0;
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
-		boolean apptTypeSelected=false, validCreditCardEntered=false, hasInsurance=false, 
+		boolean apptTypeSelected=false, hasInsurance=false, 
 				creditCardAccepted=false;
 		
 		//Check that student has insurance information

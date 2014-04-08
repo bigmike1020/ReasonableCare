@@ -12,6 +12,10 @@ import asg.cliche.Param;
 
 //import java.sql.Timestamp;
 
+/**
+ * Shell to provide the required tasks, operations, and views for a staff member.
+ *
+ */
 public class StaffShell {
 
   /**
@@ -26,23 +30,24 @@ public class StaffShell {
     this.connection = connection;
     this.id = id;
   }
-
-  @Command
-  public String createStudent(Object... args) {
-	  return "Unrecognized command.";
-  }
   
-  @Command(description="Add a new student to the system.  Returns UniqueID of student.  Usage:"
-  		+ "create-student 'name' 'password' startingDate (YYYY-MM-DD)")
+  /**
+   * Allow a staff member to add a new student to the system
+   * 
+   * @param name
+   * @param password
+   * @param startingDate
+   * @return studentID of created student if successful
+   * @throws SQLException
+   */
+  @Command(description="Add a new student to the system")
   public Object createStudent(
-		  @Param(name = "name", description="Name of student.  For student names with multiple words,"
-		  		+ "surround with single quotes.")
+		  @Param(name = "name")
 		  String name, 
-		  @Param(name="password", description="password for student to login.  For passwords with"
-		  		+ "spaces, surround with single quotes.")
+		  @Param(name="password")
 		  String password, 
 		  @Param(name="startingDate", description="starting semester of student in the format"
-		  		+ "YYYY-MM-DD.  Enter without quotes.")
+		  		+ "YYYY-MM-DD")
 		  String startingDate)
       throws SQLException {
 
@@ -74,13 +79,21 @@ public class StaffShell {
 
   }
   
-  @Command(description="Add or Update Insurance Informatin for a Student.  Usage:")
-  public Object updateStudentInsuranceInformation(
+  /**
+   * Allow staff member to add or update insturance information for a student
+   * @param studentID
+   * @param insuranceProviderName
+   * @param insurancePolicyNumber
+   * @return confirmation
+   * @throws SQLException
+   */
+  @Command(description="Add or Update Insurance Information for a Student")
+  public Object updateInsuranceInformation(
 	  @Param(name="studentID", description="Student ID Number")
 	  int studentID,
-	  @Param(name="insuranceProviderName", description="Health Insurance Provider Name")
+	  @Param(name="insuranceProviderName")
 	  String insuranceProviderName,
-	  @Param(name="insurancePolicyNumber", description="Health Insurance Policy Number")
+	  @Param(name="insurancePolicyNumber")
 	  String insurancePolicyNumber)
   	throws SQLException{
 	  
@@ -99,21 +112,26 @@ public class StaffShell {
 	      return "Updated Insurance Information";
   }
   			
-
-  @Command(description = "Add a new doctor to the system.  Usage: create-doctor name password "
-  		+ "phoneNumber specialization. Returns uniqueID of doctor.")
+/**
+ * Allow staff to add a new doctor to the system.
+ * 
+ * @param name
+ * @param password
+ * @param phoneNumber
+ * @param specialization
+ * @return doctorID of created doctor
+ * @throws SQLException
+ */
+  @Command(description = "Add a new doctor to the system")
   public Object createDoctor(
-      @Param(name = "name", description = "Name of Doctor.  For names containing spaces/multiple "
-      		+ "words, surround with single quotes ('').") 
+      @Param(name = "name") 
       String name,
-      @Param(name = "password", description = "Password.  For passwords with spaces, surround with "
-      		+ "single quotes ('').") 
+      @Param(name = "password") 
       String password,
-      @Param(name = "phoneNumber", description = "Phone number.  Should be in form ###-###-####.") 
+      @Param(name = "phoneNumber", description = "Should be in form ###-###-####.") 
       String phoneNumber,
-      @Param(name = "specialization", description = "Specialization.  For specializations with spaces,"
-      		+ " surround with single quotes ('')."
-          + "If doctor is not a specialist, use 'General Practitioner'.") 
+      @Param(name = "specialization", description = "If doctor is not a specialist, use "
+      		+ "'General Practitioner'.") 
       String specialization)
       throws SQLException {
 
@@ -143,29 +161,40 @@ public class StaffShell {
     }
   }
 
-  @Command
+  /**
+   * Return a table of all doctors, grouped by specialization
+   * @return table of all doctors
+   * @throws SQLException
+   */
+  @Command(description = "Return a table of all doctors in the system")
   public Object getDoctors() throws SQLException {
 
     try (Statement statement = connection.createStatement()) {
 
       // Get records from the Doctor table
       try (ResultSet result = statement
-          .executeQuery("SELECT doctorID, doctorName FROM Doctor ORDER BY doctorID")) {
+          .executeQuery("SELECT doctorID, doctorName, specialization FROM "
+          		+ "Doctor ORDER BY specialization")) {
 
-        Table res = new Table("Doctor ID", "Doctor Name");
+        Table res = new Table("Doctor ID", "Doctor Name", "Specialization");
 
         while (result.next()) {
           int id = result.getInt("doctorID");
           String name = result.getString("doctorName");
-          res.add(id, name);
+          String specialization = result.getString("specialization");
+          res.add(id, name, specialization);
         }
 
         return res;
       }
     }
   }
-
-  @Command
+/**
+ * Show list of all students
+ * @return table of all students
+ * @throws SQLException
+ */
+  @Command(description = "Return a table of all students in the system")
   public Object getStudents() throws SQLException {
 
     try (Statement statement = connection.createStatement()) {
@@ -186,15 +215,18 @@ public class StaffShell {
       }
     }
   }
-
-  @Command(description = "Add a new staff member to the system.  Usage: create-staff name "
-  		+ "password.  Returns uniqueID of staff member.")
+/**
+ * Allow a staff member to add a new staff member to the system
+ * @param name
+ * @param password
+ * @return staffID of the created Staff member
+ * @throws SQLException
+ */
+  @Command(description = "Add a new staff member to the system")
 	  public Object createStaff(
-	      @Param(name = "name", description = "Name of staff member.  For names containing spaces/"
-	      		+ "multiple words, surround with single quotes ('').") 
+	      @Param(name = "name") 
 	      String name,
-	      @Param(name = "password", description = "Password.  For passwords with spaces, surround "
-	      		+ "with single quotes ('').") 
+	      @Param(name = "password") 
 	      String password)
 	      throws SQLException {
 
@@ -220,14 +252,18 @@ public class StaffShell {
 	    }
 	  }
 
-  @Command(description = "Add a new nurse to the system.  Usage: create-nurse name "
-	  		+ "password.  Returns uniqueID of nurse.")
+  /**
+   * Allow staff member to add a new nurse to the system
+   * @param name
+   * @param password
+   * @return nurseID of the created nurse
+   * @throws SQLException
+   */
+  @Command(description = "Add a new nurse to the system.")
 		  public Object createNurse(
-		      @Param(name = "name", description = "Name of nurse.  For names containing spaces/"
-		      		+ "multiple words, surround with single quotes ('').") 
+		      @Param(name = "name") 
 		      String name,
-		      @Param(name = "password", description = "Password.  For passwords with spaces, surround "
-		      		+ "with single quotes ('').") 
+		      @Param(name = "password") 
 		      String password)
 		      throws SQLException {
 
