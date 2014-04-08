@@ -1,6 +1,7 @@
 package reasonablecare;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -81,9 +82,14 @@ public class StudentShell {
 		
 	}
 
-	@Command
-	public void updateStudent() {
-		// TODO updateStudent
+	/**
+	 * Allow student to update his or her information
+	 * @throws SQLException 
+	 * @throws IOException 
+	 */
+	@Command(description="Update your information")
+	public void updateStudent() throws IOException, SQLException {
+		commonStatements.updatestudentinformation(id);
 	}
 /**
  * Interactive method to allow a student to make appointment by being prompted for 

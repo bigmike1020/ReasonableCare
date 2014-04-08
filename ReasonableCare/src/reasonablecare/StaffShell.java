@@ -277,30 +277,55 @@ public class StaffShell {
 		    }
 		   }
 	
-  
-  @Command
-  public void updateNurse(int nurseId) throws IOException, SQLException {
+  /**
+   * Update information for a Nurse
+   * @param nurseId
+   * @throws IOException
+   * @throws SQLException
+   */
+  @Command(description="update information for a nurse")
+  public void updateNurse(@Param(name="nurseID")int nurseId) throws IOException, SQLException {
     try (CommonStatements stm = new CommonStatements(connection)) {
       stm.updatenurseinformation(nurseId);
     }
   }
 
-  @Command
-  public void updateDoctor(int id) throws IOException, SQLException {
+  /**
+   * Update information for a Doctor
+   * 
+   * @param id Doctor ID
+   * @throws IOException
+   * @throws SQLException
+   */
+  @Command(description="update information for a doctor")
+  public void updateDoctor(@Param(name="doctorID") int id) throws IOException, SQLException {
     try (CommonStatements stm = new CommonStatements(connection)) {
       stm.updatedoctorinformation(id);
     }
   }
-
-  @Command
-  public void updateStudent(int id) throws IOException, SQLException {
+  
+  /**
+   * Update information for a Student
+   * 
+   * @param id Student ID
+   * @throws IOException
+   * @throws SQLException
+   */
+  @Command(description="update information for a student")
+  public void updateStudent(@Param(name="studentID") int id) throws IOException, SQLException {
     try (CommonStatements stm = new CommonStatements(connection)) {
       stm.updatestudentinformation(id);
     }
   }
 
-  @Command
-  public void updateStaff(int id) throws IOException, SQLException {
+  /**
+   * Update information for a staff member
+   * @param id Staff ID
+   * @throws IOException
+   * @throws SQLException
+   */
+  @Command(description="update information for a staff member")
+  public void updateStaff(@Param(name="staffID") int id) throws IOException, SQLException {
     try (CommonStatements stm = new CommonStatements(connection)) {
       stm.updatestaffinformation(id);
     }
