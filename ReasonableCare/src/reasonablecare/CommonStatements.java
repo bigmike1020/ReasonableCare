@@ -25,7 +25,7 @@ public class CommonStatements implements AutoCloseable {
     // to the DBMS
 	this.connection=connection;
     stm = connection.createStatement();
-    //connection.setAutoCommit(true); // set autocommit on
+    //connection.setAutoCommit(true); //commented out due to SQL error
   }
 
   @Override
@@ -394,6 +394,31 @@ public class CommonStatements implements AutoCloseable {
       }
     }
   }
+  
+  /**
+   * Print Table of doctors
+   * @return Table of doctors with their specializations, names, and doctorIDs
+   * @throws SQLException
+   */
+  
+  public Table getDoctors() throws SQLException {
+		try (Statement statement = connection.createStatement()) {
+
+		// Get records from the Student table
+		try (ResultSet rs = statement
+				.executeQuery("SELECT specialization, doctorID, doctorName "							+ "FROM Doctor ORDER BY specialization, doctorID")) {
+
+			Table table = new Table("Specialization", "Doctor ID",
+					"Doctor Name");
+
+			while (rs.next()) {
+				table.add(rs.getString(1), rs.getInt(2), rs.getString(3));
+			}
+			
+			return table;
+		}
+	}
+}
   
   /**
 	 * Utility method to validate that a given int is a valid doctorID in the DB

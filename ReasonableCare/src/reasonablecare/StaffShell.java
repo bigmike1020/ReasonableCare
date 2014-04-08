@@ -23,12 +23,15 @@ public class StaffShell {
    * connection; no need to close.
    */
   final Connection connection;
+  final CommonStatements commonStatements;
 
   final int id;
 
-  public StaffShell(Connection connection, int id) {
+  public StaffShell(Connection connection, int id) throws SQLException {
     this.connection = connection;
     this.id = id;
+    //constructor to use shared statements
+  	commonStatements = new CommonStatements(connection);
   }
   
   /**
@@ -166,29 +169,14 @@ public class StaffShell {
    * @return table of all doctors
    * @throws SQLException
    */
-  @Command(description = "Return a table of all doctors in the system")
-  public Object getDoctors() throws SQLException {
 
-    try (Statement statement = connection.createStatement()) {
+  @Command(description = "Show list of all doctors and their specializations")
+	public Table getDoctors() throws SQLException {
+		
+		Table doctorTable = commonStatements.getDoctors();
 
-      // Get records from the Doctor table
-      try (ResultSet result = statement
-          .executeQuery("SELECT doctorID, doctorName, specialization FROM "
-          		+ "Doctor ORDER BY specialization")) {
-
-        Table res = new Table("Doctor ID", "Doctor Name", "Specialization");
-
-        while (result.next()) {
-          int id = result.getInt("doctorID");
-          String name = result.getString("doctorName");
-          String specialization = result.getString("specialization");
-          res.add(id, name, specialization);
-        }
-
-        return res;
-      }
-    }
-  }
+		return doctorTable;
+	}
 /**
  * Show list of all students
  * @return table of all students
