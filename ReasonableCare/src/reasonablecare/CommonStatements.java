@@ -287,6 +287,82 @@ public class CommonStatements implements AutoCloseable {
 }
   
   /**
+   * Creates an appointment in the db given all of the information
+   * 
+   * @throws SQLException 
+   * 
+   */
+  public Object makeAppointment(int studentID, int doctorID, String type, String reason,
+		  java.sql.Timestamp time, int cost) throws SQLException
+  {
+	  String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
+				+ "doctorNotes, cost) values(?,?,?,?,?)";
+	  
+	  PreparedStatement prepStmt = null;
+	  ResultSet rs = null;
+	  
+		 int apptID = 0;
+		 
+		try {
+			
+			prepStmt = connection.prepareStatement(makeAppt,
+			        new String[] { "AppointmentID" });
+
+		      prepStmt.setString(1, reason);
+		      prepStmt.setString(2, type);
+		      prepStmt.setTimestamp(3, time); 
+		      prepStmt.setString(4, "");
+		      prepStmt.setInt(5, 0); //TODO update with retrieved cost
+		      prepStmt.executeUpdate();
+		      
+		      rs = prepStmt.getGeneratedKeys();
+		      if (rs != null && rs.next()) {
+		        apptID = rs.getInt(1);
+		      }
+		}
+		finally{
+			close(prepStmt);
+			close(rs);
+		}
+		
+		String associateAppt = "insert into makesAppointment(studentID,doctorID,appointmentID)"
+			 	+ "values (?,?,?)";
+		
+		try {
+			prepStmt = connection.prepareStatement(associateAppt);
+			 
+			prepStmt.setInt(1, studentID);
+			prepStmt.setInt(2, doctorID);
+			prepStmt.setInt(3, apptID);
+			prepStmt.executeUpdate();
+			 	
+			return "Created new Appointment with id= "+apptID+"\n";
+		}
+		finally{
+			close(prepStmt);
+		}
+  }
+  
+  
+  private void close(ResultSet rs) {
+	  if(rs != null) {
+          try { 
+          rs.close(); 
+          } catch(Throwable whatever) {}
+      }
+	
+}
+
+private void close(PreparedStatement prepStmt) {
+	  if(prepStmt != null) {
+          try { 
+          prepStmt.close(); 
+          } catch(Throwable whatever) {}
+      }
+	
+}
+
+/**
 	 * Utility method to validate that a given int is a valid doctorID in the DB
 	 * 
 	 * @param docID

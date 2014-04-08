@@ -236,6 +236,8 @@ public class StudentShell {
 		
 		//Make the appointment
 		
+		return commonStatements.makeAppointment(id, apptDoc, apptType, apptReason, apptTime, cost);
+		/*
 		String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
 				+ "doctorNotes, cost) values(?,?,?,?,?)";
 		
@@ -268,7 +270,7 @@ public class StudentShell {
 			 	
 			 	return "Created new Appointment with id= "+apptID+"\n"
 			 			+"You were billed for $"+cost;
-			} 
+			} */
 		
 	}
 
