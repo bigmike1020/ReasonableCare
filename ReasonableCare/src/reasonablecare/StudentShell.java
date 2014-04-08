@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -454,7 +453,6 @@ public class StudentShell {
 				
 			try{
 				apptDate = java.sql.Date.valueOf(date);
-				
 				dateSelected = true;
 			}
 			catch (IllegalArgumentException e){
@@ -707,4 +705,11 @@ public class StudentShell {
 		}
 	}
 	
+	static void close(PreparedStatement statement) {
+        if(statement != null) {
+            try { 
+            statement.close(); 
+            } catch(Throwable whatever) {}
+        }
+	}
 }

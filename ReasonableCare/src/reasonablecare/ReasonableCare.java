@@ -32,23 +32,38 @@ public class ReasonableCare {
       // and calls the registerDriver method to make Oracle Thin
       // driver, at ora.csc.ncsu.edu, available to clients.
       Class.forName("oracle.jdbc.driver.OracleDriver");
+      
+	  Connection connection = null;
 
       // Get a connection instance from the first driver in the
       // DriverManager list that recognizes the URL jdbcURL
-      try (Connection connection = DriverManager.getConnection(jdbcURL, user,
-          password)) {
+      try {
+    	  
+    	connection = DriverManager.getConnection(jdbcURL, user,password);
 
         connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         Object shell = new LoginShell(connection);
         ShellFactory.createConsoleShell("ReasonableCare", APP_NAME, shell).commandLoop();
 
       }
+       finally {
+        close(connection);
+       }	
 
     } catch (Exception oops) {
       System.out.println("Exception running program.");
       oops.printStackTrace();
     }
 
+ }
+
+  static void close(Connection connection) 
+  {
+	  if(connection != null) {
+		  try { 
+			  connection.close(); 
+		  } catch(Throwable whatever) {}
+	  }
   }
 
 }
