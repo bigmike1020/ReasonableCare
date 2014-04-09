@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -57,31 +58,22 @@ public class StudentShell {
 		// TODO show the student mandatory vaccination info
 	}
 
+		
 	@Command
-	public void manageAppointments(){
-		
-		/*
-		 * 
-		 * Merging these into a manageAppointments (or view/manage) suite
-		 * 
-		@Command
-		public void checkFutureAppointments() {
-			// TODO list future appointments
-		}
-		
-		@Command
-		public void checkPastAppointments() {
-			// TODO checkPastAppointments
-		}
-		
-		@Command
-		public void deleteAppointment() {
-		// TODO deleteAppointment
-		}
-	
-		*/
-		
+	public void checkFutureAppointments() {			
+		// TODO list future appointments
 	}
+		
+	@Command
+	public void checkPastAppointments() {
+	// TODO checkPastAppointments
+	}		
+	
+	@Command
+	public void deleteAppointment() {
+	// TODO deleteAppointment
+	}
+		
 
 	/**
 	 * Allow student to update his or her information
@@ -156,9 +148,75 @@ public class StudentShell {
 			else hasInsurance=true;
 		}
 		
+		 ResultSet result = null;
+		 Statement stm=null
+				 ;
+			String specialization="";
+				int aname1=0;
+				do{
+				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Physical "
+						+ "\n4.Mental Health \n5.Orthopedics \n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems "
+						+ "\n9.HIV Testing \10.Ear, Nose, Throat Problems \n11.Heart related Problems \n12.Vaccination");
+						aname1 = Integer.parseInt(br.readLine());
+					}while(aname1>=13);
+				
+				
+				switch(aname1)
+				{
+				case 1:
+					specialization="Endocrinologist";
+					break;
+				case 2:
+					specialization="General Physician";
+					break;
+				case 3:
+					specialization="General Physician";
+					break;
+				case 4:
+					specialization="Psychiatrist";
+					break;
+				case 5:
+					specialization="Orthopedic Surgeon";
+					break;
+				case 6:
+					specialization="Physical Therapist";
+					break;
+				case 7:
+					specialization="Gynaceologist";
+					break;
+				case 8:
+					specialization="Nephrologist";
+					break;
+				case 9:
+					specialization="General Physician";
+					break;
+				case 10:
+					specialization="ENT specialist";
+					break;
+				case 11:
+				
+					specialization="Cardiologist";
+					break;
+				case 12:
+					specialization="General Physician";
+					break;
+					}
+				System.out.println(specialization+":");
+				result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+				if(result.next())
+				{
+					do
+					{
+						System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
+					}while (result.next());
+				}	
+				
+		/*
 		//prompt for appointment type and reason (if not physical/vaccination)
 		do
 		{
+			commonStatements.
+			
 			System.out.println("Select Appointment Type"
 					+"\n1. Vaccination"
 					+"\n2. Physical"
@@ -185,6 +243,7 @@ public class StudentShell {
 				//TODO control input >512 chars
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
+		*/
 		
 		//select doctor for the appointment
 		apptDoc=selectDoctor();
