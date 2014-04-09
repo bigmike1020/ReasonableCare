@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import asg.cliche.Command;
+import asg.cliche.Param;
 
 public class DoctorShell {
 
@@ -26,8 +27,8 @@ public class DoctorShell {
 		this.id = id;
 	}
 
-	@Command
-	public String checkStudentRecord(String studId) throws Exception {
+	@Command(description="Prints a student's past appointments and consultations.")
+	public String checkStudentRecord(@Param(name="Student ID")String studId) throws Exception {
 		int studentId;
 		try {
 			studentId = Integer.parseInt(studId);
@@ -72,7 +73,7 @@ public class DoctorShell {
 		return "";
 	}
 
-	@Command
+	@Command(description="Show your past appointments.")
 	public Table checkPastAppointments() throws SQLException {
 		String sql = "select appointmentId, studentName, appointmenttime, type, reasonforvisit, doctornotes "
 				+ "FROM Appointment join makesappointment using(appointmentid) join student using(studentid) "
@@ -93,7 +94,7 @@ public class DoctorShell {
 		}
 	}
 
-	@Command
+	@Command(description="Shows your future appointments.")
 	public Table checkFutureAppointments() throws SQLException {
 		String sql = "select appointmentId, studentName, appointmenttime, type, reasonforvisit, doctornotes "
 				+ "FROM Appointment join makesappointment using(appointmentid) join student using(studentid) "
@@ -114,8 +115,8 @@ public class DoctorShell {
 		}
 	}
 
-	@Command
-	public String updateNotes(String appointmentId) throws Exception {
+	@Command(description="Updates the notes for an appointment.")
+	public String updateNotes(@Param(name="Appointment ID")String appointmentId) throws Exception {
 		int apptId;
 		try {
 			apptId = Integer.parseInt(appointmentId);
@@ -161,7 +162,7 @@ public class DoctorShell {
 		return "Appointment updated.";
 	}
 
-	@Command
+	@Command(description="Updates your information.")
 	public void updateDoctor() throws SQLException, IOException {
 		try (CommonStatements common = new CommonStatements(connection)) {
 			common.updatedoctorinformation(id);

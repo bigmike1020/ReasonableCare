@@ -15,7 +15,6 @@ public class CreditCardSystem {
 	 */
 	public boolean getPreapproval(String creditCardNumber)
 	{
-		//TODO credit card preapproval simulation
 		return true;
 	}
 	
@@ -24,8 +23,6 @@ public class CreditCardSystem {
 	 */
 	public boolean validateCreditCard(String creditCardNumber)
 	{
-		//TODO check if credit card number provided is valid
-		
 		return true;
 	}
 	
