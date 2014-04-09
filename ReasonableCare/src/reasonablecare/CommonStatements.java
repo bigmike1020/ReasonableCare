@@ -458,6 +458,49 @@ private void close(PreparedStatement prepStmt) {
 	
 }
 
+
+/**
+ * Determines if student is eligible for a free physical
+ * Students get one free physical year year.
+ * 
+ * @param studentID
+ * @param date proposed date of appointment
+ */
+public boolean freePhysicalEligibility(int studentID, String date)
+{
+	return true;
+}
+
+public boolean validateStudentID(String stID) throws SQLException
+{
+	int studentID=0;
+	
+	//ensure the given studentID
+	try {
+		studentID=Integer.parseInt(stID);
+	} catch (NumberFormatException e) {
+		return false;
+	}
+	//check valid range
+	if (studentID<1000 || studentID>1999)
+		return false;
+	
+	//check if exists in DB
+	String sql = "select 1 from student where studentID=?";
+	
+	try (PreparedStatement stm = connection.prepareStatement(sql)) {
+
+		stm.setInt(1,studentID);
+
+		ResultSet rs = stm.executeQuery();
+		if (!rs.next()) {
+			return false;
+		}
+		else return true;
+
+	}
+}
+
 /**
 	 * Utility method to validate that a given int is a valid doctorID in the DB
 	 * 
@@ -810,5 +853,5 @@ String specialization="";
 	System.out.println("Please choose a valid doctor id");
 	}while(flag!=1);
 	}
-}// end of class HealthCentre
-
+}
+// end of class HealthCentre

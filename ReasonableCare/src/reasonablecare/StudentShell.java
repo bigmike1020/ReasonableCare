@@ -26,9 +26,9 @@ public class StudentShell {
 	 */
 	final Connection connection;
 	final CommonStatements commonStatements;
-	
-	  private static Statement stm;
+	static Statement stm = null;
 
+	
 	final int id;
 	
 	final BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -163,6 +163,7 @@ public class StudentShell {
 		//prompt for appointment type and reason (if not physical/vaccination)
 		do
 		{
+					
 			System.out.println("Select Appointment Type"
 					+"\n1. Vaccination"
 					+"\n2. Physical"
