@@ -13,6 +13,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import asg.cliche.Command;
+import asg.cliche.Param;
+
 public class CommonStatements implements AutoCloseable {
 
   private static BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -93,7 +96,7 @@ public class CommonStatements implements AutoCloseable {
     b = (br.readLine());
     if (b.isEmpty()) {
       out.println("invalid input");
-      updatestudentinformation(userid2);
+      updatedoctorinformation(userid2);
     }
 
     switch (y) {
@@ -209,7 +212,9 @@ public class CommonStatements implements AutoCloseable {
       printStudentInfo(z);
       break;
     case 2:
-
+    	/*
+    	 * If health insurance provider changes, policy number must change too
+    	 */
       stm.executeUpdate("update Student set HEALTHINSURANCEPROVIDERNAME =' "
           + b + " 'where studentid=" + z);
       do {
@@ -560,6 +565,61 @@ public boolean validateStudentID(String stID) throws SQLException
 		return true;
 	}*/
 	
+	  /**
+	   * Delete an appointment from the db
+	   * @param appointmentId
+	   * @return
+	   * @throws SQLException
+	   */
+	  public String deleteAppointment(String appointmentId) throws SQLException {
+	    int id;
+	    try {
+	      id = Integer.parseInt(appointmentId);
+	    } catch (NumberFormatException e) {
+	      return "Error: AppointmentId must be a number. Appointment not deleted.";
+	    }
+
+	    final String studentName, doctorName;
+	    try {
+	      connection.setAutoCommit(false);
+
+	      String sql = "select studentname, doctorname from makesAppointment join "
+	      		+ "student using(studentid) join doctor using(doctorid) "
+	          + " where appointmentid=?";
+	      try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+	        statement.setInt(1, id);
+
+	        // Get records from the Student table
+	        try (ResultSet rs = statement.executeQuery()) {
+
+	          if (!rs.next()) {
+	            return "Error: Could not find appointment. Appointment not deleted.";
+	          }
+
+	          studentName = rs.getString(1);
+	          doctorName = rs.getString(2);
+	        }
+	      }
+
+	      sql = "DELETE FROM Appointment WHERE appointmentId=?";
+	      try (PreparedStatement statement = connection.prepareStatement(sql)) {
+	        statement.setInt(1, id);
+	        statement.executeUpdate();
+	      }
+
+	      connection.commit();
+	    } catch (SQLException e) {
+	      connection.rollback();
+	      throw e;
+	    } finally {
+	      connection.setAutoCommit(true);
+	    }
+
+	    return "Deleted appointment between " + doctorName + " and " + studentName;
+}
+
+	
 	
 	private static void FindSpecialist() throws IOException, SQLException {
 		 ResultSet result = null;
@@ -624,144 +684,6 @@ public boolean validateStudentID(String stID) throws SQLException
 			}		
 		}
 
-	/*
-	 * Create statements are only performed by Staff - Have methods in staff shell
-	 * 
-	 * 
-	  public void createStudent() throws IOException, SQLException {
-		    String sname = "";
-		    while (sname.isEmpty()) {
-		      out.println("Enter your Name");
-		      sname = (br.readLine());
-		    }
-		    String spassword = "";
-		    while (spassword.isEmpty()) {
-		      out.println("Choose a student health centre Password");
-		      spassword = (br.readLine());
-		    }
-		    String startingsemester = "";
-		    while (startingsemester.isEmpty()) {
-		      out.println("Enter the starting semester");
-		      startingsemester = (br.readLine());
-		    }
-		    out.println("Do you have a health insurance?\n1. Yes \n2. No");
-
-		    ResultSet result;
-		    int c = Integer.parseInt(br.readLine());
-		    if (c == 1) {
-		      String providerName = "";
-		      while (providerName.isEmpty()) {
-		        out.println("Enter your health insurance provider name");
-		        providerName = br.readLine();
-		      }
-		      String policyNumber = "";
-		      while (policyNumber.isEmpty()) {
-		        out.println("Enter your health insurance provider name");
-		        policyNumber = br.readLine();
-		      }
-
-		      stm.executeUpdate("INSERT INTO Student(studentName, password, healthInsuranceProviderName, healthInsurancePolicynumber, startingDate) values('"
-		          + sname
-		          + "' , '"
-		          + spassword
-		          + "' , '"
-		          + providerName
-		          + "', '"
-		          + policyNumber + "', '" + startingsemester + "')");
-		      result = stm.executeQuery("SELECT studentid from student");
-		    }// end of if
-		    else {
-		      stm.executeUpdate("INSERT INTO Student( studentName, password, startingDate) values('"
-		          + sname + "' , '" + spassword + "' , '" + startingsemester + "')");
-		      result = stm.executeQuery("SELECT studentid from student");
-		    }
-		    int ID1 = 0;
-		    while (result.next()) {
-		      ID1 = result.getInt("studentid");
-		    }// end of while
-		    out.println("Registration completed. Your Id is:" + ID1);
-		  }
-
-		  public void createNurse() throws IOException, SQLException {
-		    String nname = "";
-		    while (nname.isEmpty()) {
-		      out.println("Enter your Name");
-		      nname = (br.readLine());
-		    }
-		    String npassword = "";
-		    while (npassword.isEmpty()) {
-		      out.println("Choose a student health centre Password");
-		      npassword = (br.readLine());
-		    }
-		    stm.executeUpdate("INSERT INTO Nurse( nurseName, password) values ('"
-		        + nname + "','" + npassword + "')");
-		    ResultSet result = stm.executeQuery("SELECT nurseid from nurse");
-		    int ID2 = 0;
-		    while (result.next()) {
-		      ID2 = result.getInt("nurseid");
-		    }// end of while
-		    out.println("Registration completed. Your Id is:" + ID2);
-		  }
-
-		  public void createDoctor() throws IOException, SQLException {
-		    String dname = "";
-		    while (dname.isEmpty()) {
-		      out.println("Enter your Name");
-		      dname = (br.readLine());
-		    }
-		    String dpassword = "";
-		    while (dpassword.isEmpty()) {
-		      out.println("Choose a student health centre Password");
-		      dpassword = (br.readLine());
-		    }
-		    String dphone = "";
-		    while (dphone.isEmpty()) {
-		      out.println("Enter your Phone number");
-		      dphone = (br.readLine());
-		    }
-		    String dspecialization = "";
-		    while (dspecialization.isEmpty()) {
-		      out.println("Enter your Specialization");
-		      dspecialization = (br.readLine());
-		    }
-		    stm.executeUpdate("INSERT INTO Doctor( doctorNAme, password, phonenumber, specialization) values ('"
-		        + dname
-		        + "','"
-		        + dpassword
-		        + "','"
-		        + dphone
-		        + "','"
-		        + dspecialization
-		        + "')");
-		    ResultSet result = stm.executeQuery("SELECT doctorid from doctor");
-		    int ID3 = 0;
-		    while (result.next()) {
-		      ID3 = result.getInt("doctorid");
-		    }// end of while
-		    out.println("Registration completed. Your Id is:" + ID3);
-		  }
-
-		  public void createStaff() throws IOException, SQLException {
-		    String mname = "";
-		    while (mname.isEmpty()) {
-		      out.println("Enter your Name");
-		      mname = (br.readLine());
-		    }
-		    String mpassword = "";
-		    while (mpassword.isEmpty()) {
-		      out.println("Choose a student health centre Password");
-		      mpassword = (br.readLine());
-		    }
-		    stm.executeUpdate("INSERT INTO Staff(staffName, password) values ('"
-		        + mname + "','" + mpassword + "')");
-		    ResultSet result = stm.executeQuery("SELECT staffid from staff");
-		    int ID4 = 0;
-		    while (result.next()) {
-		      ID4 = result.getInt("staffid");
-		    }// end of while
-		    out.println("Registration completed. Your Id is:" + ID4);
-		  }
-		  */
 	private static void makeAppointment1(int z,String job)throws IOException, SQLException 
 	{ ResultSet result = null;
 		int studentid=0;

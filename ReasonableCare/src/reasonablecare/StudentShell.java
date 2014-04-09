@@ -76,30 +76,32 @@ public class StudentShell {
 public Object checkFutureAppointments() throws SQLException {
 			
 	//Timestamp representing actual current time
-		    java.util.Calendar calendar = Calendar.getInstance();
-		    java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+	java.util.Calendar calendar = Calendar.getInstance();
+	java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 		      
-		      String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
-		      		+ "(appointment natural join makesappointment natural join doctor)"
-		      		+ "where appointmenttime > ? and studentid = ?";
+	String sql = "select appointmentid, appointmenttime, doctorname, type, reasonforvisit from "
+			+ "(appointment natural join makesappointment natural join doctor)"
+		    + "where appointmenttime > ? and studentid = ?";
 		      
-		    	  try (PreparedStatement stm = connection.prepareStatement(sql,
-		  		        new String[] { "AppointmentTime" })) {
+	try (PreparedStatement stm = connection.prepareStatement(sql,
+		  new String[] { "AppointmentTime" })) {
 
-		  		      stm.setTimestamp(1, now);
-		  		      stm.setInt(2, id);
-		  		      ResultSet rs = stm.executeQuery();
+		  stm.setTimestamp(1, now);
+		  stm.setInt(2, id);
+		  ResultSet rs = stm.executeQuery();
 		  		      
-		  		      Table upcomingAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
+		  Table upcomingAppointments = new Table("AppointmentID","Time/Date", 
+				  "Doctor", "Type", "Reason");
 		  		      
-		  		      while (rs.next()) 
-		  		      {
-		  		    	  upcomingAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
-		  		      }
+		  while (rs.next()) 
+		  {
+			  upcomingAppointments.add(rs.getInt(1), rs.getTimestamp(2), rs.getString(3), 
+					  rs.getString(4), rs.getString(5));
+		  }
 		  		      
-		  		      return upcomingAppointments;
-		    	  }  
-		}
+		  return upcomingAppointments;
+	}  
+}
 /**
  * View past appointments for the logged in student
  * 
@@ -107,40 +109,61 @@ public Object checkFutureAppointments() throws SQLException {
  * @return
  * @throws SQLException
  */
-		@Command(description="View past appointments")
-		public Object checkPastAppointments() throws SQLException {
+@Command(description="View past appointments")
+public Object checkPastAppointments() throws SQLException {
 			
-			//Timestamp representing actual current time
-				    java.util.Calendar calendar = Calendar.getInstance();
-				    java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+	//Timestamp representing actual current time
+	java.util.Calendar calendar = Calendar.getInstance();
+	java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 				      
-				      String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
-				      		+ "(appointment natural join makesappointment natural join doctor)"
-				      		+ "where appointmenttime < ? and studentid = ?";
+	String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
+		+ "(appointment natural join makesappointment natural join doctor)"
+		+ "where appointmenttime < ? and studentid = ?";
 				      
-				    	  try (PreparedStatement stm = connection.prepareStatement(sql,
-				  		        new String[] { "AppointmentTime" })) {
+	try (PreparedStatement stm = connection.prepareStatement(sql,
+		new String[] { "AppointmentTime" })) {
 
-				  		      stm.setTimestamp(1, now);
-				  		      stm.setInt(2, id);
-				  		      ResultSet rs = stm.executeQuery();
+		stm.setTimestamp(1, now);
+		stm.setInt(2, id);
+		ResultSet rs = stm.executeQuery();
 				  		      
-				  		      Table pastAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
+		Table pastAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
 				  		      
-				  		      while (rs.next()) 
-				  		      {
-				  		    	  pastAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				  		      }
-				  		      
-				  		      return pastAppointments;
-				    	  }  
-				}
-		
-		@Command
-		public void deleteAppointment() {
-		// TODO deleteAppointment
+		while (rs.next()){
+			pastAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
 		}
+				  		      
+		return pastAppointments;
+	}  
+}
+		
+@Command(description = "Delete one of your appointments given its appointmentID")
+public String deleteAppointment(@Param(name="appointmentID")String appointmentId) 
+    throws SQLException {
+	
+	int apptid;
+    try {
+      apptid = Integer.parseInt(appointmentId);
+    } catch (NumberFormatException e) {
+      return "Error: AppointmentId must be a number. Appointment not deleted.";
+    }
+    
+	String sql = "select appointmentid from makesAppointment where studentid=? and appointmentid=?";
+	try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
+		statement.setInt(1, id);
+		statement.setInt(2, apptid);
+
+		// Get records from the Student table
+		try (ResultSet rs = statement.executeQuery()) {
+			
+			if (!rs.next())
+				return "Error: That is not one of your appointments";
+			else
+				return commonStatements.deleteAppointment(appointmentId);
+		}
+	}
+}
 
 	/**
 	 * Allow student to update his or her information

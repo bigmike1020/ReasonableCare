@@ -81,39 +81,6 @@ public class StaffShell {
     }
 
   }
-  
-  /**
-   * Allow staff member to add or update insturance information for a student
-   * @param studentID
-   * @param insuranceProviderName
-   * @param insurancePolicyNumber
-   * @return confirmation
-   * @throws SQLException
-   */
-  @Command(description="Add or Update Insurance Information for a Student")
-  public Object updateInsuranceInformation(
-	  @Param(name="studentID", description="Student ID Number")
-	  int studentID,
-	  @Param(name="insuranceProviderName")
-	  String insuranceProviderName,
-	  @Param(name="insurancePolicyNumber")
-	  String insurancePolicyNumber)
-  	throws SQLException{
-	  
-	  String sql = "update student set HEALTHINSURANCEPROVIDERNAME = ?, "
-	  		+ "HEALTHINSURANCEPOLICYNUMBER = ? where studentID = ?";
-
-	    // Create a statement instance that will be sending
-	    try (PreparedStatement stm = connection.prepareStatement(sql)) {
-
-	      stm.setString(1, insuranceProviderName);
-	      stm.setString(2, insurancePolicyNumber);
-	      stm.setInt(3, studentID);
-	      stm.executeUpdate();
-	      }
-
-	      return "Updated Insurance Information";
-  }
   			
 /**
  * Allow staff to add a new doctor to the system.
@@ -333,56 +300,13 @@ public class StaffShell {
 
   @Command
   public void makeAppointment() {
-	  // TODO makeAppointment
-	  // TODO make sure date is at start of semester
+	  // TODO makeAppointment - studentID
   }
   
   @Command(description = "Delete an appointment, given the appointment's ID.")
   public String deleteAppointment(@Param(name="appointmentID")String appointmentId) throws SQLException {
-    int id;
-    try {
-      id = Integer.parseInt(appointmentId);
-    } catch (NumberFormatException e) {
-      return "Error: AppointmentId must be a number. Appointment not deleted.";
-    }
-
-    final String studentName, doctorName;
-    try {
-      connection.setAutoCommit(false);
-
-      String sql = "select studentname, doctorname from makesAppointment join student using(studentid) join doctor using(doctorid) "
-          + " where appointmentid=?";
-      try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-        statement.setInt(1, id);
-
-        // Get records from the Student table
-        try (ResultSet rs = statement.executeQuery()) {
-
-          if (!rs.next()) {
-            return "Error: Could not find appointment. Appointment not deleted.";
-          }
-
-          studentName = rs.getString(1);
-          doctorName = rs.getString(2);
-        }
-      }
-
-      sql = "DELETE FROM Appointment WHERE appointmentId=?";
-      try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setInt(1, id);
-        statement.executeUpdate();
-      }
-
-      connection.commit();
-    } catch (SQLException e) {
-      connection.rollback();
-      throw e;
-    } finally {
-      connection.setAutoCommit(true);
-    }
-
-    return "Deleted appointment between " + doctorName + " and " + studentName;
+	  
+	  return commonStatements.deleteAppointment(appointmentId);
   }
 
   
