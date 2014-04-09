@@ -211,9 +211,9 @@ public class NurseShell {
 	  PreparedStatement getDoctors = null;
 	  
 	  String getDoctorsString = "SELECT * FROM Doctor WHERE DoctorId IN " + 
-	  "SELECT DoctorId FROM Appointment a JOIN MakesAppointment ma ON " +
+	  "(SELECT DoctorId FROM Appointment a JOIN MakesAppointment ma ON " +
 	  "a.AppointmentID = ma.AppointmentId WHERE appointmentTime < SYSDATE AND " +
-	  "ma.StudentId = ?";
+	  "ma.StudentId = ?)";
 	  
 	  Table table = new Table("doctorName", "password", "phoneNumber", "specialization");
 	  
@@ -223,7 +223,7 @@ public class NurseShell {
 		  
 		  ResultSet doctors = getDoctors.executeQuery();
 		  
-		  
+		  String x = "something";
 		  while (doctors.next()) {
 			table.add(doctors.getString(1), doctors.getString(2), doctors.getString(3),
 					doctors.getString(4));
@@ -232,15 +232,13 @@ public class NurseShell {
 		  return table;
 	  }
 	  catch(Exception e){
-		  
+		  return "Error retrieving student's doctors: " + e;
 	  }
 	  finally{
 		  if(getDoctors != null){
 			  getDoctors.close();
 		  }
 	  }
-	  
-	  return table;
   }
 
 }
