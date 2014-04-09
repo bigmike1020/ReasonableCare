@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -26,7 +27,8 @@ public class StudentShell {
 	final Connection connection;
 	final CommonStatements commonStatements;
 	
-	
+	  private static Statement stm;
+
 	final int id;
 	
 	final BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -101,7 +103,8 @@ public class StudentShell {
 	@Command(description="Interactive way to make an appointment.  Prompts for all information"
 			+ "needed.")
 	public Object makeAppointmentInteractive() throws Exception {	
-		
+		ResultSet result = null;
+		// Statement statement = null;
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0, cost=0;
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
@@ -155,7 +158,8 @@ public class StudentShell {
 			}
 			else hasInsurance=true;
 		}
-		
+		String specialization="";
+		int apptReason1=0;
 		//prompt for appointment type and reason (if not physical/vaccination)
 		do
 		{
@@ -175,19 +179,93 @@ public class StudentShell {
 			if (apptTypeSelected){
 			switch (menuSelection) {
 		    case 1:
-		    	apptType=apptReason="Vaccination"; break;
+		    	apptType=apptReason="Vaccination"; 
+		    	specialization="General Physician";
+		    	break;
 		    case 2:
-		    	apptType=apptReason="Physical"; break;
+		    	apptType=apptReason="Physical";
+		    	specialization="General Physician";
+		    	break;
 			default:
 				apptType="Office Visit";
-				System.out.println("Enter the reason for your appointment:");
-				apptReason=br.readLine().trim();
-				//TODO control input >512 chars
+				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Mental Health \n4.Orthopedics \n5.Physical Therapy \n6.Women's Health\n7.Urinary, Genital Problems \n8.HIV Testing \n9.Ear, Nose, Throat Problems \n10.Heart related Problems ");
+				apptReason1=Integer.parseInt(br.readLine());
+				switch(apptReason1)
+				{
+				case 1:
+					apptReason="Diabetes";
+					specialization="Endocrinologist";
+					break;
+				case 2:
+					apptReason="FluShots";
+					specialization="General Physician";
+					break;
+				
+				case 3:
+					apptReason="Mental Health";
+					specialization="Psychiatrist";
+					break;
+				case 4:
+					apptReason="Orthopedics";
+					specialization="Orthopedic Surgeon";
+					break;
+				case 5:
+					apptReason="Physical Therapy";
+					specialization="Physical Therapist";
+					break;
+				case 6:
+					apptReason="Women's Health";
+					specialization="Gynaceologist";
+					break;
+				case 7:
+					apptReason="Urinary, Genital Problems";
+					specialization="Nephrologist";
+					break;
+				case 8:
+					apptReason="HIV Testing";
+					specialization="General Physician";
+					break;
+				case 9:
+					apptReason="Ear, Nose, Throat Problems";
+					specialization="ENT specialist";
+					break;
+				case 10:
+					apptReason="Heart related Problems";
+					specialization="Cardiologist";
+					break;
+				}
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
-		
+	//	System.out.println(specialization);
+	//	Statement statement = null;
+		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+		if(result.next())
+		{
+			do
+			{
+				System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
+			}while (result.next());
+		}
+		int ID=0;
+		int flag=0;
+		do{
+		System.out.println("Select the id of the doctor you want to book appointment with"); 
+		apptDoc=Integer.parseInt(br.readLine());
+		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+		while (result.next()) 
+		{
+			ID=result.getInt("doctorid");
+			if(apptDoc==ID)
+				{
+				flag=1;
+				break;
+				}
+		}
+		if(flag==0)
+		System.out.println("Please choose a valid doctor id");
+		}while(flag!=1);
 		//select doctor for the appointment
-		apptDoc=selectDoctor();
+	//	apptDoc=selectDoctor();
 		
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
