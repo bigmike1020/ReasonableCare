@@ -27,9 +27,49 @@ public class DoctorShell {
 	}
 
 	@Command
-	public void checkStudentRecord(String studentId) {
-		// TODO show past appointments and reasons for appointment
-		// TODO show consultations and notes
+	public String checkStudentRecord(String studId) throws Exception {
+		int studentId;
+		try {
+			studentId = Integer.parseInt(studId);
+		} catch (NumberFormatException e) {
+			return "Student ID must be an integer.";
+		}
+
+		String sql = "select appointmenttime, type, reasonforvisit, doctorname, doctorNotes from appointment "
+				+ "join makesappointment using(appointmentid) join doctor using(doctorid) "
+				+ "where studentid=? and (appointmenttime < CURRENT_TIMESTAMP)";
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+			stm.setInt(1, studentId);
+
+			Table table = new Table("Date and Time", "Type", "Reason",
+					"Doctor", "Notes");
+			ResultSet rs = stm.executeQuery();
+			while (rs.next()) {
+				table.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getString(5));
+			}
+
+			out.println("Student's Past Appointments:");
+			out.println(table);
+		}
+
+		sql = "select timeOfConsultation, nurseName, nurseNotes from Consultation "
+				+ "join makesConsultation using(consultationId) join nurse using(nurseid) "
+				+ "where studentid=? and (timeofconsultation < CURRENT_TIMESTAMP)";
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+			stm.setInt(1, studentId);
+
+			Table table = new Table("Date and Time", "Nurse", "Notes");
+			ResultSet rs = stm.executeQuery();
+			while (rs.next()) {
+				table.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3));
+			}
+
+			out.println("Student's Consultations:");
+			out.println(table);
+		}
+
+		return "";
 	}
 
 	@Command
