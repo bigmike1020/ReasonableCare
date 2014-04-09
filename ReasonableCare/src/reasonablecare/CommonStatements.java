@@ -694,6 +694,121 @@ private void close(PreparedStatement prepStmt) {
 		    out.println("Registration completed. Your Id is:" + ID4);
 		  }
 		  */
-
+	private static void makeAppointment1(int z,String job)throws IOException, SQLException 
+	{ ResultSet result = null;
+		int studentid=0;
+		//System.out.println(job);
+		if(job.equalsIgnoreCase("Student"))
+		{
+			studentid=z;
+		}
+		else
+		{
+			System.out.println("Enter the student id");
+			studentid=Integer.parseInt(br.readLine());
+		}
+		
+		int atype1=0;
+	do
+	{
+		System.out.println("Choose the type of your visit \n1.Physical \n2.Vaccination");
+		atype1 = Integer.parseInt(br.readLine());
+	}while(atype1>2);
+	String atype="";
+	if (atype1==2)
+		atype="Vaccination";
+	else
+		atype="Physical";
+	int aname1=0;
+String aname="";
+String specialization="";
+	if (atype1==2)
+		{
+		aname="Vaccination";
+		specialization="General Physician";
+		}
+	else
+	{	
+	do
+		{
+			System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.General Medical Problems \n4.Mental Health \n5.Orthopedics \n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems \n9.HIV Testing \10.Ear, Nose, Throat Problems \n11.Heart related Problems ");
+			aname1 = Integer.parseInt(br.readLine());
+		}while(aname1>=12);}
+	switch(aname1)
+		{
+	case 1:
+		aname="Diabetes";
+		specialization="Endocrinologist";
+		break;
+	case 2:
+		aname="FluShots";
+		specialization="General Physician";
+		break;
+	case 3:
+		aname="General Medical Problems";
+		specialization="General Physician";
+		break;
+	case 4:
+		aname="Mental Health";
+		specialization="Psychiatrist";
+		break;
+	case 5:
+		aname="Orthopedics";
+		specialization="Orthopedic Surgeon";
+		break;
+	case 6:
+		aname="Physical Therapy";
+		specialization="Physical Therapist";
+		break;
+	case 7:
+		aname="Women's Health";
+		specialization="Gynaceologist";
+		break;
+	case 8:
+		aname="Urinary, Genital Problems";
+		specialization="Nephrologist";
+		break;
+	case 9:
+		aname="HIV Testing";
+		specialization="General Physician";
+		break;
+	case 10:
+		aname="Ear, Nose, Throat Problems";
+		specialization="ENT specialist";
+		break;
+	case 11:
+		aname="Heart related Problems";
+		specialization="Cardiologist";
+		break;
+		}
+	
+	result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+	if(result.next())
+	{
+		do
+		{
+			System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
+		}while (result.next());
+	}
+	int ID=0;
+	int flag=0;
+	int doc=0;
+	do{
+	System.out.println("Select the id of the doctor you want to book appointment with"); 
+	doc=Integer.parseInt(br.readLine());
+	result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+	while (result.next()) 
+	{
+		ID=result.getInt("doctorid");
+		if(doc==ID)
+			{
+			flag=1;
+			break;
+			}
+	}
+	if(flag==0)
+	System.out.println("Please choose a valid doctor id");
+	}while(flag!=1);
+	}
 }// end of class HealthCentre
 
