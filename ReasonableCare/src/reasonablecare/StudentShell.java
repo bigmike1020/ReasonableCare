@@ -55,20 +55,50 @@ public class StudentShell {
 	}
 
 	@Command
-	public void checkVaccinations() {
+	public void checkVaccinations() 
+	{
+		//Get past appointments
+		//Check for vaccinations in those
+		//If not three vaccinations, return false
+			//else return true
+		
 		// TODO show the student mandatory vaccination info
 	}
+	
+/**
+ * View upcoming appointments for the logged in student
+ * 
+ * Displays table with Date/Time, Doctor, Appointment Type, and Reason for appointment
+ * @return
+ * @throws SQLException
+ */
+@Command(description="view upcoming appointments")
+public Object checkFutureAppointments() throws SQLException {
+			
+	//Timestamp representing actual current time
+		    java.util.Calendar calendar = Calendar.getInstance();
+		    java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+		      
+		      String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
+		      		+ "(appointment natural join makesappointment natural join doctor)"
+		      		+ "where appointmenttime > ? and studentid = ?";
+		      
+		    	  try (PreparedStatement stm = connection.prepareStatement(sql,
+		  		        new String[] { "AppointmentTime" })) {
 
-	@Command
-	public void manageAppointments(){
-		
-		/*
-		 * 
-		 * Merging these into a manageAppointments (or view/manage) suite
-		 * 
-		@Command
-		public void checkFutureAppointments() {
-			// TODO list future appointments
+		  		      stm.setTimestamp(1, now);
+		  		      stm.setInt(2, id);
+		  		      ResultSet rs = stm.executeQuery();
+		  		      
+		  		      Table upcomingAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
+		  		      
+		  		      while (rs.next()) 
+		  		      {
+		  		    	  upcomingAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
+		  		      }
+		  		      
+		  		      return upcomingAppointments;
+		    	  }  
 		}
 		
 		@Command
@@ -80,10 +110,7 @@ public class StudentShell {
 		public void deleteAppointment() {
 		// TODO deleteAppointment
 		}
-	
-		*/
-		
-	}
+
 
 	/**
 	 * Allow student to update his or her information
@@ -596,16 +623,6 @@ public class StudentShell {
 		}
 		
 		return availableAppointments;
-	}
-	
-	/**
-	 * Check if free physical has been taken in the past year for a student
-	 * 
-	 */
-	public boolean checkFreePhysical(int studentID)
-	{
-		//TODO Check if user has had a free physical in the past year
-		return false;
 	}
 	
 	/**
