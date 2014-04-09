@@ -314,7 +314,7 @@ public class CommonStatements implements AutoCloseable {
 		      prepStmt.setString(2, type);
 		      prepStmt.setTimestamp(3, time); 
 		      prepStmt.setString(4, "");
-		      prepStmt.setInt(5, 0); //TODO update with retrieved cost
+		      prepStmt.setInt(5, 0);
 		      prepStmt.executeUpdate();
 		      
 		      rs = prepStmt.getGeneratedKeys();
