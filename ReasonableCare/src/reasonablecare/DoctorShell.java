@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import asg.cliche.Command;
+import asg.cliche.Param;
 
 public class DoctorShell {
 
@@ -26,8 +27,8 @@ public class DoctorShell {
 		this.id = id;
 	}
 
-	@Command
-	public String checkStudentRecord(String studId) throws Exception {
+	@Command(description="Prints a student's past appointments and consultations.")
+	public String checkStudentRecord(@Param(name="Student ID")String studId) throws Exception {
 		int studentId;
 		try {
 			studentId = Integer.parseInt(studId);
