@@ -89,7 +89,11 @@ public class NurseShell {
 	  }
 	  
   }
+ 
+  //TODO Allow nurse to view consultations; either by date or student?
   
+  //TODO Allow nurse to update consultations
+
   //@Command
   //public void updateConsultation() {
 //	  PreparedStatement updateConsultation = null;
@@ -134,6 +138,7 @@ public class NurseShell {
 	  }
   }
   
+  //TODO allow nurse to view past appointments for student - is in narrative
   @Command
   public void viewAppointments(
 		  @Param(name="studentId", description = "Student's ID to find appointments for") int studentId) 
@@ -142,6 +147,7 @@ public class NurseShell {
 	  
   }
   
+  //TODO debug: ORA-00921: unexpected end of SQL command with check-student-records 1020
   @Command(description="Check a student's medical records, including past appointments and consultations")
   public String checkStudentRecords(
 		  @Param(name="studentId", description = "Student's ID to find appointments for") String strStudentId)
@@ -192,6 +198,7 @@ public class NurseShell {
 	  
   }
   
+  //TODO add past appointments for testing this method
   @Command(description = "Show the list of doctors a student has seen in the past.")
   public Object showStudentsDoctors(
 		  @Param(name="studentId", description = "Student's ID")String strStudentId) 

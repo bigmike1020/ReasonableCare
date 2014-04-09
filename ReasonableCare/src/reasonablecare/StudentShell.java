@@ -190,9 +190,8 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
 		boolean apptTypeSelected=false, hasInsurance=false, 
 				creditCardAccepted=false;
-		
+
 		//Check that student has insurance information
-		
 		while (!hasInsurance)
 		{
 			if (!checkHasInsurance(id))
@@ -318,17 +317,15 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
 	System.out.println(specialization);
-	//	Statement statement = null;
 		
 		String sql = "SELECT doctorname,doctorid FROM doctor where specialization=?";
 		  
 		try (PreparedStatement stm = connection.prepareStatement(sql)) {
 				     stm.setString(1, specialization);
 				    
-			
-		ResultSet rs = stm.executeQuery();
-								
-					//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");						if(rs.next())
+		
+		ResultSet rs = stm.executeQuery();						
+
 		while (rs.next()){
 			System.out.println(rs.getInt("doctorid")+"          "+rs.getString("doctorname"));
 		}
@@ -340,7 +337,8 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		System.out.println("Select the id of the doctor you want to book appointment with"); 
 		apptDoc=Integer.parseInt(br.readLine());
 		
-		//TODO fix null pointer error
+		//TODO fix null pointer error - convert statement to preparedStatement as directly above
+		
 		//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
 		while (result.next()) 
 		{
@@ -354,8 +352,8 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		if(flag==0)
 		System.out.println("Please choose a valid doctor id");
 		}while(flag!=1);
-		//select doctor for the appointment
-	//	apptDoc=selectDoctor();
+		//select doctor for the appointment - old method
+		//apptDoc=selectDoctor();
 		
 		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
