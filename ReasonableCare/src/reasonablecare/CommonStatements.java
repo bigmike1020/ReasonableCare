@@ -536,6 +536,31 @@ public boolean validateStudentID(String stID) throws SQLException
 
 		}
 	}
+	/*	
+	
+	public boolean checkFreePhysical(String studentID, String date) throws SQLException
+	{
+		if (!validateStudentID(studentID))
+			return false;
+		else
+		{
+			try (PreparedStatement stm = connection.prepareStatement(sql,
+			        new String[] { "AppointmentTime" })) {
+
+			      stm.setInt(1, doctorID);
+			      stm.setString(2, date);
+			      ResultSet rs = stm.executeQuery();
+			      
+			      while (rs.next()) 
+			      {
+			    	  scheduledAppointments.add(rs.getTimestamp(1));
+			      }
+			}
+		}
+		return true;
+	}*/
+	
+	
 	private static void FindSpecialist() throws IOException, SQLException {
 		 ResultSet result = null;
 		//static Statement statement = null;

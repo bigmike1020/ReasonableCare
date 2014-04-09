@@ -237,22 +237,31 @@ public class StudentShell {
 				}
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
-	//	System.out.println(specialization);
+	System.out.println(specialization);
 	//	Statement statement = null;
-		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-		if(result.next())
-		{
-			do
-			{
-				System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
-			}while (result.next());
+		
+		String sql = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+		  
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+				     stm.setString(1, specialization);
+				    
+			
+		ResultSet rs = stm.executeQuery();
+								
+					//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");						if(rs.next())
+		while (rs.next()){
+			System.out.println(rs.getInt("doctorid")+"          "+rs.getString("doctorname"));
+		}
+		
 		}
 		int ID=0;
 		int flag=0;
 		do{
 		System.out.println("Select the id of the doctor you want to book appointment with"); 
 		apptDoc=Integer.parseInt(br.readLine());
-		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
+		
+		//TODO fix null pointer error
+		//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
 		while (result.next()) 
 		{
 			ID=result.getInt("doctorid");
