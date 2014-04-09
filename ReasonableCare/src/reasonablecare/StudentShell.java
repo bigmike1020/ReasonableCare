@@ -100,11 +100,41 @@ public Object checkFutureAppointments() throws SQLException {
 		  		      return upcomingAppointments;
 		    	  }  
 		}
-		
-		@Command
-		public void checkPastAppointments() {
-			// TODO checkPastAppointments
-		}
+/**
+ * View past appointments for the logged in student
+ * 
+ * Displays table with Date/Time, Doctor, Appointment Type, and Reason for appointment
+ * @return
+ * @throws SQLException
+ */
+		@Command(description="View past appointments")
+		public Object checkPastAppointments() throws SQLException {
+			
+			//Timestamp representing actual current time
+				    java.util.Calendar calendar = Calendar.getInstance();
+				    java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+				      
+				      String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
+				      		+ "(appointment natural join makesappointment natural join doctor)"
+				      		+ "where appointmenttime < ? and studentid = ?";
+				      
+				    	  try (PreparedStatement stm = connection.prepareStatement(sql,
+				  		        new String[] { "AppointmentTime" })) {
+
+				  		      stm.setTimestamp(1, now);
+				  		      stm.setInt(2, id);
+				  		      ResultSet rs = stm.executeQuery();
+				  		      
+				  		      Table pastAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
+				  		      
+				  		      while (rs.next()) 
+				  		      {
+				  		    	  pastAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				  		      }
+				  		      
+				  		      return pastAppointments;
+				    	  }  
+				}
 		
 		@Command
 		public void deleteAppointment() {
