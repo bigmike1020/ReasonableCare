@@ -184,7 +184,7 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 			+ "needed.")
 	public Object makeAppointmentInteractive() throws Exception {	
 		java.sql.Timestamp apptTime;
-		int apptDoc=0,menuSelection=0, cost=0;
+		int apptDoc=0,menuSelection=0, cost=0, ccMonth,ccYear;
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
 		boolean apptTypeSelected=false, hasInsurance=false, 
 				creditCardAccepted=false;
@@ -382,9 +382,12 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 			do{
 				System.out.println("Enter your credit card number:");
 				ccNumber = br.readLine().trim();
-				//TODO handle credit card expiration date
-				
-				if (creditCard.validateCreditCard(ccNumber))
+				// handle credit card expiration date
+				System.out.println("Enter your the expiration month:");
+				ccMonth = br.readLine().trim();
+				System.out.println("Enter your the expiration month:");
+				ccYear = br.readLine().trim();
+				if (creditCard.validateCreditCard(ccNumber,ccMonth,ccYear))
 				{
 					if (creditCard.getPreapproval(ccNumber))
 					{

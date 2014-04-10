@@ -1,5 +1,7 @@
 package reasonablecare;
 
+import java.util.Calendar;
+
 public class CreditCardSystem {
 
 	public CreditCardSystem()
@@ -21,9 +23,18 @@ public class CreditCardSystem {
 	/**
 	 * 
 	 */
-	public boolean validateCreditCard(String creditCardNumber)
+	public boolean validateCreditCard(String creditCardNumber, int ccMonth, int ccYear)
 	{
-		return true;
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		int month = Calendar.getInstance().get(Calendar.MONTH);
+
+		if (ccYear>=year)
+			{
+			if (ccMonth >= month)
+				return true;
+			}
+		
+			return false;
 	}
 	
 	
