@@ -183,8 +183,6 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 	@Command(description="Interactive way to make an appointment.  Prompts for all information"
 			+ "needed.")
 	public Object makeAppointmentInteractive() throws Exception {	
-		ResultSet result = null;
-		// Statement statement = null;
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0, cost=0;
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
