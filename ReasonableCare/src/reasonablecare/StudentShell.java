@@ -347,9 +347,6 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 			ResultSet rs = stm.executeQuery();						
 
 		
-		//TODO fix null pointer error - convert statement to preparedStatement as directly above
-	//	System.out.println(specialization);
-		//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
 		while (rs.next()) 
 		{
 			ID=rs.getInt("doctorid");
@@ -363,10 +360,7 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		if(flag==0)
 		System.out.println("Please choose a valid doctor id");
 		}while(flag!=1);
-		//select doctor for the appointment - old method
-		//apptDoc=selectDoctor();
 		
-		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
 		//fetch insurance information
