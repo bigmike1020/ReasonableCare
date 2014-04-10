@@ -384,9 +384,9 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 				ccNumber = br.readLine().trim();
 				// handle credit card expiration date
 				System.out.println("Enter your the expiration month:");
-				ccMonth = br.readLine().trim();
+				ccMonth = Integer.parseInt(br.readLine());
 				System.out.println("Enter your the expiration month:");
-				ccYear = br.readLine().trim();
+				ccYear = Integer.parseInt(br.readLine());
 				if (creditCard.validateCreditCard(ccNumber,ccMonth,ccYear))
 				{
 					if (creditCard.getPreapproval(ccNumber))
