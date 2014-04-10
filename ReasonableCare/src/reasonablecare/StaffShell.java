@@ -106,6 +106,8 @@ public class StaffShell {
       		+ "'General Practitioner'.") 
       String specialization)
       throws SQLException {
+	  
+	  //TODO Constrain add-Doctor to only allow certain specializations
 
     String sql = "insert into doctor(doctorName,password,phoneNumber,specialization) values(?,?,?,?)";
 
