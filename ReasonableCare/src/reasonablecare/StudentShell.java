@@ -316,7 +316,7 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 				}
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
-	System.out.println(specialization);
+///	System.out.println(specialization);
 		
 		String sql = "SELECT doctorname,doctorid FROM doctor where specialization=?";
 		  
@@ -333,22 +333,33 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		}
 		int ID=0;
 		int flag=0;
-		do{
-		System.out.println("Select the id of the doctor you want to book appointment with"); 
-		apptDoc=Integer.parseInt(br.readLine());
+		do{		
+			System.out.println("Select the id of the doctor you want to book appointment with"); 
+		
+			apptDoc=Integer.parseInt(br.readLine());
+
+			String sql1 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+			  
+			try (PreparedStatement stm = connection.prepareStatement(sql1)) {
+					     stm.setString(1, specialization);
+					    
+			
+			ResultSet rs = stm.executeQuery();						
+
 		
 		//TODO fix null pointer error - convert statement to preparedStatement as directly above
-		
+	//	System.out.println(specialization);
 		//result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-		while (result.next()) 
+		while (rs.next()) 
 		{
-			ID=result.getInt("doctorid");
+			ID=rs.getInt("doctorid");
 			if(apptDoc==ID)
 				{
 				flag=1;
 				break;
 				}
 		}
+		}//end try
 		if(flag==0)
 		System.out.println("Please choose a valid doctor id");
 		}while(flag!=1);
