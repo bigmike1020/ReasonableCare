@@ -55,35 +55,115 @@ public class StudentShell {
 	}
 
 	@Command
-	public void checkVaccinations() {
+	public void checkVaccinations() 
+	{
+		//Get past appointments
+		//Check for vaccinations in those
+		//If not three vaccinations, return false
+			//else return true
+		
 		// TODO show the student mandatory vaccination info
 	}
-
-	@Command
-	public void manageAppointments(){
-		
-		/*
-		 * 
-		 * Merging these into a manageAppointments (or view/manage) suite
-		 * 
-		@Command
-		public void checkFutureAppointments() {
-			// TODO list future appointments
-		}
-		
-		@Command
-		public void checkPastAppointments() {
-			// TODO checkPastAppointments
-		}
-		
-		@Command
-		public void deleteAppointment() {
-		// TODO deleteAppointment
-		}
 	
-		*/
+/**
+ * View upcoming appointments for the logged in student
+ * 
+ * Displays table with Date/Time, Doctor, Appointment Type, and Reason for appointment
+ * @return
+ * @throws SQLException
+ */
+@Command(description="view upcoming appointments")
+public Object checkFutureAppointments() throws SQLException {
+			
+	//Timestamp representing actual current time
+	java.util.Calendar calendar = Calendar.getInstance();
+	java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+		      
+	String sql = "select appointmentid, appointmenttime, doctorname, type, reasonforvisit from "
+			+ "(appointment natural join makesappointment natural join doctor)"
+		    + "where appointmenttime > ? and studentid = ?";
+		      
+	try (PreparedStatement stm = connection.prepareStatement(sql,
+		  new String[] { "AppointmentTime" })) {
+
+		  stm.setTimestamp(1, now);
+		  stm.setInt(2, id);
+		  ResultSet rs = stm.executeQuery();
+		  		      
+		  Table upcomingAppointments = new Table("AppointmentID","Time/Date", 
+				  "Doctor", "Type", "Reason");
+		  		      
+		  while (rs.next()) 
+		  {
+			  upcomingAppointments.add(rs.getInt(1), rs.getTimestamp(2), rs.getString(3), 
+					  rs.getString(4), rs.getString(5));
+		  }
+		  		      
+		  return upcomingAppointments;
+	}  
+}
+/**
+ * View past appointments for the logged in student
+ * 
+ * Displays table with Date/Time, Doctor, Appointment Type, and Reason for appointment
+ * @return
+ * @throws SQLException
+ */
+@Command(description="View past appointments")
+public Object checkPastAppointments() throws SQLException {
+			
+	//Timestamp representing actual current time
+	java.util.Calendar calendar = Calendar.getInstance();
+	java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+				      
+	String sql = "select appointmenttime, doctorname, type, reasonforvisit from "
+		+ "(appointment natural join makesappointment natural join doctor)"
+		+ "where appointmenttime < ? and studentid = ?";
+				      
+	try (PreparedStatement stm = connection.prepareStatement(sql,
+		new String[] { "AppointmentTime" })) {
+
+		stm.setTimestamp(1, now);
+		stm.setInt(2, id);
+		ResultSet rs = stm.executeQuery();
+				  		      
+		Table pastAppointments = new Table("Time/Date", "Doctor", "Type", "Reason");
+				  		      
+		while (rs.next()){
+			pastAppointments.add(rs.getTimestamp(1), rs.getString(2), rs.getString(3), rs.getString(4));
+		}
+				  		      
+		return pastAppointments;
+	}  
+}
 		
+@Command(description = "Delete one of your appointments given its appointmentID")
+public String deleteAppointment(@Param(name="appointmentID")String appointmentId) 
+    throws SQLException {
+	
+	int apptid;
+    try {
+      apptid = Integer.parseInt(appointmentId);
+    } catch (NumberFormatException e) {
+      return "Error: AppointmentId must be a number. Appointment not deleted.";
+    }
+    
+	String sql = "select appointmentid from makesAppointment where studentid=? and appointmentid=?";
+	try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
+		statement.setInt(1, id);
+		statement.setInt(2, apptid);
+
+		// Get records from the Student table
+		try (ResultSet rs = statement.executeQuery()) {
+			
+			if (!rs.next())
+				return "Error: That is not one of your appointments";
+			else
+				return commonStatements.deleteAppointment(appointmentId);
+		}
 	}
+}
 
 	/**
 	 * Allow student to update his or her information
@@ -103,16 +183,13 @@ public class StudentShell {
 	@Command(description="Interactive way to make an appointment.  Prompts for all information"
 			+ "needed.")
 	public Object makeAppointmentInteractive() throws Exception {	
-		ResultSet result = null;
-		// Statement statement = null;
 		java.sql.Timestamp apptTime;
-		int apptDoc=0,menuSelection=0, cost=0;
+		int apptDoc=0,menuSelection=0, cost=0, ccMonth,ccYear;
 		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
 		boolean apptTypeSelected=false, hasInsurance=false, 
 				creditCardAccepted=false;
-		
+
 		//Check that student has insurance information
-		
 		while (!hasInsurance)
 		{
 			if (!checkHasInsurance(id))
@@ -237,38 +314,51 @@ public class StudentShell {
 				}
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
-	//	System.out.println(specialization);
-	//	Statement statement = null;
-		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-		if(result.next())
-		{
-			do
-			{
-				System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
-			}while (result.next());
+///	System.out.println(specialization);
+		
+		String sql = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+		  
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+				     stm.setString(1, specialization);
+				    
+		
+		ResultSet rs = stm.executeQuery();						
+
+		while (rs.next()){
+			System.out.println(rs.getInt("doctorid")+"          "+rs.getString("doctorname"));
+		}
+		
 		}
 		int ID=0;
 		int flag=0;
-		do{
-		System.out.println("Select the id of the doctor you want to book appointment with"); 
-		apptDoc=Integer.parseInt(br.readLine());
-		result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-		while (result.next()) 
+		do{		
+			System.out.println("Select the id of the doctor you want to book appointment with"); 
+		
+			apptDoc=Integer.parseInt(br.readLine());
+
+			String sql1 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+			  
+			try (PreparedStatement stm = connection.prepareStatement(sql1)) {
+					     stm.setString(1, specialization);
+					    
+			
+			ResultSet rs = stm.executeQuery();						
+
+		
+		while (rs.next()) 
 		{
-			ID=result.getInt("doctorid");
+			ID=rs.getInt("doctorid");
 			if(apptDoc==ID)
 				{
 				flag=1;
 				break;
 				}
 		}
+		}//end try
 		if(flag==0)
 		System.out.println("Please choose a valid doctor id");
 		}while(flag!=1);
-		//select doctor for the appointment
-	//	apptDoc=selectDoctor();
 		
-		//prompt for appointment time
 		apptTime = selectDateTime(apptDoc);
 		
 		//fetch insurance information
@@ -292,9 +382,12 @@ public class StudentShell {
 			do{
 				System.out.println("Enter your credit card number:");
 				ccNumber = br.readLine().trim();
-				//TODO handle credit card expiration date
-				
-				if (creditCard.validateCreditCard(ccNumber))
+				// handle credit card expiration date
+				System.out.println("Enter your the expiration month:");
+				ccMonth = Integer.parseInt(br.readLine());
+				System.out.println("Enter your the expiration month:");
+				ccYear = Integer.parseInt(br.readLine());
+				if (creditCard.validateCreditCard(ccNumber,ccMonth,ccYear))
 				{
 					if (creditCard.getPreapproval(ccNumber))
 					{
@@ -587,16 +680,6 @@ public class StudentShell {
 		}
 		
 		return availableAppointments;
-	}
-	
-	/**
-	 * Check if free physical has been taken in the past year for a student
-	 * 
-	 */
-	public boolean checkFreePhysical(int studentID)
-	{
-		//TODO Check if user has had a free physical in the past year
-		return false;
 	}
 	
 	/**

@@ -1,6 +1,8 @@
 package reasonablecare;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -81,39 +83,6 @@ public class StaffShell {
     }
 
   }
-  
-  /**
-   * Allow staff member to add or update insturance information for a student
-   * @param studentID
-   * @param insuranceProviderName
-   * @param insurancePolicyNumber
-   * @return confirmation
-   * @throws SQLException
-   */
-  @Command(description="Add or Update Insurance Information for a Student")
-  public Object updateInsuranceInformation(
-	  @Param(name="studentID", description="Student ID Number")
-	  int studentID,
-	  @Param(name="insuranceProviderName")
-	  String insuranceProviderName,
-	  @Param(name="insurancePolicyNumber")
-	  String insurancePolicyNumber)
-  	throws SQLException{
-	  
-	  String sql = "update student set HEALTHINSURANCEPROVIDERNAME = ?, "
-	  		+ "HEALTHINSURANCEPOLICYNUMBER = ? where studentID = ?";
-
-	    // Create a statement instance that will be sending
-	    try (PreparedStatement stm = connection.prepareStatement(sql)) {
-
-	      stm.setString(1, insuranceProviderName);
-	      stm.setString(2, insurancePolicyNumber);
-	      stm.setInt(3, studentID);
-	      stm.executeUpdate();
-	      }
-
-	      return "Updated Insurance Information";
-  }
   			
 /**
  * Allow staff to add a new doctor to the system.
@@ -137,6 +106,8 @@ public class StaffShell {
       		+ "'General Practitioner'.") 
       String specialization)
       throws SQLException {
+	  
+	  //TODO Constrain add-Doctor to only allow certain specializations
 
     String sql = "insert into doctor(doctorName,password,phoneNumber,specialization) values(?,?,?,?)";
 
@@ -331,58 +302,275 @@ public class StaffShell {
     }
   }
 
-  @Command
-  public void makeAppointment() {
-	  // TODO makeAppointment
-	  // TODO make sure date is at start of semester
-  }
+  /**
+   * Interactive method to allow a staff member to make appointment by being prompted for 
+   * the values needed.  Invalid input is mostly handled
+   * 
+   * @throws Exception
+   */
+  	@Command(description="Interactive way to make an appointment.  Prompts for all information"
+  			+ "needed.")
+  public Object makeAppointment() throws Exception{
+	  int ID3=0;
+		int flag=0;
+	  BufferedReader br = new BufferedReader(new InputStreamReader( System.in));
+	  System.out.println("Enter the student id for which appointment has to be made");
+	  int id = Integer.parseInt(br.readLine());
+	  String sql = "SELECT STUDENTID from STUDENT";
+	  
+		try (PreparedStatement stm = connection.prepareStatement(sql)) {
+				     //stm.setString(1, specialization);
+				    
+		
+		ResultSet rs = stm.executeQuery();						
+
+		while (rs.next()){
+			ID3=rs.getInt("STUDENTID");
+			if(id==ID3)
+				{
+				flag=1;
+				break;
+				}
+		}
+		
+		}		
+		if(flag==0)
+			{
+			System.out.println("Not a valid student id");
+			makeAppointment();
+			}
+	final StudentShell  StudentShell = new StudentShell(connection,id);
+		java.sql.Timestamp apptTime;
+		int apptDoc=0,menuSelection=0, cost=0;
+		String apptType="", apptReason="", insuranceProvider, insuranceNumber, ccNumber;
+		boolean apptTypeSelected=false, hasInsurance=false, 
+				creditCardAccepted=false;
+
+		//Check that student has insurance information
+		while (!hasInsurance)
+		{
+			
+			if (!StudentShell.checkHasInsurance(id))
+			{
+				System.out.println("The student does not have insurance.  \nEnter an option from the menu below:"
+						+"\n1. Provide Insurance Information"
+						+"\n2. Exit System and Log out\n");
+				try {
+					menuSelection=Integer.parseInt(br.readLine().trim());
+					if (menuSelection<1 || menuSelection>2)
+				   	  System.out.println("Invalid Selection\n");
+					else apptTypeSelected=true;
+				      
+				} catch (NumberFormatException e) {
+			      System.out.println("Invalid Selection\n");
+				}		
+				if (apptTypeSelected){
+				switch (menuSelection) {
+			    case 1:
+			    	//take insurance info
+			    	System.out.println("Enter the name of your insurance provider:");
+			    	insuranceProvider = br.readLine().trim();
+			    	System.out.println("Enter your insurance policy number:");
+			    	insuranceNumber = br.readLine().trim();
+			    	
+			    	String updateIns = "UPDATE STUDENT SET HEALTHINSURANCEPROVIDERNAME=?, "
+			    			+ "HEALTHINSURANCEPOLICYNUMBER= ? "
+			    			+ "WHERE STUDENTID=?";
+			    	
+			    	try (PreparedStatement stm = connection.prepareStatement(updateIns)) {
+					      stm.setString(1, insuranceProvider);
+					      stm.setString(2, insuranceNumber);
+					      stm.setInt(3, id); 
+					      stm.executeUpdate();
+			    	}
+			    	System.out.println("Insurance Information Accepted");
+			    	hasInsurance=true;
+			    	break;
+			    	
+				default:
+					System.exit(0);
+				}}// end switch+if
+			}
+			else hasInsurance=true;
+		}
+		String specialization="";
+		int apptReason1=0;
+		//prompt for appointment type and reason (if not physical/vaccination)
+		do
+		{
+					
+			System.out.println("Select Appointment Type"
+					+"\n1. Vaccination"
+					+"\n2. Physical"
+					+"\n3. Office Visit");
+			try {
+				menuSelection=Integer.parseInt(br.readLine().trim());
+				if (menuSelection<1 || menuSelection>3)
+			   	  System.out.println("Invalid Selection\n");
+				else apptTypeSelected=true;
+			      
+			} catch (NumberFormatException e) {
+		      System.out.println("Invalid Selection\n");
+			}		
+			if (apptTypeSelected){
+			switch (menuSelection) {
+		    case 1:
+		    	apptType=apptReason="Vaccination"; 
+		    	specialization="General Physician";
+		    	break;
+		    case 2:
+		    	apptType=apptReason="Physical";
+		    	specialization="General Physician";
+		    	break;
+			default:
+				apptType="Office Visit";
+				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Mental Health \n4.Orthopedics \n5.Physical Therapy \n6.Women's Health\n7.Urinary, Genital Problems \n8.HIV Testing \n9.Ear, Nose, Throat Problems \n10.Heart related Problems ");
+				apptReason1=Integer.parseInt(br.readLine());
+				switch(apptReason1)
+				{
+				case 1:
+					apptReason="Diabetes";
+					specialization="Endocrinologist";
+					break;
+				case 2:
+					apptReason="FluShots";
+					specialization="General Physician";
+					break;
+				
+				case 3:
+					apptReason="Mental Health";
+					specialization="Psychiatrist";
+					break;
+				case 4:
+					apptReason="Orthopedics";
+					specialization="Orthopedic Surgeon";
+					break;
+				case 5:
+					apptReason="Physical Therapy";
+					specialization="Physical Therapist";
+					break;
+				case 6:
+					apptReason="Women's Health";
+					specialization="Gynaceologist";
+					break;
+				case 7:
+					apptReason="Urinary, Genital Problems";
+					specialization="Nephrologist";
+					break;
+				case 8:
+					apptReason="HIV Testing";
+					specialization="General Physician";
+					break;
+				case 9:
+					apptReason="Ear, Nose, Throat Problems";
+					specialization="ENT specialist";
+					break;
+				case 10:
+					apptReason="Heart related Problems";
+					specialization="Cardiologist";
+					break;
+				}
+			}}// end switch+if
+		} while (!apptTypeSelected);//end while
+///	System.out.println(specialization);
+		
+		String sql2 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+		  
+		try (PreparedStatement stm = connection.prepareStatement(sql2)) {
+				     stm.setString(1, specialization);
+				    
+		
+		ResultSet rs = stm.executeQuery();						
+
+		while (rs.next()){
+			System.out.println(rs.getInt("doctorid")+"          "+rs.getString("doctorname"));
+		}
+		
+		}
+		int ID=0;
+		flag=0;
+		do{		
+			System.out.println("Select the id of the doctor you want to book appointment with"); 
+		
+			apptDoc=Integer.parseInt(br.readLine());
+
+			String sql1 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+			  
+			try (PreparedStatement stm = connection.prepareStatement(sql1)) {
+					     stm.setString(1, specialization);
+					    
+			
+			ResultSet rs = stm.executeQuery();						
+
+		
+		while (rs.next()) 
+		{
+			ID=rs.getInt("doctorid");
+			if(apptDoc==ID)
+				{
+				flag=1;
+				break;
+				}
+		}
+		}//end try
+		if(flag==0)
+		System.out.println("Please choose a valid doctor id");
+		}while(flag!=1);
+		
+		apptTime = StudentShell.selectDateTime(apptDoc);
+		
+		//fetch insurance information
+		insuranceProvider = StudentShell.getInsuranceProvider(id);
+		insuranceNumber = StudentShell.getInsuranceNumber(id);
+		
+		//TODO allow student to get a free physical each year
+		InsuranceCompanySystem insurance= new InsuranceCompanySystem();
+		CreditCardSystem creditCard = new CreditCardSystem();
+		//get cost of appointment
+		cost = insurance.getCopay(apptType, apptDoc, insuranceProvider, insuranceNumber);
+		
+		System.out.println("The copayment for your appointment will be: "+cost);
+		
+		if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
+		{
+			System.out.println("Your deductible has been paid for the year.  You will not be billed.");
+		}
+		else
+		{
+			System.out.println("Your deductible has not been paid for the year.");
+			do{
+				System.out.println("Enter your credit card number:");
+				ccNumber = br.readLine().trim();
+				//TODO handle credit card expiration date
+				
+				if (creditCard.validateCreditCard(ccNumber))
+				{
+					if (creditCard.getPreapproval(ccNumber))
+					{
+						creditCardAccepted=true;
+						System.out.println("Your credit card was pre-approved.");
+					}
+					else
+					{
+						System.out.println("Your credit card was not pre-approved.  You will need to"
+								+ "use a different card.");
+						//TODO handle exit option for this loop
+					}
+				}
+				else
+					System.out.println("Invalid Credit Card Number");
+				
+			} while (!creditCardAccepted);
+		}
+		
+		//Make the appointment
+		
+		return commonStatements.makeAppointment(id, apptDoc, apptType, apptReason, apptTime, cost);  }
   
   @Command(description = "Delete an appointment, given the appointment's ID.")
   public String deleteAppointment(@Param(name="appointmentID")String appointmentId) throws SQLException {
-    int id;
-    try {
-      id = Integer.parseInt(appointmentId);
-    } catch (NumberFormatException e) {
-      return "Error: AppointmentId must be a number. Appointment not deleted.";
-    }
-
-    final String studentName, doctorName;
-    try {
-      connection.setAutoCommit(false);
-
-      String sql = "select studentname, doctorname from makesAppointment join student using(studentid) join doctor using(doctorid) "
-          + " where appointmentid=?";
-      try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-        statement.setInt(1, id);
-
-        // Get records from the Student table
-        try (ResultSet rs = statement.executeQuery()) {
-
-          if (!rs.next()) {
-            return "Error: Could not find appointment. Appointment not deleted.";
-          }
-
-          studentName = rs.getString(1);
-          doctorName = rs.getString(2);
-        }
-      }
-
-      sql = "DELETE FROM Appointment WHERE appointmentId=?";
-      try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setInt(1, id);
-        statement.executeUpdate();
-      }
-
-      connection.commit();
-    } catch (SQLException e) {
-      connection.rollback();
-      throw e;
-    } finally {
-      connection.setAutoCommit(true);
-    }
-
-    return "Deleted appointment between " + doctorName + " and " + studentName;
+	  
+	  return commonStatements.deleteAppointment(appointmentId);
   }
 
   
@@ -418,5 +606,4 @@ public class StaffShell {
     }
 
   }
-
 }
