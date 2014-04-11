@@ -13,9 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import asg.cliche.Command;
-import asg.cliche.Param;
-
 public class CommonStatements implements AutoCloseable {
 
   private static BufferedReader br = new BufferedReader(new InputStreamReader(
