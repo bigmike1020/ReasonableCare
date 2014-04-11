@@ -494,6 +494,13 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		    }// end of switch
 		}//end while
 	}
+	
+	@Command(description="Find a specialist to handle your care.")
+	public void findSpecialist() throws IOException, SQLException {
+	  try(CommonStatements common = new CommonStatements(connection)) {
+	    common.FindSpecialist();
+	  }
+	}
 
 	/**
 	 * Interactive system of prompts to allow a student to select a valid
