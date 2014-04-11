@@ -54,15 +54,20 @@ public class StudentShell {
 		return doctorTable;
 	}
 
-	@Command
-	public void checkVaccinations() 
+	@Command(description="Prints the number of vaccination appointments you have made. You must make 3 before the end of the semester.")
+	public String checkVaccinations() throws SQLException 
 	{
-		//Get past appointments
-		//Check for vaccinations in those
-		//If not three vaccinations, return false
-			//else return true
-		
-		// TODO show the student mandatory vaccination info
+	  String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=?";
+	  try(PreparedStatement stm = connection.prepareStatement(sql)) {
+	    stm.setInt(1, id);
+	    
+	    ResultSet rs = stm.executeQuery();
+	    if(!rs.next()) {
+	      return "Error retrieving vaccination information.";
+	    }
+	    
+	    return "You have had " + rs.getInt(1) + " vaccinations.";
+	  }
 	}
 	
 /**
