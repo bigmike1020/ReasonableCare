@@ -541,9 +541,20 @@ public class StaffShell {
 			do{
 				System.out.println("Enter your credit card number:");
 				ccNumber = br.readLine().trim();
-				//TODO handle credit card expiration date
+
+				System.out.println("Enter your credit card expiration as MMYYYY:");
+				String ccDate = br.readLine().trim();
 				
-				if (creditCard.validateCreditCard(ccNumber))
+				int ccMonth, ccYear;
+				try {
+				  ccMonth = Integer.parseInt(ccDate.substring(0, 2));
+				  ccYear = Integer.parseInt(ccDate.substring(2, ccDate.length()));
+				} catch(NumberFormatException|IndexOutOfBoundsException e) {
+				  System.out.println("Invalid credit card expiration date");
+				  continue;
+				}
+				
+				if (!creditCard.validateCreditCard(ccNumber, ccMonth, ccYear))
 				{
 					if (creditCard.getPreapproval(ccNumber))
 					{
@@ -552,13 +563,24 @@ public class StaffShell {
 					}
 					else
 					{
-						System.out.println("Your credit card was not pre-approved.  You will need to"
-								+ "use a different card.");
-						//TODO handle exit option for this loop
+						System.out.println("Your credit card was not pre-approved. Use a different card (Y/N)?");
+						String response = br.readLine().trim();
+						if("Y".equals(response)) {
+						  continue;
+						}
+						
+						break;
 					}
 				}
-				else
-					System.out.println("Invalid Credit Card Number");
+				else {
+					System.out.println("Invalid credit card number or expiration date. Try again (Y/N)?");
+          String response = br.readLine().trim();
+          if("Y".equals(response)) {
+            continue;
+          }
+          
+          break;
+				}
 				
 			} while (!creditCardAccepted);
 		}
