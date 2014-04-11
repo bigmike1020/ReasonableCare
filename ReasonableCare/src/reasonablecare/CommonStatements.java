@@ -13,9 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import asg.cliche.Command;
-import asg.cliche.Param;
-
 public class CommonStatements implements AutoCloseable {
 
   private static BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -26,9 +23,10 @@ public class CommonStatements implements AutoCloseable {
   Connection connection;
 
   public CommonStatements(Connection connection) throws SQLException {
-    // Create a statement instance that will be sending your SQL statements
-    // to the DBMS
-	this.connection=connection;
+    this.connection=connection;
+  	if(stm != null) {
+  	  stm.close();
+  	}
     stm = connection.createStatement();
     //connection.setAutoCommit(true); //commented out due to SQL error
   }
@@ -666,10 +664,7 @@ public boolean validateStudentID(String stID) throws SQLException
 	  }
 	
 	
-	private static void FindSpecialist() throws IOException, SQLException {
-		 ResultSet result = null;
-		//static Statement statement = null;
-
+	public void FindSpecialist() throws IOException, SQLException {
 		String specialization="";
 			int aname1=0;
 			do{
@@ -719,13 +714,12 @@ public boolean validateStudentID(String stID) throws SQLException
 				break;
 				}
 			System.out.println(specialization+":");
-			result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-			if(result.next())
+			ResultSet result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");
+			
+			Table table = new Table("Doctor ID", "Doctor Name");
+			while(result.next())
 			{
-				do
-				{
-					System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
-				}while (result.next());
+			  table.add(result.getInt("doctorid"), result.getString("doctorname"));
 			}		
 		}
 
