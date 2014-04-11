@@ -16,10 +16,12 @@ public class NurseShell {
 
   Connection connection;
   int id;
+  private final CommonStatements commonStatements;
   
-  public NurseShell(Connection connection, int id) {
+  public NurseShell(Connection connection, int id) throws SQLException {
     this.connection = connection;
     this.id = id;
+    this.commonStatements = new CommonStatements(connection);
   }
   
   @Command(description="Add a consultation, including a student ID and consultation notes.")
@@ -152,50 +154,7 @@ public class NurseShell {
   public String checkStudentRecords(
 		  @Param(name="studentId", description = "Student's ID to find appointments for") String strStudentId)
 		  throws Exception {	 
-	  
-	  int studentId;
-	  try{
-		  studentId = Integer.parseInt(strStudentId);
-	  }
-	  catch(Exception e){
-		  return "Error parsing student ID.";
-	  }
-	  
-	  PreparedStatement getConsultations = null;
-	  // SELECT * FROM Consultation c WHERE c.ConsultationID = 
-	  // (SELECT ConsultationID FROM MakesConsultation WHERE StudentID=1020);	  	  
-	  String getConsultationsString = "SELECT * FROM Consultation c WHERE " + 
-	  "c.ConsultationId = (SELECT ConsultationId FROM MakesConsultation WHERE " +
-	  "StudentId = ?";
-	  
-	  PreparedStatement getAppointments = null;	 
-	  // SELECT * FROM Appointment a JOIN Doctor d ON DoctorID =
-	  // (SELECT DoctorID FROM MakesAppointment WHERE StudentID=1020) 
-	  // WHERE a.AppointmentID=(SELECT AppointmentID FROM MakesAppointment 
-	  // WHERE StudentID=1020) AND a.appointmentTime < SYSDATE;
-	  String getAppointmentsString = "SELECT * FROM Appointment a JOIN Doctor d ON " +
-	  "DoctorId = (SELECT DoctorId FROM MakesAppointment WHERE StudentId = ?) " +
-	  "WHERE a.AppointmentId = (SELECT AppointmentId FROM MakesAppointment " + 
-	  "WHERE StudentId = ?) AND a.AppointmentTime < SYSDATE";
-	  
-	  try{
-		  getConsultations = connection.prepareStatement(getConsultationsString);
-		  getConsultations.setInt(1, studentId);
-		  
-		  getAppointments = connection.prepareStatement(getAppointmentsString);
-		  getAppointments.setInt(1, studentId);
-		  getAppointments.setInt(2, studentId);
-		  
-		  ResultSet consultations = getConsultations.executeQuery();
-		  ResultSet appointments = getAppointments.executeQuery();
-		  
-		  return "Stuff";
-	  }
-	  finally{
-		  
-	  }
-	  
-	  
+	  return commonStatements.checkStudentRecord(strStudentId);
   }
   
   //TODO add past appointments for testing this method
