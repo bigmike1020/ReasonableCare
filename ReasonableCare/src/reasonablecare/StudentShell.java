@@ -271,7 +271,9 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		    	break;
 			default:
 				apptType="Office Visit";
-				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Mental Health \n4.Orthopedics \n5.Physical Therapy \n6.Women's Health\n7.Urinary, Genital Problems \n8.HIV Testing \n9.Ear, Nose, Throat Problems \n10.Heart related Problems ");
+				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Mental Health "
+						+ "\n4.Orthopedics \n5.Physical Therapy \n6.Women's Health\n7.Urinary, Genital Problems "
+						+ "\n8.HIV Testing \n9.Ear, Nose, Throat Problems \n10.Heart related Problems ");
 				apptReason1=Integer.parseInt(br.readLine());
 				switch(apptReason1)
 				{
