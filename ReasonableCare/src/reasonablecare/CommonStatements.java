@@ -671,13 +671,12 @@ public boolean validateStudentID(String stID) throws SQLException
 				break;
 				}
 			System.out.println(specialization+":");
-			result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
-			if(result.next())
+			result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");
+			
+			Table table = new Table("Doctor ID", "Doctor Name");
+			while(result.next())
 			{
-				do
-				{
-					System.out.println(result.getInt("doctorid")+"          "+result.getString("doctorname"));
-				}while (result.next());
+			  table.add(result.getInt("doctorid"), result.getString("doctorname"));
 			}		
 		}
 
