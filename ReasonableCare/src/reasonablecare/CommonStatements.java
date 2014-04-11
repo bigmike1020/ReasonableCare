@@ -714,13 +714,18 @@ public boolean validateStudentID(String stID) throws SQLException
 				break;
 				}
 			System.out.println(specialization+":");
-			ResultSet result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");
 			
-			Table table = new Table("Doctor ID", "Doctor Name");
-			while(result.next())
-			{
-			  table.add(result.getInt("doctorid"), result.getString("doctorname"));
-			}		
+			String sql = "SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION=?";
+			try(PreparedStatement stm = connection.prepareStatement(sql)) {
+			  stm.setString(1, specialization);
+  			ResultSet result = stm.executeQuery();
+  			
+  			Table table = new Table("Doctor ID", "Doctor Name");
+  			while(result.next())
+  			{
+  			  table.add(result.getInt("doctorid"), result.getString("doctorname"));
+  			}		
+			}
 		}
 
 	private static void makeAppointment1(int z,String job)throws IOException, SQLException 
