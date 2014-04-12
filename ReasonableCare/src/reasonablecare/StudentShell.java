@@ -392,7 +392,7 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 				// handle credit card expiration date
 				System.out.println("Enter your the expiration month:");
 				ccMonth = Integer.parseInt(br.readLine());
-				System.out.println("Enter your the expiration month:");
+				System.out.println("Enter your the expiration year:");
 				ccYear = Integer.parseInt(br.readLine());
 				if (creditCard.validateCreditCard(ccNumber,ccMonth,ccYear))
 				{

@@ -52,7 +52,7 @@ public class StaffShell {
 		  @Param(name="password")
 		  String password, 
 		  @Param(name="startingDate", description="starting semester of student in the format"
-		  		+ "YYYY-MM-DD")
+		  		+ " YYYY-MM-DD")
 		  String startingDate)
       throws SQLException {
 
