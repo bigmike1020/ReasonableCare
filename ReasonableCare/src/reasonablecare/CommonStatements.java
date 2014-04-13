@@ -927,6 +927,39 @@ String specialization="";
 	}while(flag!=1);
 	}
 	
+	public boolean verifyFreePhysical(int studentId)throws Exception{
+		
+		String strPhysicalAppointmentNum = "SELECT COUNT(*) FROM Appointment NATURAL JOIN MakesAppointment " +
+		"WHERE StudentId = ? AND Type = 'Physical' AND AppointmentTime > TRUNC(SYSDATE, 'YEAR') AND " +
+		"AppointmentTime < ADD_MONTHS(TRUNC(SYSDATE, 'YEAR'), 12) - 1";
+		
+		PreparedStatement physicalAppointmentNum = null;
+		try{
+			physicalAppointmentNum = connection.prepareStatement(strPhysicalAppointmentNum);
+			
+			physicalAppointmentNum.setInt(1,  studentId);
+			ResultSet rs = physicalAppointmentNum.executeQuery();
+			
+			if(rs != null && rs.next()){
+				int physicalCount = rs.getInt(1);
+				if(physicalCount >= 1){
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+		}
+		catch(Exception e){
+			throw e;
+		}
+		finally{
+			physicalAppointmentNum.close();
+		}
+		return false;
+	}
+	
+	
 	  /**
 	   * Verifies that the specialty of a doctor is one of the allowed specialties
 	   * 

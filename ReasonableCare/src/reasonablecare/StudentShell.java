@@ -376,10 +376,15 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		
 		//get cost of appointment
 		cost = insurance.getCopay(apptType, apptDoc, insuranceProvider, insuranceNumber);
+		if(apptType.equals("Physical") && commonStatements.verifyFreePhysical(id)){
+			cost = 0;
+		}
 		
 		System.out.println("The copayment for your appointment will be: "+cost);
-		
-		if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
+		if(cost == 0){
+			
+		}
+		else if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
 		{
 			System.out.println("Your deductible has been paid for the year.  You will not be billed.");
 		}
@@ -435,6 +440,17 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		Object appointmentTable = commonStatements.showAvailableTimes(doctorID, date);
 		
 		return appointmentTable;
+	}
+	
+	@Command(description="Return whether or not you have a free physical for this calendar year. " + 
+	"This will return false if you currently have an upcoming physical appointment.")
+	public String verifyFreePhysical() throws Exception{
+		if(commonStatements.verifyFreePhysical(id)){
+			return "You have 1 free physical left for this year.";
+		}
+		else{
+			return "You do not have a free physical this year.";
+		}
 	}
 	
 	/**

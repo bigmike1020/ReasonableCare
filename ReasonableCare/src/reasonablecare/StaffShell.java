@@ -533,10 +533,15 @@ public class StaffShell {
 		CreditCardSystem creditCard = new CreditCardSystem();
 		//get cost of appointment
 		cost = insurance.getCopay(apptType, apptDoc, insuranceProvider, insuranceNumber);
+		if(apptType.equals("Physical") && commonStatements.verifyFreePhysical(id)){
+			cost = 0;
+		}
 		
 		System.out.println("The copayment for your appointment will be: "+cost);
-		
-		if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
+		if(cost == 0){
+			
+		}
+		else if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
 		{
 			System.out.println("Your deductible has been paid for the year.  You will not be billed.");
 		}
