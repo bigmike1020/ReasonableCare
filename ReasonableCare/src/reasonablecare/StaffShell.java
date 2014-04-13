@@ -107,7 +107,7 @@ public class StaffShell {
       String specialization)
       throws SQLException {
 	  
-	  if (!verifySpecialty(specialization))
+	  if (!commonStatements.verifySpecialty(specialization))
 	  {
 		  return "Invalid Specialization Provided.  Doctor not created.";
 	  }
@@ -632,44 +632,5 @@ public class StaffShell {
       }
     }
 
-  }
-  /**
-   * Verifies that the specialty of a doctor is one of the allowed specialties
-   * 
-   * @param proposedSpecialty
-   * @return
-   */
-  
-  /*
-   * Creating appointments and searching by health problem requires that
-   * only certain types of doctors exist in the system.  A doctor must conform to
-   * one of the below types of doctors.
-   */
-  public boolean verifySpecialty(String proposedSpecialty)
-  {
-	  switch(proposedSpecialty)
-		{
-		case "General Physician":
-			return true;
-		case "Endocrinologist":
-			return true;
-		case "Psychiatrist":
-			return true;
-		case "Orthopedic Surgeon":
-			return true;
-		case "Physical Therapist":
-			return true;
-		case "Gynaceologist":
-			return true;
-		case "Nephrologist":
-			return true;
-		case "ENT specialist":
-			return true;
-		case "Cardiologist":
-			return true;
-		default:
-			System.out.println(proposedSpecialty);
-			return false;
-		}
   }
 }
