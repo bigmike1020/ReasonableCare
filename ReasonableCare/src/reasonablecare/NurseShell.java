@@ -142,7 +142,7 @@ public void updateConsultation() throws IOException, SQLException{
   }
   
   //TODO allow nurse to view past appointments for student - is in narrative
-  @Command
+  @Command(description="Check a student's medical records, including past appointments and consultations")
   public void viewAppointments(
 		  @Param(name="studentId", description = "Student's ID to find appointments for") int studentId) 
 		  throws SQLException {
@@ -150,6 +150,10 @@ public void updateConsultation() throws IOException, SQLException{
 	  
   }
   
+  @Command(description="Check all doctors records, including number and specialization")
+  public void viewDoctors () throws IOException, SQLException{
+	  commonStatements.viewDoctors();	  
+  }
   //TODO debug: ORA-00921: unexpected end of SQL command with check-student-records 1020
   @Command(description="Check a student's medical records, including past appointments and consultations")
   public String checkStudentRecords(
