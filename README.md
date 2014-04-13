@@ -39,6 +39,41 @@ Staff may update a student's information, or a student may do this himself. Upon
     3.HealthInsurance Provider Number 
     4.Password
     5.Starting semester
+    
+###Maintain and update doctor information
+
+Staff have the ability to create new doctor accounts and update doctor information, including name, phone number, and area of specialization.
+
+####Create a new doctor account
+
+    ReasonableCare/staff> create-doctor <name> <password> <phone number> <specialization>
+
+####Update existing doctor account
+
+    ReasonableCare/staff> update-doctor <doctor ID>
+    Enter the attribute to be updated: 
+    1.Name 
+    2.Password
+    3.Specialization
+    4.Phone Number
+    
+###Check student records for holds
+
+A student must receive three vaccinations by the end of their first semester, otherwise their account with the health center is in a hold. It is possible to check which students have not received their mandatory vaccinations in the Staff Shell with the check vaccinations command, which will print a list of all students who are in violation.
+
+    ReasonableCare/staff> check-vaccinations
+    +------------+--------------+-----------------------+------------------------+
+    | Student ID | Student Name | Starting Semester     | Number of Vaccinations |
+    +------------+--------------+-----------------------+------------------------+
+    | 1005       | MDaniel      | 2012-08-01 00:00:00.0 | 0                      |
+    | 1052       | Jim          | 2013-01-04 00:00:00.0 | 0                      |
+    | 1082       | Gati         | 2013-03-12 00:00:00.0 | 0                      |
+      ...
+      
+Students may also check their own vaccinatino records through the Student Shell
+
+    ReasonableCare/student> check-vaccinations
+    You have had 0 vaccinations.
 
 ##Making an Appointment with a Doctor
 
@@ -95,6 +130,33 @@ To schedule an office visit, select the appopriate prompt response. You will the
     2014
     Your credit card was pre-approved.
     Created new Appointment with id = 3220
+  
+###Checking past appointments
+
+Students can view their past appointments in the Student Shell
+    
+    ReasonableCare/student> check-past-appointments
+    +-----------------------+-----------+--------------+--------------+
+    | Time/Date             | Doctor    | Type         | Reason       |
+    +-----------------------+-----------+--------------+--------------+
+    | 2014-04-09 16:30:00.0 | Dr. Harry | Office Visit | Stomach Ache |
+    +-----------------------+-----------+--------------+--------------+
+  
+###Showing and canceling future appointments
+
+A student can view his or her future appointments using the Student Shell.
+  
+    ReasonableCare/student> check-future-appointments
+    +---------------+-----------------------+---------+--------------+---------------+
+    | AppointmentID | Time/Date             | Doctor  | Type         | Reason        |
+    +---------------+-----------------------+---------+--------------+---------------+
+    | 3241          | 2014-04-14 16:30:00.0 | Dr. Rob | Office Visit | Mental Health |
+    +---------------+-----------------------+---------+--------------+---------------+
+
+Students can also cancel their own appointments using the appointment ID's.
+    
+    ReasonableCare/student> delete-appointment 3220
+    Deleted appointment between Dr. Rob and Mitchell Neville
     
 ##Doctors' Schedules
 
