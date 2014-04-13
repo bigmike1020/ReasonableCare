@@ -19,7 +19,8 @@ public class CommonStatements implements AutoCloseable {
       System.in));
 
   private static Statement stm;
-  
+	static ResultSet result = null;
+
   Connection connection;
 
   public CommonStatements(Connection connection) throws SQLException {
@@ -38,6 +39,106 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
+  public void updateConsultations() throws IOException, SQLException {
+		int atype1=0;
+		System.out.println("Enter the consultation id you want to update");
+		atype1 = Integer.parseInt(br.readLine());
+		result = stm.executeQuery("SELECT consultationid from consultation");
+		int ID3=0;
+		int flag=0;
+		while (result.next()) 
+		{
+			ID3=result.getInt("consultationid");
+			if(atype1==ID3)
+				{
+				flag=1;
+				break;
+				}
+		}// end of while
+		if(flag==0)
+			{
+			System.out.println("Not a valid consultation id");
+			updateConsultations();
+			}
+		else
+		{
+			int y=0;
+			String b="";
+			
+			do{
+			do{
+				System.out.println ("Enter the attribute to be updated: \n1.Time of Consultation \n2.Notes");
+			
+			y=Integer.parseInt(br.readLine());
+			}while(y>=3);
+			if(y==1)
+			{
+				System.out.println ("Enter the changed value");
+				b=(br.readLine());
+			}
+			else{
+				int choice=0;
+				System.out.println("1.Do you want to add to your note\n2.Change the contents of the note");
+				choice=Integer.parseInt(br.readLine());
+				if(choice==1)
+				{
+					String ID="";
+					result = stm.executeQuery("SELECT * FROM Consultation WHERE Consultationid="+atype1+"");
+					while (result.next()) 
+					{
+						ID=result.getString("NURSENOTES");
+						
+					}// end of while
+					System.out.println ("Enter the additional part of the note");
+					b=(br.readLine());
+					b=ID+""+b;
+				}
+				if(choice==2)
+				{	
+					System.out.println ("Enter the changed value");
+					b=(br.readLine());
+				}
+			}
+		}while(b.isEmpty());
+		
+		switch(y)
+		{
+		case 1:
+			stm.executeUpdate("update Consultation set TIMEOFCONSULTATION = to_date('"+b+"','dd.mm.yyyy hh24:mi:ss') where Consultationid=" + atype1);
+			System.out.println("Record Updated");
+			System.out.println("Your updated details are as shown:");
+			result = stm.executeQuery("SELECT * FROM Consultation WHERE Consultationid="+atype1+"");	
+			if(result.next())
+			{
+				do
+				{
+					System.out.println("ID: "+result.getString("Consultationid"));
+					System.out.println("Time: "+result.getString("TIMEOFCONSULTATION"));
+					System.out.println("Nurse's Notes: "+result.getString("NURSENOTES"));
+					
+				}while (result.next());
+			}
+			break;
+		case 2:
+			stm.executeUpdate("update Consultation set NURSENOTES =' " + b + " 'where Consultationid=" + atype1);	
+			System.out.println("Record Updated");
+			System.out.println("Your updated details are as shown:");
+			result = stm.executeQuery("SELECT * FROM Consultation WHERE Consultationid="+atype1+"");	
+			if(result.next())
+			{
+				do
+				{
+					System.out.println("ID: "+result.getString("Consultationid"));
+					System.out.println("Time: "+result.getString("TIMEOFCONSULTATION"));
+					System.out.println("Nurse's Notes: "+result.getString("NURSENOTES"));
+					
+				}while (result.next());
+			}
+			break;
+		}
+		}
+	}
+  
   public void updatenurseinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;

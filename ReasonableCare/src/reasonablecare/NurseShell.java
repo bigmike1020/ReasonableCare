@@ -1,5 +1,6 @@
 package reasonablecare;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -94,14 +95,11 @@ public class NurseShell {
  
   //TODO Allow nurse to view consultations; either by date or student?
   
-  //TODO Allow nurse to update consultations
 
-  //@Command
-  //public void updateConsultation() {
-//	  PreparedStatement updateConsultation = null;
-//	  string updateConsultationString = "UPDATE Consultation SET"
- // }
-  
+@Command
+public void updateConsultation() throws IOException, SQLException{
+	   commonStatements.updateConsultations();
+}  
   
   @Command(description="Update nurse information, including name and password.")
   public String updateNurse(
