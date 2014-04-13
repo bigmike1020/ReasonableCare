@@ -147,6 +147,25 @@ public class CommonStatements implements AutoCloseable {
       }
     }
   }
+  
+  public void viewDoctors() throws IOException, SQLException {
+	
+		result = stm.executeQuery("SELECT * FROM doctor");	//get the details of the all the doctors
+		if(result.next())
+		{
+			do
+			{
+				System.out.println("ID: "+result.getString("doctorid"));
+				System.out.println("Name: "+result.getString("doctorname"));
+			//	System.out.println("Password: "+result.getString("password"));
+				System.out.println("Specialization: "+result.getString("specialization"));
+				System.out.println("Phone Number: "+result.getString("Phonenumber"));
+				System.out.println("-----------------------------------------------");
+
+			}while (result.next());
+		}
+  }
+  
 
   public void updatedoctorinformation(int z) throws IOException, SQLException {
     int userid2 = z;
