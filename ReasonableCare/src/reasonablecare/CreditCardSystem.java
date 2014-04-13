@@ -28,12 +28,16 @@ public class CreditCardSystem {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		int month = Calendar.getInstance().get(Calendar.MONTH);
 
-		if (ccYear>=year)
+		if (ccYear>year)
 			{
+			//if (ccMonth >= month)
+				return true;
+			}
+		else if(ccYear==year)
+		{
 			if (ccMonth >= month)
 				return true;
 			}
-		
 			return false;
 	}
 	

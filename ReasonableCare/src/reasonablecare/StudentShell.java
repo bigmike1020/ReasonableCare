@@ -39,6 +39,7 @@ public class StudentShell {
 		this.id = id;
 		//constructor to use shared statements
 		commonStatements = new CommonStatements(connection);
+		checkVaccinations();
 	}
 	
 	//insurance instances to contact insurance and credit card companies
@@ -65,8 +66,11 @@ public class StudentShell {
 	    if(!rs.next()) {
 	      return "Error retrieving vaccination information.";
 	    }
-	    
+	    if(rs.getInt(1)>=3)
 	    return "You have had " + rs.getInt(1) + " vaccinations.";
+	    else
+		    return "You have had " + rs.getInt(1) + " vaccinations. You must make 3 before the end of the semester.";
+
 	  }
 	}
 	
@@ -526,7 +530,6 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 		int menuSelection=0;
 		boolean dateSelected=false, runSelectionLoop=true;
-		//boolean flag=true;
 
 		//loops through prompts; for use handling invalid input without exiting
 		do{
@@ -540,7 +543,6 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 				if(apptDate.before(now))
 					{
 						System.out.println("Appointment time cannot be in the past");
-						//flag=false;
 					}
 
 			}

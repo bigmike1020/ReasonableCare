@@ -51,7 +51,9 @@ public class LoginShell implements ShellDependent {
 
 		try {
 			if (1000 <= id && id < 2000) {
-				loginStudent(id, password);
+				{
+					loginStudent(id, password);
+				}
 			} else if (2000 <= id && id < 3000) {
 				loginDoctor(id, password);
 			} else if (4000 <= id && id < 5000) {
