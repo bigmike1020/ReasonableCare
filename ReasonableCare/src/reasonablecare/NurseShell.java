@@ -107,16 +107,16 @@ public void updateConsultation() throws IOException, SQLException{
   @Command(description="Update nurse information, including name and password.")
   public String updateNurse(
 		  @Param(name="password", description = "New password surrounded in single quotes") String password,
-		  @Param(name="nurseName", description = "New name surrounded in single quotes") String nurseName, 
-		  @Param(name="nurseId", description = "Nurse ID") String strNurseId) throws SQLException{
+		  @Param(name="nurseName", description = "New name surrounded in single quotes") String nurseName) 
+		  /*@Param(name="nurseId", description = "Nurse ID") String strNurseId)*/ throws SQLException{
 	  
-	  int nurseId;
-	  try{
-		  nurseId = Integer.parseInt(strNurseId);
-	  }
-	  catch(Exception e){
-		  return "Error parsing student ID.";
-	  }
+	  int nurseId = id;
+	  //try{
+		//  nurseId = Integer.parseInt(strNurseId);
+	  //}
+	  //catch(Exception e){
+		//  return "Error parsing student ID.";
+	  //}
 	  
 	  PreparedStatement updateNurse = null;
 	  
@@ -129,7 +129,7 @@ public void updateConsultation() throws IOException, SQLException{
 		  updateNurse.setInt(3,  nurseId);
 		  
 		  int numRowsUpdated = updateNurse.executeUpdate();
-		  return "Updated " + numRowsUpdated + " row(s)";
+		  return "Updated nurse information for nurse with ID: " + id;
 	  }
 	  catch(SQLException e){
 		  return "Error updating information for nurse with ID: " + nurseId + ". " + e;
