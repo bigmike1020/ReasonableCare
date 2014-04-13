@@ -77,6 +77,7 @@ public class NurseShell {
 		  return "Updated " + rowsUpdated + " row(s)";
 	  }
 	  catch(Exception e){
+		  connection.rollback();
 		  return "Error adding consultation: " + e;
 	  }
 	  finally{
