@@ -8,6 +8,7 @@ It provides an interface for students to schedule appointments, search for docto
 information. Doctors may view their upcoming and past appointments, and nurses may help provide on-the-phone
 consultations for students, as well as schedule appointments if necessary.
 
+#Installation
 
 #Usage
 ##Managing User Accounts
