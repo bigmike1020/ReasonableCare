@@ -56,16 +56,19 @@ public class NurseShell {
 		  
 		  Timestamp timestamp = new Timestamp(now.getTime());
 		  
-		  int consultationId;
+		  int consultationId = -1;
 		  
-		  addConsultation = connection.prepareStatement(addConsultationString, Statement.RETURN_GENERATED_KEYS);
+		  addConsultation = connection.prepareStatement(addConsultationString, new String[] {"ConsultationId"});
 		  addConsultation.setTimestamp(1, timestamp);
 		  addConsultation.setString(2,  nurseNotes);
 		  
 		  addConsultation.executeUpdate();
 		  
 		  ResultSet generatedKeys = addConsultation.getGeneratedKeys();
-		  consultationId = generatedKeys.getInt(1);
+		  if(generatedKeys != null && generatedKeys.next()){
+			  consultationId = generatedKeys.getInt(1);
+		  }
+		  
 		  
 		  addMakesConsultation = connection.prepareStatement(addMakesConsultationString);
 		  
@@ -75,7 +78,7 @@ public class NurseShell {
 		  
 		  int rowsUpdated = addMakesConsultation.executeUpdate();
 		  connection.commit();
-		  return "Updated " + rowsUpdated + " row(s)";
+		  return "Created new consultation with ID " + consultationId;
 	  }
 	  catch(Exception e){
 		  connection.rollback();
@@ -96,7 +99,7 @@ public class NurseShell {
   //TODO Allow nurse to view consultations; either by date or student?
   
 
-@Command
+@Command(description = "Update consultation information")
 public void updateConsultation() throws IOException, SQLException{
 	   commonStatements.updateConsultations();
 }  
