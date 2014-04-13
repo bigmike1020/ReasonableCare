@@ -343,14 +343,14 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		int ID=0;
 		int flag=0;
 		do{		
-			System.out.println("Select the id of the doctor you want to book appointment with"); 
+			System.out.println("Select any valid id of the doctor you want to book appointment"); 
 		
 			apptDoc=Integer.parseInt(br.readLine());
 
-			String sql1 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
+			String sql1 = "SELECT doctorname,doctorid FROM doctor";
 			  
 			try (PreparedStatement stm = connection.prepareStatement(sql1)) {
-					     stm.setString(1, specialization);
+					   //  stm.setString(1, specialization);
 					    
 			
 			ResultSet rs = stm.executeQuery();						
