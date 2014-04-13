@@ -526,7 +526,8 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
 		int menuSelection=0;
 		boolean dateSelected=false, runSelectionLoop=true;
-		
+		//boolean flag=true;
+
 		//loops through prompts; for use handling invalid input without exiting
 		do{
 			System.out.println("Enter the date for the appointment (YYYY-MM-DD): \n");
@@ -536,11 +537,16 @@ public String deleteAppointment(@Param(name="appointmentID")String appointmentId
 			try{
 				apptDate = java.sql.Date.valueOf(date);
 				dateSelected = true;
+				if(apptDate.before(now))
+					{
+						System.out.println("Appointment time cannot be in the past");
+						//flag=false;
+					}
+
 			}
 			catch (IllegalArgumentException e){
 				System.out.println("Invalid Date Format: Must be YYYY-MM-DD"); 
 				}
-			
 			if (dateSelected)
 			{
 				System.out.println(showAvailableTimes(Integer.toString(doctorID),date));
