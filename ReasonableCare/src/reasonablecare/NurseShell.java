@@ -57,7 +57,7 @@ public class NurseShell {
 		  Timestamp timestamp = new Timestamp(now.getTime());
 		  
 		  int consultationId = -1;
-		  
+		  // Create the consultation creation statement and inject the parameters
 		  addConsultation = connection.prepareStatement(addConsultationString, new String[] {"ConsultationId"});
 		  addConsultation.setTimestamp(1, timestamp);
 		  addConsultation.setString(2,  nurseNotes);
@@ -69,7 +69,7 @@ public class NurseShell {
 			  consultationId = generatedKeys.getInt(1);
 		  }
 		  
-		  
+		  // Create the makesConsultation creation statement and inject parameters
 		  addMakesConsultation = connection.prepareStatement(addMakesConsultationString);
 		  
 		  addMakesConsultation.setInt(1, studentId);
@@ -77,10 +77,12 @@ public class NurseShell {
 		  addMakesConsultation.setInt(3, consultationId);
 		  
 		  int rowsUpdated = addMakesConsultation.executeUpdate();
+		  // Commit the transaction
 		  connection.commit();
 		  return "Created new consultation with ID " + consultationId;
 	  }
 	  catch(Exception e){
+		  // If there was an exception, roll back the transaction
 		  connection.rollback();
 		  return "Error adding consultation: " + e;
 	  }

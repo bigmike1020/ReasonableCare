@@ -404,49 +404,53 @@ public class CommonStatements implements AutoCloseable {
 	  String makeAppt = "insert into appointment(reasonForVisit,type,appointmentTime,"
 				+ "doctorNotes, cost) values(?,?,?,?,?)";
 	  
-	  PreparedStatement prepStmt = null;
+	  PreparedStatement apptStmt = null;
+	  PreparedStatement makesApptStmt = null;
 	  ResultSet rs = null;
 	  
-		 int apptID = 0;
-		 
-		try {
-			
-			prepStmt = connection.prepareStatement(makeAppt,
+	  int apptID = 0;
+	  String associateAppt = "insert into makesAppointment(studentID,doctorID,appointmentID)"
+			 	+ "values (?,?,?)";
+	  
+	  try {
+		  connection.setAutoCommit(false);
+		  // Create the appointment prepared statement and inject parameters
+		  apptStmt = connection.prepareStatement(makeAppt,
 			        new String[] { "AppointmentID" });
 
-		      prepStmt.setString(1, reason);
-		      prepStmt.setString(2, type);
-		      prepStmt.setTimestamp(3, time); 
-		      prepStmt.setString(4, "");
-		      prepStmt.setInt(5, 0);
-		      prepStmt.executeUpdate();
-		      
-		      rs = prepStmt.getGeneratedKeys();
-		      if (rs != null && rs.next()) {
-		        apptID = rs.getInt(1);
-		      }
-		}
-		finally{
-			close(prepStmt);
-			close(rs);
-		}
-		
-		String associateAppt = "insert into makesAppointment(studentID,doctorID,appointmentID)"
-			 	+ "values (?,?,?)";
-		
-		try {
-			prepStmt = connection.prepareStatement(associateAppt);
+	      apptStmt.setString(1, reason);
+	      apptStmt.setString(2, type);
+	      apptStmt.setTimestamp(3, time); 
+	      apptStmt.setString(4, "");
+	      apptStmt.setInt(5, 0);
+	      apptStmt.executeUpdate();
+	      
+	      rs = apptStmt.getGeneratedKeys();
+	      if (rs != null && rs.next()) {
+	        apptID = rs.getInt(1);
+	      }
+	      // Create the makesAppointment prepared statement and inject parameters
+	      makesApptStmt = connection.prepareStatement(associateAppt);
 			 
-			prepStmt.setInt(1, studentID);
-			prepStmt.setInt(2, doctorID);
-			prepStmt.setInt(3, apptID);
-			prepStmt.executeUpdate();
-			 	
-			return "Created new Appointment with id = "+apptID+"\n";
-		}
-		finally{
-			close(prepStmt);
-		}
+	      makesApptStmt.setInt(1, studentID);
+	      makesApptStmt.setInt(2, doctorID);
+	      makesApptStmt.setInt(3, apptID);
+	      makesApptStmt.executeUpdate();
+	      // Commit the transaction
+	      connection.commit();
+		      
+	      return "Created new Appointment with id = "+apptID+"\n";
+	}
+  	catch(SQLException e){
+  		// If there was an exception for ther insert statements, rollback the transaction
+  		connection.rollback();
+  		return "Failed to create appointment: " + e;
+  	}
+	finally{
+		close(apptStmt);
+		close(makesApptStmt);
+		close(rs);
+	}		
   }
   
   /**
