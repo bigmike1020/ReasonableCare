@@ -318,6 +318,7 @@ public class StaffShell {
   public Object makeAppointment() throws Exception{
 	  int ID3=0;
 		int flag=0;
+		int ccMonth, ccYear;
 	  BufferedReader br = new BufferedReader(new InputStreamReader( System.in));
 	  System.out.println("Enter the student id for which appointment has to be made");
 	  int id = Integer.parseInt(br.readLine());
@@ -551,21 +552,13 @@ public class StaffShell {
 			do{
 				System.out.println("Enter your credit card number:");
 				ccNumber = br.readLine().trim();
-
-				System.out.println("Enter your credit card expiration as MMYYYY:");
-				String ccDate = br.readLine().trim();
-				
-				int ccMonth, ccYear;
-				try {
-				  ccMonth = Integer.parseInt(ccDate.substring(0, 2));
-				  ccYear = Integer.parseInt(ccDate.substring(2, ccDate.length()));
-				} catch(NumberFormatException|IndexOutOfBoundsException e) {
-				  System.out.println("Invalid credit card expiration date");
-				  continue;
-				}
-				
-				if (!creditCard.validateCreditCard(ccNumber, ccMonth, ccYear))
+				System.out.println("Enter your the expiration month:");
+				ccMonth = Integer.parseInt(br.readLine());
+				System.out.println("Enter your the expiration year:");
+				ccYear = Integer.parseInt(br.readLine());
+				if (creditCard.validateCreditCard(ccNumber,ccMonth,ccYear))
 				{
+				
 					if (creditCard.getPreapproval(ccNumber))
 					{
 						creditCardAccepted=true;
