@@ -176,6 +176,24 @@ public class CommonStatements implements AutoCloseable {
       printDoctorInfo(z);
       break;
     case 3:
+    
+    	while (!verifySpecialty(b))
+    	{
+    		System.out.println("Invalid Specialization.  Enter a valid one.\n"
+    				+"Valid Choices are :\n "
+    				+ "General Physician\n"
+    				+ "Endocrinologist\n"
+    				+ "Psychiatrist\n"
+    				+ "Orthopedic Surgeon\n"
+    				+ "Gynaceologist\n"
+    				+ "Nephrologist\n"
+    				+ "ENT Specialist\n"
+    				+ "Cardiologist\n"
+    				+ "Oncology Surgeon \n");
+    		System.out.println("Enter Specialization: ");
+    		
+    		b = br.readLine().trim();	
+    	}
       stm.executeUpdate("update doctor set Specialization ='" + b
           + "' where doctorid=" + z);
       out.println("Record Updated");
