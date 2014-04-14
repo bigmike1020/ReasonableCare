@@ -866,7 +866,6 @@ public boolean validateStudentID(String stID) throws SQLException
 				specialization="ENT specialist";
 				break;
 			case 11:
-			
 				specialization="Cardiologist";
 				break;
 			case 12:

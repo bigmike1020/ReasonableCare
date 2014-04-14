@@ -58,10 +58,12 @@ public class StudentShell {
 	@Command(description="Prints the number of vaccination appointments you have made. You must make 3 before the end of the semester.")
 	public String checkVaccinations() throws SQLException 
 	{
-	  String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=?";
+		java.util.Calendar calendar = Calendar.getInstance();
+		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
+	  String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=? and APPOINTMENTTIME>?";
 	  try(PreparedStatement stm = connection.prepareStatement(sql)) {
 	    stm.setInt(1, id);
-	    
+	    stm.setTimestamp(2, now);
 	    ResultSet rs = stm.executeQuery();
 	    if(!rs.next()) {
 	      return "Error retrieving vaccination information.";
