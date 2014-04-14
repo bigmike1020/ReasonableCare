@@ -2,6 +2,7 @@ ReasonableCare
 ==============
 
 The Reasonable Care management system for CSC 540
+Team Members: gshah, mpsenn, glsetlif, mdnevill
 
 Reasonable Care provides a means for students, doctors, and nurses to schedule doctor and receive medical care. 
 It provides an interface for students to schedule appointments, search for doctors, and update their personal
