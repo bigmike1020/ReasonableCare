@@ -59,7 +59,7 @@ public class StudentShell {
 	{
 		java.util.Calendar calendar = Calendar.getInstance();
 		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
-		String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=? and APPOINTMENTTIME>?";
+		String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=? and APPOINTMENTTIME<?";
 		try(PreparedStatement stm = connection.prepareStatement(sql)) {
 	    stm.setInt(1, id);
 	    stm.setTimestamp(2, now);
