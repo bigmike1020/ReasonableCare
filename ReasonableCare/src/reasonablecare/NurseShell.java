@@ -12,6 +12,11 @@ import java.util.Date;
 import asg.cliche.Command;
 import asg.cliche.Param;
 
+/**
+ * Shell containing the operations corresponding to the views for the Staff user class
+ *
+ */
+@SuppressWarnings("unused")
 public class NurseShell {
 
   Connection connection;
@@ -30,10 +35,6 @@ public class NurseShell {
 		  @Param(name="studentId", description = "Student ID") String strStudentId,
 		  @Param(name="nurseNotes", description = "Consultation notes, surrounded in single quotes")String nurseNotes)
   throws SQLException{
-    
-	  // INSERT INTO Consultation(timeofConsultation, nurseNotes)
-	  // VALUES (to_date('16.03.2014 01:22:43', 'dd.mm.yyyy hh24:mi:ss'), 'Notes go here')
-	  // INSERT INTO MakesConsultation
 	  int studentId;
 	  int nurseId;
 	  try{
@@ -98,7 +99,6 @@ public class NurseShell {
 	  
   }
  
-  //TODO Allow nurse to view consultations; either by date or student?
   
 
 @Command(description = "Update consultation information")
@@ -110,15 +110,9 @@ public void updateConsultation() throws IOException, SQLException{
   public String updateNurse(
 		  @Param(name="password", description = "New password surrounded in single quotes") String password,
 		  @Param(name="nurseName", description = "New name surrounded in single quotes") String nurseName) 
-		  /*@Param(name="nurseId", description = "Nurse ID") String strNurseId)*/ throws SQLException{
+				  throws SQLException{
 	  
 	  int nurseId = id;
-	  //try{
-		//  nurseId = Integer.parseInt(strNurseId);
-	  //}
-	  //catch(Exception e){
-		//  return "Error parsing student ID.";
-	  //}
 	  
 	  PreparedStatement updateNurse = null;
 	  
@@ -142,21 +136,19 @@ public void updateConsultation() throws IOException, SQLException{
 		  }
 	  }
   }
-  
-  //TODO allow nurse to view past appointments for student - is in narrative
-  @Command(description="Check a student's medical records, including past appointments and consultations")
-  public void viewAppointments(
-		  @Param(name="studentId", description = "Student's ID to find appointments for") int studentId) 
-		  throws SQLException {
-	  // TODO viewAppointments
-	  
-  }
+ 
   
   @Command(description="Check all doctors records, including number and specialization")
   public void viewDoctors () throws IOException, SQLException{
 	  commonStatements.viewDoctors();	  
   }
-  //TODO debug: ORA-00921: unexpected end of SQL command with check-student-records 1020
+  
+  /**
+   * View a student's past appointments and consultations
+   * @param strStudentId
+   * @return
+   * @throws Exception
+   */
   @Command(description="Check a student's medical records, including past appointments and consultations")
   public String checkStudentRecords(
 		  @Param(name="studentId", description = "Student's ID to find appointments for") String strStudentId)
@@ -164,7 +156,6 @@ public void updateConsultation() throws IOException, SQLException{
 	  return commonStatements.checkStudentRecord(strStudentId);
   }
   
-  //TODO add past appointments for testing this method
   @Command(description = "Show the list of doctors a student has seen in the past.")
   public Object showStudentsDoctors(
 		  @Param(name="studentId", description = "Student's ID")String strStudentId) 
@@ -178,9 +169,6 @@ public void updateConsultation() throws IOException, SQLException{
 		  return "Error parsing student ID.";
 	  }
 	  
-	  // SELECT * FROM Doctor WHERE DoctorID IN (SELECT DoctorID 
-	  // FROM  Appointment a JOIN MakesAppointment ma ON a.AppointmentID=ma.AppointmentID 
-	  // WHERE appointmenttime < SYSDATE AND ma.StudentID = 1020);
 	  PreparedStatement getDoctors = null;
 	  
 	  String getDoctorsString = "SELECT * FROM Doctor WHERE DoctorId IN " + 

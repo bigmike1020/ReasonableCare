@@ -22,6 +22,8 @@ public class ReasonableCare {
   public static final String APP_NAME = "ReasonableCare";
 
   /**
+   * Main program to launch the connection with the DB and launch the login Shell
+   * 
    * @param args
    *          Not used.
    */

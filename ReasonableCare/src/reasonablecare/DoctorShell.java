@@ -13,6 +13,10 @@ import java.sql.SQLException;
 import asg.cliche.Command;
 import asg.cliche.Param;
 
+/**
+ * Shell containing the operations corresponding to the views for the Doctor user class
+ *
+ */
 public class DoctorShell {
 
 	private final BufferedReader br = new BufferedReader(new InputStreamReader(

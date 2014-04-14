@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Utility class to print data in a neat manner
+ *
+ */
 public class Table {
 
   static final char[] blanks, dashes;
@@ -19,6 +23,7 @@ public class Table {
 
   private final List<List<String>> data = new ArrayList<List<String>>();
 
+  //constructor for the table
   public Table(String col1, String... cols) {
     columnNames.add(col1);
     Collections.addAll(columnNames, cols);
@@ -32,6 +37,10 @@ public class Table {
     }
   }
 
+  /**
+   * Add a row to the table
+   * @param data
+   */
   public void add(Object... data) {
     if (data.length != columnNames.size()) {
       throw new RuntimeException("Incorrect number of columns");

@@ -12,8 +12,6 @@ import java.sql.Statement;
 import asg.cliche.Command;
 import asg.cliche.Param;
 
-//import java.sql.Timestamp;
-
 /**
  * Shell to provide the required tasks, operations, and views for a staff member.
  *
@@ -111,8 +109,6 @@ public class StaffShell {
 	  {
 		  return "Invalid Specialization Provided.  Doctor not created.";
 	  }
-	  
-	  //TODO Constrain add-Doctor to only allow certain specializations
 
     String sql = "insert into doctor(doctorName,password,phoneNumber,specialization) values(?,?,?,?)";
 
@@ -179,6 +175,7 @@ public class StaffShell {
       }
     }
   }
+  
 /**
  * Allow a staff member to add a new staff member to the system
  * @param name
@@ -345,6 +342,7 @@ public class StaffShell {
 			System.out.println("Not a valid student id");
 			makeAppointment();
 			}
+		//runs method from studentShell
 	final StudentShell  StudentShell = new StudentShell(connection,id);
 		java.sql.Timestamp apptTime;
 		int apptDoc=0,menuSelection=0, cost=0;
@@ -430,7 +428,12 @@ public class StaffShell {
 		    	break;
 			default:
 				apptType="Office Visit";
-				System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.Mental Health \n4.Orthopedics \n5.Physical Therapy \n6.Women's Health\n7.Urinary, Genital Problems \n8.HIV Testing \n9.Ear, Nose, Throat Problems \n10.Heart related Problems ");
+				System.out.println("Enter the reason of your visit \n1.Diabetes "
+						+ "\n2.FluShots \n3.Mental Health \n4.Orthopedics \n5.Physical Therapy "
+						+ "\n6.Women's Health\n7.Urinary, Genital Problems \n8.HIV Testing "
+						+ "\n9.Ear, Nose, Throat Problems "
+						+ "\n10.Heart related Problems "
+						+ "\n11. Cancer Surgery");
 				apptReason1=Integer.parseInt(br.readLine());
 				switch(apptReason1)
 				{
@@ -475,10 +478,13 @@ public class StaffShell {
 					apptReason="Heart related Problems";
 					specialization="Cardiologist";
 					break;
+				case 11:
+					apptReason="Cancer Surgery";
+					specialization="Oncology Surgeon";
+					break;
 				}
 			}}// end switch+if
 		} while (!apptTypeSelected);//end while
-///	System.out.println(specialization);
 		
 		String sql2 = "SELECT doctorname,doctorid FROM doctor where specialization=?";
 		  
@@ -503,8 +509,6 @@ public class StaffShell {
 			String sql1 = "SELECT doctorname,doctorid FROM doctor";
 			  
 			try (PreparedStatement stm = connection.prepareStatement(sql1)) {
-					  //   stm.setString(1, specialization);
-					    
 			
 			ResultSet rs = stm.executeQuery();						
 
@@ -529,7 +533,6 @@ public class StaffShell {
 		insuranceProvider = StudentShell.getInsuranceProvider(id);
 		insuranceNumber = StudentShell.getInsuranceNumber(id);
 		
-		//TODO allow student to get a free physical each year
 		InsuranceCompanySystem insurance= new InsuranceCompanySystem();
 		CreditCardSystem creditCard = new CreditCardSystem();
 		//get cost of appointment
@@ -540,8 +543,9 @@ public class StaffShell {
 		
 		System.out.println("The copayment for your appointment will be: "+cost);
 		if(cost == 0){
-			
+			//do nothing
 		}
+		//determine if deductible has been paid for the year
 		else if (insurance.getDeductiblePaid(insuranceProvider, insuranceNumber))
 		{
 			System.out.println("Your deductible has been paid for the year.  You will not be billed.");
@@ -550,6 +554,7 @@ public class StaffShell {
 		{
 			System.out.println("Your deductible has not been paid for the year.");
 			do{
+				//get credit card information and validate it
 				System.out.println("Enter your credit card number:");
 				ccNumber = br.readLine().trim();
 				System.out.println("Enter your the expiration month:");

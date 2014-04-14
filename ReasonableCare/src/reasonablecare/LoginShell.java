@@ -8,6 +8,12 @@ import asg.cliche.Command;
 import asg.cliche.Shell;
 import asg.cliche.ShellDependent;
 
+/**
+ * Initial shell to validate the login for different user classes.
+ * 
+ * Launches appropriate shell based on provide credentials
+ *
+ */
 public class LoginShell implements ShellDependent {
 
 	public static class LoginFailedException extends Exception {
@@ -49,6 +55,14 @@ public class LoginShell implements ShellDependent {
 	@Command
 	public String login(int id, String password) throws Exception {
 
+		/*
+		 * Parses given userIDs
+		 * 
+		 * Students = 1000-1999
+		 * Doctors = 2000-2999
+		 * Nurses = 4000-4999
+		 * Staff = 5000-5999
+		 */
 		try {
 			if (1000 <= id && id < 2000) {
 				{
@@ -70,6 +84,13 @@ public class LoginShell implements ShellDependent {
 		return "Back at login shell.";
 	}
 
+	/**
+	 * Validates a student's credentials and launches the studentShell if valid
+	 * 
+	 * @param id
+	 * @param password
+	 * @throws Exception
+	 */
 	private void loginStudent(int id, String password) throws Exception {
 
 		String sql = "select 1 from Student where StudentID=? and password=?";
@@ -91,7 +112,14 @@ public class LoginShell implements ShellDependent {
 		factory.createSubshell(loginShell, "student",
 				new StudentShell(connection, id)).commandLoop();
 	}
-
+	
+	/**
+	 * Validates a staff member's credentials and launches the staffShell if valid
+	 * 
+	 * @param id
+	 * @param password
+	 * @throws Exception
+	 */
 	private String loginStaff(String idStr, String password) throws Exception {
 
 		int id;
@@ -122,6 +150,13 @@ public class LoginShell implements ShellDependent {
 		return "";
 	}
 
+	/**
+	 * Validates a doctor's credentials and launches the doctorShell if valid
+	 * 
+	 * @param id
+	 * @param password
+	 * @throws Exception
+	 */
 	private void loginDoctor(int id, String password) throws Exception {
 
 		String sql = "select 1 from Doctor where doctorID=? and password=?";
@@ -144,6 +179,13 @@ public class LoginShell implements ShellDependent {
 				new DoctorShell(connection, id)).commandLoop();
 	}
 
+	/**
+	 * Validates a nurse's credentials and launches the nurseShell if valid
+	 * 
+	 * @param id
+	 * @param password
+	 * @throws Exception
+	 */
 	private void loginNurse(int id, String password) throws Exception {
 
 		String sql = "select 1 from Nurse where NurseID=? and password=?";
