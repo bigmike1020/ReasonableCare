@@ -22,47 +22,53 @@ VALUES('Jason Hunter', 'password', 'Acme',
 123456, '15-MAR-2011')
 RETURNING studentId INTO :jason_id;
 
+VAR dale_id NUMBER
 INSERT INTO Student(studentName, password, startingDate)
-VALUES('Dale Steyn', 'password', null);
+VALUES('Dale Steyn', 'password', '1-JAN-2011')
+RETURNING studentId INTO :dale_id;
 
 VAR appt_id NUMBER
 INSERT INTO Appointment(reasonForVisit, type, appointmentTime,
-doctorNotes, cost) VALUES('Broken Bone', 'general', 
+doctorNotes, cost) VALUES('Orthopedics', 'Office Visit', 
 TO_DATE('15.03.2011 09:00:00', 'dd.mm.yyyy hh24:mi:ss'), 
-'Pain killer', 30) RETURNING appointmentId INTO :appt_id;
+'Boken bone: Prescribed pain killer', 30) RETURNING appointmentId INTO :appt_id;
 
 INSERT INTO MakesAppointment(studentId, doctorId, appointmentId)
 VALUES(:jason_id, :john_id, :appt_id);
 
 INSERT INTO Appointment(reasonForVisit, type, appointmentTime,
-doctorNotes, cost) VALUES('Vaccination', 'vaccination',
+doctorNotes, cost) VALUES('Vaccination', 'Vaccination',
 TO_DATE('21.04.2014 16:00:00', 'dd.mm.yyyy hh24:mi:ss'),
 '', 100) RETURNING appointmentId INTO :appt_id;
 
 INSERT INTO MakesAppointment(studentId, doctorId, appointmentId)
 VALUES(:jason_id, :john_id, :appt_id);
 
+
+
 INSERT INTO Appointment(reasonForVisit, type, appointmentTime,
-doctorNotes, cost) VALUES('Vaccination', 'vaccination1',
+doctorNotes, cost) VALUES('Vaccination', 'Vaccination',
 TO_DATE('16.03.2011 09:00:00', 'dd.mm.yyyy hh24:mi:ss'),
-'', 20) RETURNING appointmentId INTO :appt_id;
+'', 30) RETURNING appointmentId INTO :appt_id;
 
-INSERT INTO Appointment(studentId, doctorId, appointmentId)
-VALUES(:jason_id, :john_id, :appt_id);
+INSERT INTO MakesAppointment(studentId, doctorId, appointmentId)
+VALUES(:dale_id, :john_id, :appt_id);
 
 INSERT INTO Appointment(reasonForVisit, type, appointmentTime,
-doctorNotes, cost) VALUES('Vaccination', 'vaccination2',
+doctorNotes, cost) VALUES('Vaccination', 'Vaccination',
 TO_DATE('16.03.2011 09:30:00', 'dd.mm.yyyy hh24:mi:ss'),
-'', 20) RETURNING appointmentId INTO :appt_id;
+'', 30) RETURNING appointmentId INTO :appt_id;
 
-INSERT INTO Appointment(studentId, doctorId, appointmentId)
-VALUES(:jason_id, :john_id, :appt_id);
+INSERT INTO MakesAppointment(studentId, doctorId, appointmentId)
+VALUES(:dale_id, :john_id, :appt_id);
 
 INSERT INTO Appointment(reasonForVisit, type, appointmentTime,
-doctorNotes, cost) VALUES('Vaccination', 'vaccination3',
+doctorNotes, cost) VALUES('Vaccination', 'Vaccination',
 TO_DATE('16.03.2011 10:00:00', 'dd.mm.yyyy hh24:mi:ss'),
-'', 20) RETURNING appointmentId INTO :appt_id;
+'', 30) RETURNING appointmentId INTO :appt_id;
 
-INSERT INTO Appointment(studentId, doctorId, appointmentId)
-VALUES(:jason_id, :john_id, :appt_id);
+INSERT INTO MakesAppointment(studentId, doctorId, appointmentId)
+VALUES(:dale_id, :john_id, :appt_id);
+
+COMMIT;
 
