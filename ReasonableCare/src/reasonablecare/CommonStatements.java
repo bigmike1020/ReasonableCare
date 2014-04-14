@@ -13,6 +13,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * Utility class containing methods common to multiple user types
+ *
+ */
+
 public class CommonStatements implements AutoCloseable {
 
   private static BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -23,13 +28,17 @@ public class CommonStatements implements AutoCloseable {
 
   Connection connection;
 
+  /**
+   * Constructor for CommonStatements - allows shells to use these methods
+   * @param connection
+   * @throws SQLException
+   */
   public CommonStatements(Connection connection) throws SQLException {
     this.connection=connection;
   	if(stm != null) {
   	  stm.close();
   	}
     stm = connection.createStatement();
-    //connection.setAutoCommit(true); //commented out due to SQL error
   }
 
   @Override
@@ -39,10 +48,18 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
+  /**
+   * Allows a user to update a consultation.
+   * 
+   * @throws IOException
+   * @throws SQLException
+   */
   public void updateConsultations() throws IOException, SQLException {
 		int atype1=0;
 		System.out.println("Enter the consultation id you want to update");
 		atype1 = Integer.parseInt(br.readLine());
+		
+		//validate consultation id and return attributes if valid
 		result = stm.executeQuery("SELECT consultationid from consultation");
 		int ID3=0;
 		int flag=0;
@@ -64,7 +81,9 @@ public class CommonStatements implements AutoCloseable {
 		{
 			String b="";
 				int choice=0;
-				System.out.println("1.Do you want to add to your note\n2.Change the contents of the note");
+				//allow user to update or append the nurse's notes
+				System.out.println("1.Do you want to add to your note\n"
+						+ "2.Change the contents of the note");
 				choice=Integer.parseInt(br.readLine());
 				if(choice==1)
 				{
@@ -101,7 +120,13 @@ public class CommonStatements implements AutoCloseable {
 		}}
 		
 	
-  
+  /**
+   * Class allowing the updating of the attributes of a nurse
+   * 
+   * @param z NurseID
+   * @throws IOException
+   * @throws SQLException
+   */
   public void updatenurseinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
@@ -148,6 +173,12 @@ public class CommonStatements implements AutoCloseable {
     }
   }
   
+  /**
+   * Shows selected attributes of all doctors in a neat table when called
+   * 
+   * @throws IOException
+   * @throws SQLException
+   */
   public void viewDoctors() throws IOException, SQLException {
 	
 		result = stm.executeQuery("SELECT * FROM doctor");	//get the details of the all the doctors
@@ -157,7 +188,6 @@ public class CommonStatements implements AutoCloseable {
 			{
 				System.out.println("ID: "+result.getString("doctorid"));
 				System.out.println("Name: "+result.getString("doctorname"));
-			//	System.out.println("Password: "+result.getString("password"));
 				System.out.println("Specialization: "+result.getString("specialization"));
 				System.out.println("Phone Number: "+result.getString("Phonenumber"));
 				System.out.println("-----------------------------------------------");
@@ -166,7 +196,13 @@ public class CommonStatements implements AutoCloseable {
 		}
   }
   
-
+/**
+ * Allows the updating of the attributes of a doctor
+ * 
+ * @param z Doctor ID
+ * @throws IOException
+ * @throws SQLException
+ */
   public void updatedoctorinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
@@ -227,6 +263,12 @@ public class CommonStatements implements AutoCloseable {
     }// end of switch
   }
 
+  /**
+   * Prints the information for a doctor - used after editing
+   * 
+   * @param doctorId
+   * @throws SQLException
+   */
   private void printDoctorInfo(int doctorId) throws SQLException {
     out.println("Your updated details are as shown:");
 
@@ -244,6 +286,13 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
+  /**
+   * Allows the updating of attributes for a staff member
+   * 
+   * @param z StaffID
+   * @throws IOException
+   * @throws SQLException
+   */
   public void updatestaffinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
@@ -290,6 +339,13 @@ public class CommonStatements implements AutoCloseable {
     }
   }
 
+  /**
+   * Allows the updating of student attributes for a selected student
+   * 
+   * @param z StudentID
+   * @throws IOException
+   * @throws SQLException
+   */
   public void updatestudentinformation(int z) throws IOException, SQLException {
     int userid2 = z;
     int y;
@@ -347,6 +403,12 @@ public class CommonStatements implements AutoCloseable {
     }// end of switch
   }// end of updatestudentinformation
 
+  /**
+   * Prints all attributes for a selected student - used after updating
+   * 
+   * @param studentId
+   * @throws SQLException
+   */
   private void printStudentInfo(int studentId) throws SQLException {
     out.println("Your updated details are as shown:");
 
@@ -644,29 +706,6 @@ public boolean validateStudentID(String stID) throws SQLException
 
 		}
 	}
-	/*	
-	
-	public boolean checkFreePhysical(String studentID, String date) throws SQLException
-	{
-		if (!validateStudentID(studentID))
-			return false;
-		else
-		{
-			try (PreparedStatement stm = connection.prepareStatement(sql,
-			        new String[] { "AppointmentTime" })) {
-
-			      stm.setInt(1, doctorID);
-			      stm.setString(2, date);
-			      ResultSet rs = stm.executeQuery();
-			      
-			      while (rs.next()) 
-			      {
-			    	  scheduledAppointments.add(rs.getTimestamp(1));
-			      }
-			}
-		}
-		return true;
-	}*/
 	
 	  /**
 	   * Delete an appointment from the db
@@ -722,7 +761,13 @@ public boolean validateStudentID(String stID) throws SQLException
 	    return "Deleted appointment between " + doctorName + " and " + studentName;
 }
 
-	  
+	/**  
+	 * Shows a student's past appointments and consultations
+	 * 
+	 * @param studId
+	 * @return
+	 * @throws Exception
+	 */
 	  public String checkStudentRecord(String studId) throws Exception{
 		  int studentId;
 			try {
@@ -768,12 +813,22 @@ public boolean validateStudentID(String stID) throws SQLException
 			return "";
 	  }
 	
-	
+	/**
+	 * Allows one to find a specialist given a medical condition
+	 * 
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public void FindSpecialist() throws IOException, SQLException {
 		String specialization="";
 			int aname1=0;
 			do{
-					System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.General Medical Problems \n4.Mental Health \n5.Orthopedics \n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems \n9.HIV Testing \10.Ear, Nose, Throat Problems \n11.Heart related Problems \n12.Vaccination");
+					System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots "
+							+ "\n3.General Medical Problems \n4.Mental Health \n5.Orthopedics "
+							+ "\n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems "
+							+ "\n9.HIV Testing \10.Ear, Nose, Throat Problems "
+							+ "\n11.Heart related Problems \n12.Vaccination"
+							+ "\n13. Cancer Surgery");
 					aname1 = Integer.parseInt(br.readLine());
 				}while(aname1>=13);
 			
@@ -817,6 +872,8 @@ public boolean validateStudentID(String stID) throws SQLException
 			case 12:
 				specialization="General Physician";
 				break;
+			case 13: 
+				specialization="Oncology Surgeon";
 				}
 			System.out.println(specialization+":");
 			
@@ -833,6 +890,7 @@ public boolean validateStudentID(String stID) throws SQLException
 			}
 		}
 
+	@SuppressWarnings("unused")
 	private static void makeAppointment1(int z,String job)throws IOException, SQLException 
 	{ ResultSet result = null;
 		int studentid=0;
@@ -870,7 +928,12 @@ String specialization="";
 	{	
 	do
 		{
-			System.out.println("Enter the reason of your visit \n1.Diabetes \n2.FluShots \n3.General Medical Problems \n4.Mental Health \n5.Orthopedics \n6.Physical Therapy \n7.Women's Health\n8.Urinary, Genital Problems \n9.HIV Testing \10.Ear, Nose, Throat Problems \n11.Heart related Problems ");
+			System.out.println("Enter the reason of your visit \n1.Diabetes "
+					+ "\n2.FluShots \n3.General Medical Problems \n4.Mental Health "
+					+ "\n5.Orthopedics \n6.Physical Therapy \n7.Women's Health"
+					+ "\n8.Urinary, Genital Problems \n9.HIV Testing \10.Ear, Nose, Throat Problems "
+					+ "\n11.Heart related Problems "
+					+ "\n12. Cancer Surgery");
 			aname1 = Integer.parseInt(br.readLine());
 		}while(aname1>=12);}
 	switch(aname1)
@@ -919,6 +982,10 @@ String specialization="";
 		aname="Heart related Problems";
 		specialization="Cardiologist";
 		break;
+	case 12:
+		aname="Cancer Surgery";
+		specialization="Oncology Surgeon";
+		break;
 		}
 	
 	result = stm.executeQuery("SELECT doctorname,doctorid FROM doctor WHERE SPECIALIZATION='"+specialization+"'");	
@@ -950,6 +1017,13 @@ String specialization="";
 	}while(flag!=1);
 	}
 	
+	/**
+	 * Returns whether a student is eligible for an annual free physical
+	 * 
+	 * @param studentId
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean verifyFreePhysical(int studentId)throws Exception{
 		
 		String strPhysicalAppointmentNum = "SELECT COUNT(*) FROM Appointment NATURAL JOIN MakesAppointment " +
