@@ -613,11 +613,12 @@ public class StaffShell {
           +"FROM Student LEFT JOIN ( "
           +" SELECT StudentID, count(*) AS Vacc "
           +" FROM makesAppointment NATURAL JOIN Appointment "
-          +" WHERE Appointment.type='Vaccination' and studentid=1004 "
+          +" WHERE Appointment.type='Vaccination' "
+          +" AND appointmentTime < CURRENT_TIMESTAMP "
           +" GROUP BY StudentID "
           +") V USING (StudentID) "
-          +"WHERE MONTHS_BETWEEN(CURRENT_TIMESTAMP, startingDate) >= 6 "
-          +" AND nvl(V.Vacc,0) < 3";
+          +"WHERE (MONTHS_BETWEEN(CURRENT_TIMESTAMP, startingDate) >= 6) "
+          +" AND (nvl(V.Vacc,0) < 3)";
 
 
       // Get records from the Student table
