@@ -39,7 +39,6 @@ public class StudentShell {
 		this.id = id;
 		//constructor to use shared statements
 		commonStatements = new CommonStatements(connection);
-		checkVaccinations();
 	}
 	
 	//insurance instances to contact insurance and credit card companies
@@ -60,8 +59,8 @@ public class StudentShell {
 	{
 		java.util.Calendar calendar = Calendar.getInstance();
 		java.sql.Timestamp now = new java.sql.Timestamp(calendar.getTime().getTime());
-	  String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=? and APPOINTMENTTIME>?";
-	  try(PreparedStatement stm = connection.prepareStatement(sql)) {
+		String sql = "select count(*) from appointment natural join makesappointment where type='Vaccination' and studentid=? and APPOINTMENTTIME>?";
+		try(PreparedStatement stm = connection.prepareStatement(sql)) {
 	    stm.setInt(1, id);
 	    stm.setTimestamp(2, now);
 	    ResultSet rs = stm.executeQuery();
